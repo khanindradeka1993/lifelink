@@ -58,6 +58,57 @@ const CONTRACT_ABI = [
 "type":"function"
 }
 ];
+let provider;
+let signer;
+let contract;
+
+const connectBtn = document.getElementById("connectBtn");
+const walletAddress = document.getElementById("walletAddress");
+const registerBtn = document.getElementById("registerBtn");
+const donorList = document.getElementById("donorList");
+const searchBtn = document.getElementById("searchBtn");
+const searchResults = document.getElementById("searchResults");
+
+let currentAccount = "";
+
+// Wallet Connect
+connectBtn.addEventListener("click", async () => {
+
+    if (!window.ethereum) {
+        alert("Please install MetaMask");
+        return;
+    }
+
+    try {
+
+        const accounts = await ethereum.request({
+            method: "eth_requestAccounts"
+        });
+
+        currentAccount = accounts[0];
+
+        provider =
+            new ethers.providers.Web3Provider(window.ethereum);
+
+        signer = provider.getSigner();
+
+        contract = new ethers.Contract(
+            CONTRACT_ADDRESS,
+            CONTRACT_ABI,
+            signer
+        );
+
+        walletAddress.innerText =
+            "Connected: " +
+            currentAccount.substring(0, 6) +
+            "..." +
+            currentAccount.substring(currentAccount.length - 4);
+
+    } catch (error) {
+        console.log(error);
+    }
+
+});
 
 // Load donors
 async function loadDonors() {
