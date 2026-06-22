@@ -1,37 +1,26 @@
 const CONTRACT_ADDRESS =
-"0xe0beA6702B03FBc2eF3A44C2771a7f78B161F955";
+"0xF482093CAFa6777e0B614512517d0D4D6EB4D7b6";
 
 const CONTRACT_ABI = [
 {
 "inputs":[
-{"internalType":"string","name":"bloodGroup","type":"string"},
-{"internalType":"string","name":"city","type":"string"}
-],
-"name":"registerDonor",
-"outputs":[],
-"stateMutability":"nonpayable",
-"type":"function"
+{
+"internalType":"string",
+"name":"bloodGroup",
+"type":"string"
 },
 {
-"inputs":[],
-"name":"getDonors",
-"outputs":[
+"internalType":"string",
+"name":"city",
+"type":"string"
+},
 {
-"components":[
-{"internalType":"string","name":"bloodGroup","type":"string"},
-{"internalType":"string","name":"city","type":"string"},
-{"internalType":"address","name":"wallet","type":"address"},
-{"internalType":"bool","name":"available","type":"bool"}
-],
-"internalType":"struct LifeLinkDonor.Donor[]",
-"name":"",
-"type":"tuple[]"
+"internalType":"string",
+"name":"phone",
+"type":"string"
 }
 ],
-"stateMutability":"view",
-"type":"function"
-}
-];
+"name":"registerDonor",
 
 let provider;
 let signer;
