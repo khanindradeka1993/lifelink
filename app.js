@@ -4,68 +4,60 @@ const CONTRACT_ADDRESS =
 const CONTRACT_ABI = [
 {
 "inputs":[
-{
-"internalType":"string",
-"name":"bloodGroup",
-"type":"string"
-},
-{
-"internalType":"string",
-"name":"city",
-"type":"string"
-},
-{
-"internalType":"string",
-"name":"phone",
-"type":"string"
-}
+{"internalType":"string","name":"bloodGroup","type":"string"},
+{"internalType":"string","name":"city","type":"string"},
+{"internalType":"string","name":"phone","type":"string"}
 ],
 "name":"registerDonor",
-
-let provider;
-let signer;
-let contract;
-const connectBtn = document.getElementById("connectBtn");
-const walletAddress = document.getElementById("walletAddress");
-const registerBtn = document.getElementById("registerBtn");
-const donorList = document.getElementById("donorList");
-const searchBtn = document.getElementById("searchBtn");
-const searchResults = document.getElementById("searchResults");
-
-let currentAccount = "";
-
-// Wallet Connect
-connectBtn.addEventListener("click", async () => {
-  if (!window.ethereum) {
-    alert("Please install MetaMask");
-    return;
-  }
-
-  try {
-    const accounts = await ethereum.request({
-      method: "eth_requestAccounts"
-    });
-
-    currentAccount = accounts[0];
-provider = new ethers.providers.Web3Provider(window.ethereum);
-
-signer = provider.getSigner();
-
-contract = new ethers.Contract(
-  CONTRACT_ADDRESS,
-  CONTRACT_ABI,
-  signer
-); 
-    walletAddress.innerText =
-      "Connected: " +
-      currentAccount.substring(0, 6) +
-      "..." +
-      currentAccount.substring(currentAccount.length - 4);
-
-  } catch (error) {
-    console.log(error);
-  }
-});
+"outputs":[],
+"stateMutability":"nonpayable",
+"type":"function"
+},
+{
+"inputs":[
+{"internalType":"uint256","name":"","type":"uint256"}
+],
+"name":"donors",
+"outputs":[
+{"internalType":"string","name":"bloodGroup","type":"string"},
+{"internalType":"string","name":"city","type":"string"},
+{"internalType":"string","name":"phone","type":"string"},
+{"internalType":"address","name":"wallet","type":"address"},
+{"internalType":"bool","name":"available","type":"bool"}
+],
+"stateMutability":"view",
+"type":"function"
+},
+{
+"inputs":[],
+"name":"getDonors",
+"outputs":[
+{
+"components":[
+{"internalType":"string","name":"bloodGroup","type":"string"},
+{"internalType":"string","name":"city","type":"string"},
+{"internalType":"string","name":"phone","type":"string"},
+{"internalType":"address","name":"wallet","type":"address"},
+{"internalType":"bool","name":"available","type":"bool"}
+],
+"internalType":"struct LifeLinkDonor.Donor[]",
+"name":"",
+"type":"tuple[]"
+}
+],
+"stateMutability":"view",
+"type":"function"
+},
+{
+"inputs":[],
+"name":"totalDonors",
+"outputs":[
+{"internalType":"uint256","name":"","type":"uint256"}
+],
+"stateMutability":"view",
+"type":"function"
+}
+];
 
 // Load donors
 async function loadDonors() {
