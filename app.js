@@ -216,20 +216,33 @@ searchBtn.addEventListener("click", async () => {
 
     filtered.forEach((donor) => {
 
-        searchResults.innerHTML += `
-        <div style="
-            border:1px solid #ddd;
-            padding:10px;
-            margin-top:10px;
-            border-radius:10px;
-        ">
-            <strong>${donor.bloodGroup}</strong><br>
-            City: ${donor.city}<br>
-            Wallet: ${donor.wallet.substring(0,6)}...
-            ${donor.wallet.substring(donor.wallet.length - 4)}
-        </div>
-        `;
+    searchResults.innerHTML += `
+    <div style="
+        border:1px solid #ddd;
+        padding:10px;
+        margin-top:10px;
+        border-radius:10px;
+    ">
+        <strong>${donor.bloodGroup}</strong><br>
+        City: ${donor.city}<br>
 
-    });
+        <button
+            onclick="window.location.href='tel:${donor.phone}'"
+            style="
+                margin-top:10px;
+                background:#2563eb;
+                color:white;
+                border:none;
+                padding:10px 15px;
+                border-radius:8px;
+                cursor:pointer;
+            "
+        >
+            📞 Call Donor
+        </button>
+    </div>
+    `;
+
+});
 
 });
