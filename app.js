@@ -79,26 +79,28 @@ contract = new ethers.Contract(
 });
 
 // Load donors
-function loadDonors() {
-  const donors =
-    JSON.parse(localStorage.getItem("lifelink_donors")) || [];
+async function loadDonors() {
+    if (!contract) return;
 
-  donorList.innerHTML = "";
+    const donors = await contract.getDonors();
 
-  donors.forEach((donor) => {
-    donorList.innerHTML += `
-      <div style="
-        border:1px solid #ddd;
-        padding:10px;
-        margin-top:10px;
-        border-radius:10px;
-      ">
-        <strong>${donor.name}</strong><br>
-        Blood Group: ${donor.bloodGroup}<br>
-        City: ${donor.city}
-      </div>
-    `;
-  });
+    donorList.innerHTML = "";
+
+    donors.forEach((donor) => {
+        donorList.innerHTML += `
+        <div style="
+            border:1px solid #ddd;
+            padding:10px;
+            margin-top:10px;
+            border-radius:10px;
+        ">
+            <strong>${donor.bloodGroup}</strong><br>
+            City: ${donor.city}<br>
+            Wallet: ${donor.wallet.substring(0,6)}...
+            ${donor.wallet.substring(donor.wallet.length-4)}
+        </div>
+        `;
+    });
 }
 
 // Register donor
@@ -127,7 +129,8 @@ registerBtn.addEventListener("click", async () => {
 
 const donors = await contract.getDonors();
 alert("Total donors on chain: " + donors.length);
-
+await loadDonors();
+    
 alert("Donor registered on Arc ❤️");
 
 } catch (err) {
