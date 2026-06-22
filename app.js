@@ -66,8 +66,7 @@ contract = new ethers.Contract(
   CONTRACT_ADDRESS,
   CONTRACT_ABI,
   signer
-);
-await loadDonors(); 
+); 
     walletAddress.innerText =
       "Connected: " +
       currentAccount.substring(0, 6) +
