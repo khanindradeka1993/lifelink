@@ -152,43 +152,55 @@ searchBtn.addEventListener("click", () => {
   const city =
     document.getElementById("searchCity").value.toLowerCase();
 
-  const donors =
-    JSON.parse(localStorage.getItem("lifelink_donors")) || [];
+  const donors = await contract.getDonors();
 
   const filtered = donors.filter((donor) => {
 
-    return (
-      donor.bloodGroup === bloodGroup &&
-      donor.city.toLowerCase().includes(city)
-    );
+    searchBtn.addEventListener("click", async () => {
 
-  });
+    const bloodGroup =
+        document.getElementById("searchBloodGroup").value;
 
-  searchResults.innerHTML = "";
+    const city =
+        document.getElementById("searchCity").value.toLowerCase();
 
-  if (filtered.length === 0) {
+    const donors = await contract.getDonors();
 
-    searchResults.innerHTML =
-      "<p>No donors found.</p>";
+    const filtered = donors.filter((donor) => {
 
-    return;
-  }
+        return (
+            donor.bloodGroup === bloodGroup &&
+            donor.city.toLowerCase().includes(city)
+        );
 
-  filtered.forEach((donor) => {
+    });
 
-    searchResults.innerHTML += `
-      <div style="
-        border:1px solid #ddd;
-        padding:10px;
-        margin-top:10px;
-        border-radius:10px;
-      ">
-        <strong>${donor.name}</strong><br>
-        Blood Group: ${donor.bloodGroup}<br>
-        City: ${donor.city}
-      </div>
-    `;
+    searchResults.innerHTML = "";
 
-  });
+    if (filtered.length === 0) {
+
+        searchResults.innerHTML =
+            "<p>No donors found.</p>";
+
+        return;
+    }
+
+    filtered.forEach((donor) => {
+
+        searchResults.innerHTML += `
+        <div style="
+            border:1px solid #ddd;
+            padding:10px;
+            margin-top:10px;
+            border-radius:10px;
+        ">
+            <strong>${donor.bloodGroup}</strong><br>
+            City: ${donor.city}<br>
+            Wallet: ${donor.wallet.substring(0,6)}...
+            ${donor.wallet.substring(donor.wallet.length - 4)}
+        </div>
+        `;
+
+    });
 
 });
