@@ -246,3 +246,4 @@ searchBtn.addEventListener("click", async () => {
 });
 
 });
+
