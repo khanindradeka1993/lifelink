@@ -1,188 +1,94 @@
-const CONTRACT_ADDRESS =
-"0xe0beA6702B03FBc2eF3A44C2771a7f78B161F955";
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LifeLink</title>
 
-const CONTRACT_ABI = [
-{
-"inputs":[
-{"internalType":"string","name":"bloodGroup","type":"string"},
-{"internalType":"string","name":"city","type":"string"}
-],
-"name":"registerDonor",
-"outputs":[],
-"stateMutability":"nonpayable",
-"type":"function"
-},
-{
-"inputs":[],
-"name":"getDonors",
-"outputs":[
-{
-"components":[
-{"internalType":"string","name":"bloodGroup","type":"string"},
-{"internalType":"string","name":"city","type":"string"},
-{"internalType":"address","name":"wallet","type":"address"},
-{"internalType":"bool","name":"available","type":"bool"}
-],
-"internalType":"struct LifeLinkDonor.Donor[]",
-"name":"",
-"type":"tuple[]"
-}
-],
-"stateMutability":"view",
-"type":"function"
-}
-];
+  <link rel="stylesheet" href="style.css">
 
-let provider;
-let signer;
-let contract;
-const connectBtn = document.getElementById("connectBtn");
-const walletAddress = document.getElementById("walletAddress");
-const registerBtn = document.getElementById("registerBtn");
-const donorList = document.getElementById("donorList");
-const searchBtn = document.getElementById("searchBtn");
-const searchResults = document.getElementById("searchResults");
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+</head>
 
-let currentAccount = "";
+<body>
 
-// Wallet Connect
-connectBtn.addEventListener("click", async () => {
-  if (!window.ethereum) {
-    alert("Please install MetaMask");
-    return;
-  }
+  <div class="container">
 
-  try {
-    const accounts = await ethereum.request({
-      method: "eth_requestAccounts"
-    });
+    <h1>❤️ LifeLink</h1>
+    <p class="subtitle">
+      Decentralized Healthcare on Arc
+    </p>
 
-    currentAccount = accounts[0];
-provider = new ethers.providers.Web3Provider(window.ethereum);
+    <button id="connectBtn">
+      Connect Wallet
+    </button>
 
-signer = provider.getSigner();
+    <p id="walletAddress">
+      Wallet not connected
+    </p>
 
-contract = new ethers.Contract(
-  CONTRACT_ADDRESS,
-  CONTRACT_ABI,
-  signer
-);
-    walletAddress.innerText =
-      "Connected: " +
-      currentAccount.substring(0, 6) +
-      "..." +
-      currentAccount.substring(currentAccount.length - 4);
+    <div class="card">
 
-  } catch (error) {
-    console.log(error);
-  }
-});
+      <h2>Blood Donor Registration</h2>
 
-// Load donors
-function loadDonors() {
-  const donors =
-    JSON.parse(localStorage.getItem("lifelink_donors")) || [];
+      <input
+        type="text"
+        id="name"
+        placeholder="Your Name"
+      >
 
-  donorList.innerHTML = "";
+      <select id="bloodGroup">
+  <option value="">Select Blood Group</option>
+  <option value="A+">A+</option>
+  <option value="A-">A-</option>
+  <option value="B+">B+</option>
+  <option value="B-">B-</option>
+  <option value="AB+">AB+</option>
+  <option value="AB-">AB-</option>
+  <option value="O+">O+</option>
+  <option value="O-">O-</option>
+</select>
 
-  donors.forEach((donor) => {
-    donorList.innerHTML += `
-      <div style="
-        border:1px solid #ddd;
-        padding:10px;
-        margin-top:10px;
-        border-radius:10px;
-      ">
-        <strong>${donor.name}</strong><br>
-        Blood Group: ${donor.bloodGroup}<br>
-        City: ${donor.city}
-      </div>
-    `;
-  });
-}
+      <input
+        type="text"
+        id="city"
+        placeholder="City"
+      >
 
-// Register donor
-registerBtn.addEventListener("click", async () => {
-  const name = document.getElementById("name").value;
-  const bloodGroup =
-    document.getElementById("bloodGroup").value;
-  const city =
-    document.getElementById("city").value;
+      <button id="registerBtn">
+        Register Donor
+      </button>
+<h3 style="margin-top:20px;">Registered Donors</h3>
+<div id="donorList"></div>
 
-  if (!name || !bloodGroup || !city) {
-    alert("Please fill all fields");
-    return;
-  }
+<hr style="margin:20px 0;">
 
-  try {
+<h2>🔍 Search Donors</h2>
+<select id="searchBloodGroup">
+  <option value="">Select Blood Group</option>
+  <option value="A+">A+</option>
+  <option value="A-">A-</option>
+  <option value="B+">B+</option>
+  <option value="B-">B-</option>
+  <option value="AB+">AB+</option>
+  <option value="AB-">AB-</option>
+  <option value="O+">O+</option>
+  <option value="O-">O-</option>
+</select>
+<input
+  type="text"
+  id="searchCity"
+  placeholder="Enter City"
+/>
+<button id="searchBtn">
+  Search Donors
+</button>
+<div id="searchResults"></div>
+</div>
+  </div>
 
-  const tx = await contract.registerDonor(
-    bloodGroup,
-    city
-  );
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script src="app.js"></script>
 
-  alert("Transaction submitted ⏳");
-
-  await tx.wait();
-
-  alert("Donor registered on Arc ❤️");
-
-} catch (err) {
-
-  console.log(err);
-
-  alert(err.message);
-console.log(err);
-}
-});
-
-// Show donors when page opens
-loadDonors();
-searchBtn.addEventListener("click", () => {
-
-  const bloodGroup =
-    document.getElementById("searchBloodGroup").value;
-
-  const city =
-    document.getElementById("searchCity").value.toLowerCase();
-
-  const donors =
-    JSON.parse(localStorage.getItem("lifelink_donors")) || [];
-
-  const filtered = donors.filter((donor) => {
-
-    return (
-      donor.bloodGroup === bloodGroup &&
-      donor.city.toLowerCase().includes(city)
-    );
-
-  });
-
-  searchResults.innerHTML = "";
-
-  if (filtered.length === 0) {
-
-    searchResults.innerHTML =
-      "<p>No donors found.</p>";
-
-    return;
-  }
-
-  filtered.forEach((donor) => {
-
-    searchResults.innerHTML += `
-      <div style="
-        border:1px solid #ddd;
-        padding:10px;
-        margin-top:10px;
-        border-radius:10px;
-      ">
-        <strong>${donor.name}</strong><br>
-        Blood Group: ${donor.bloodGroup}<br>
-        City: ${donor.city}
-      </div>
-    `;
-
-  });
-
-});
+</body>
+</html>
