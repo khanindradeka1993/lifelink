@@ -148,8 +148,6 @@ searchBtn.addEventListener("click", async () => {
     const city =
         document.getElementById("searchCity").value.toLowerCase();
 
-  const phone =
-document.getElementById("phone").value;
     const donors = await contract.getDonors();
 
     const filtered = donors.filter((donor) => {
