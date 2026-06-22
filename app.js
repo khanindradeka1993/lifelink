@@ -100,7 +100,7 @@ registerBtn.addEventListener("click", async () => {
   const city =
     document.getElementById("city").value;
 
-  if (!name || !bloodGroup || !city) {
+  if (!name || !bloodGroup || !city || !phone) {
     alert("Please fill all fields");
     return;
   }
@@ -108,9 +108,10 @@ registerBtn.addEventListener("click", async () => {
   try {
 
   const tx = await contract.registerDonor(
-    bloodGroup,
-    city
-  );
+  bloodGroup,
+  city,
+  phone
+);
 
   alert("Transaction submitted ⏳");
 
@@ -147,6 +148,8 @@ searchBtn.addEventListener("click", async () => {
     const city =
         document.getElementById("searchCity").value.toLowerCase();
 
+  const phone =
+document.getElementById("phone").value;
     const donors = await contract.getDonors();
 
     const filtered = donors.filter((donor) => {
