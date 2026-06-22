@@ -67,6 +67,7 @@ contract = new ethers.Contract(
   CONTRACT_ABI,
   signer
 );
+await loadDonors(); 
     walletAddress.innerText =
       "Connected: " +
       currentAccount.substring(0, 6) +
@@ -144,19 +145,13 @@ console.log(err);
 
 // Show donors when page opens
 loadDonors();
-searchBtn.addEventListener("click", () => {
 
-  const bloodGroup =
-    document.getElementById("searchBloodGroup").value;
+searchBtn.addEventListener("click", async () => {
 
-  const city =
-    document.getElementById("searchCity").value.toLowerCase();
-
-  const donors = await contract.getDonors();
-
-  const filtered = donors.filter((donor) => {
-
-    searchBtn.addEventListener("click", async () => {
+    if (!contract) {
+        alert("Please connect wallet first");
+        return;
+    }
 
     const bloodGroup =
         document.getElementById("searchBloodGroup").value;
