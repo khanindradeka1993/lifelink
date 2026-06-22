@@ -125,7 +125,10 @@ registerBtn.addEventListener("click", async () => {
 
   await tx.wait();
 
-  alert("Donor registered on Arc ❤️");
+const donors = await contract.getDonors();
+alert("Total donors on chain: " + donors.length);
+
+alert("Donor registered on Arc ❤️");
 
 } catch (err) {
 
