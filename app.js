@@ -100,6 +100,8 @@ registerBtn.addEventListener("click", async () => {
   const city =
     document.getElementById("city").value;
 
+  const phone =
+document.getElementById("phone").value;
   if (!name || !bloodGroup || !city || !phone) {
     alert("Please fill all fields");
     return;
