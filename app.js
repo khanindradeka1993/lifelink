@@ -1,63 +1,357 @@
 const CONTRACT_ADDRESS =
 "0xa7aFb8345779F26428D0B44e24c47c630cC52791";
-
-const CONTRACT_ABI = [
-{
-"inputs":[
-{"internalType":"string","name":"bloodGroup","type":"string"},
-{"internalType":"string","name":"city","type":"string"},
-{"internalType":"string","name":"phone","type":"string"}
-],
-"name":"registerDonor",
-"outputs":[],
-"stateMutability":"nonpayable",
-"type":"function"
-},
-{
-"inputs":[
-{"internalType":"uint256","name":"","type":"uint256"}
-],
-"name":"donors",
-"outputs":[
-{"internalType":"string","name":"bloodGroup","type":"string"},
-{"internalType":"string","name":"city","type":"string"},
-{"internalType":"string","name":"phone","type":"string"},
-{"internalType":"address","name":"wallet","type":"address"},
-{"internalType":"bool","name":"available","type":"bool"}
-],
-"stateMutability":"view",
-"type":"function"
-},
-{
-"inputs":[],
-"name":"getDonors",
-"outputs":[
-{
-"components":[
-{"internalType":"string","name":"bloodGroup","type":"string"},
-{"internalType":"string","name":"city","type":"string"},
-{"internalType":"string","name":"phone","type":"string"},
-{"internalType":"address","name":"wallet","type":"address"},
-{"internalType":"bool","name":"available","type":"bool"}
-],
-"internalType":"struct LifeLinkDonor.Donor[]",
-"name":"",
-"type":"tuple[]"
-}
-],
-"stateMutability":"view",
-"type":"function"
-},
-{
-"inputs":[],
-"name":"totalDonors",
-"outputs":[
-{"internalType":"uint256","name":"","type":"uint256"}
-],
-"stateMutability":"view",
-"type":"function"
-}
-];
+const CONTRACT_ABI =
+[
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_patientName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_bloodGroup",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_hospital",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_city",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_contact",
+        "type": "string"
+      }
+    ],
+    "name": "createRequest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "donors",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "bloodGroup",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "city",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "phone",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "wallet",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "available",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "fulfillRequest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getDonors",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "bloodGroup",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "city",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "phone",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "wallet",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "available",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct LifeLinkDonor.Donor[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getRequests",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "patientName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "bloodGroup",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "hospital",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "city",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "contact",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "requester",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "fulfilled",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct LifeLinkDonor.BloodRequest[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_bloodGroup",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_city",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_phone",
+        "type": "string"
+      }
+    ],
+    "name": "registerDonor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "requests",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "patientName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "bloodGroup",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "hospital",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "city",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "contact",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "requester",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "fulfilled",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_bloodGroup",
+        "type": "string"
+      }
+    ],
+    "name": "searchDonors",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "bloodGroup",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "city",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "phone",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "wallet",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "available",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct LifeLinkDonor.Donor[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalDonors",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalRequests",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
 let provider;
 let signer;
 let contract;
@@ -153,9 +447,10 @@ document.getElementById("phone").value;
   try {
 
   const tx = await contract.registerDonor(
-  bloodGroup,
-  city,
-  phone
+    name,
+    bloodGroup,
+    city,
+    phone
 );
 
   alert("Transaction submitted ⏳");
