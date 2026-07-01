@@ -580,3 +580,49 @@ requestBtn.addEventListener("click", async () => {
     alert(err.message);
   }
 });
+// ==========================
+// Load SOS Requests
+// ==========================
+
+const requestList = document.getElementById("requestList");
+
+async function loadRequests() {
+    if (!contract) return;
+
+    const requests = await contract.getRequests();
+
+    requestList.innerHTML = "";
+
+    requests.forEach((req) => {
+
+        if (req.fulfilled) return;
+
+        requestList.innerHTML += `
+        <div style="
+            border:1px solid #ddd;
+            padding:10px;
+            margin-top:10px;
+            border-radius:10px;
+        ">
+            <strong>🚨 ${req.bloodGroup}</strong><br>
+            Patient: ${req.patientName}<br>
+            Hospital: ${req.hospital}<br>
+            City: ${req.city}<br>
+
+            <button
+                onclick="window.location.href='tel:${req.contact}'"
+                style="
+                    margin-top:10px;
+                    background:#dc3545;
+                    color:white;
+                    border:none;
+                    padding:10px 15px;
+                    border-radius:8px;
+                    cursor:pointer;
+                ">
+                📞 Call Patient
+            </button>
+        </div>
+        `;
+    });
+}
