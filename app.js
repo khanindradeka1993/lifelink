@@ -542,3 +542,44 @@ searchBtn.addEventListener("click", async () => {
 
 });
 
+// =====================
+// SOS Blood Request
+// =====================
+
+const requestBtn = document.getElementById("requestBtn");
+
+requestBtn.addEventListener("click", async () => {
+  if (!contract) {
+    alert("Please connect wallet first");
+    return;
+  }
+
+  const patientName = document.getElementById("patientName").value;
+  const bloodGroup = document.getElementById("requestBloodGroup").value;
+  const hospital = document.getElementById("hospital").value;
+  const city = document.getElementById("requestCity").value;
+  const contact = document.getElementById("contact").value;
+
+  if (!patientName || !hospital || !city || !contact) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  try {
+    const tx = await contract.createRequest(
+      patientName,
+      bloodGroup,
+      hospital,
+      city,
+      contact
+    );
+
+    alert("Submitting SOS request...");
+    await tx.wait();
+
+    alert("🚨 SOS Request Created Successfully!");
+  } catch (err) {
+    console.log(err);
+    alert(err.message);
+  }
+});
