@@ -533,8 +533,19 @@ searchBtn.addEventListener("click", async () => {
                 cursor:pointer;
             "
         >
-            📞 Call Donor
-        </button>
+            <button
+  onclick="window.location.href='tel:${donor.phone}'"
+  style="
+    margin-top:10px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+  ">
+  📞 Call Donor
+</button>
     </div>
     `;
 
