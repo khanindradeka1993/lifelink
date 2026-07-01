@@ -421,9 +421,7 @@ async function loadDonors() {
             border-radius:10px;
         ">
             <strong>${donor.bloodGroup}</strong><br>
-            City: ${donor.city}<br>
-            Wallet: ${donor.wallet.substring(0,6)}...
-            ${donor.wallet.substring(donor.wallet.length-4)}
+City: ${donor.city}
         </div>
         `;
     });
