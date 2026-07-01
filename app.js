@@ -472,7 +472,7 @@ console.log(err);
 
 // Show donors when page opens
 loadDonors();
-
+loadRequests();
 searchBtn.addEventListener("click", async () => {
 
     if (!contract) {
@@ -573,7 +573,7 @@ requestBtn.addEventListener("click", async () => {
 
     alert("Submitting SOS request...");
     await tx.wait();
-
+await loadRequests();
     alert("🚨 SOS Request Created Successfully!");
   } catch (err) {
     console.log(err);
