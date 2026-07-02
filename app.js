@@ -638,7 +638,49 @@ totalRequests.innerText = active.length;
                 ">
                 📞 Call Patient
             </button>
+      <button
+    onclick="fulfillRequest(${req.id})"
+    style="
+        margin-top:10px;
+        margin-left:10px;
+        background:#16a34a;
+        color:white;
+        border:none;
+        padding:10px 15px;
+        border-radius:8px;
+        cursor:pointer;
+    ">
+    ❤️ I'm Coming to Donate
+</button>  
         </div>
         `;
     });
+}
+async function fulfillRequest(id) {
+
+    if (!contract) {
+        alert("Please connect wallet first");
+        return;
+    }
+
+    try {
+
+        const tx = await contract.fulfillRequest(id);
+
+        alert("Updating request...");
+
+        await tx.wait();
+
+        alert("✅ Request marked as fulfilled!");
+
+        await loadRequests();
+await loadDonors();
+
+    } catch (err) {
+
+        console.log(err);
+        alert(err.message);
+
+    }
+
 }
