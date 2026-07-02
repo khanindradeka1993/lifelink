@@ -362,6 +362,7 @@ const registerBtn = document.getElementById("registerBtn");
 const donorList = document.getElementById("donorList");
 const searchBtn = document.getElementById("searchBtn");
 const searchResults = document.getElementById("searchResults");
+const totalDonors = document.getElementById("totalDonors");
 
 let currentAccount = "";
 
@@ -397,7 +398,9 @@ connectBtn.addEventListener("click", async () => {
             currentAccount.substring(0, 6) +
             "..." +
             currentAccount.substring(currentAccount.length - 4);
-
+await loadDonors();
+await loadRequests();
+      
     } catch (error) {
         console.log(error);
     }
@@ -409,7 +412,8 @@ async function loadDonors() {
     if (!contract) return;
 
     const donors = await contract.getDonors();
-
+totalDonors.innerText = donors.length;
+  
     donorList.innerHTML = "";
 
     donors.forEach((donor) => {
