@@ -363,6 +363,9 @@ const donorList = document.getElementById("donorList");
 const searchBtn = document.getElementById("searchBtn");
 const searchResults = document.getElementById("searchResults");
 const totalDonors = document.getElementById("totalDonors");
+const dashboardDonors = document.getElementById("dashboardDonors");
+const dashboardRequests = document.getElementById("dashboardRequests");
+const dashboardFulfilled = document.getElementById("dashboardFulfilled");
 
 let currentAccount = "";
 
@@ -413,6 +416,7 @@ async function loadDonors() {
 
     const donors = await contract.getDonors();
 totalDonors.innerText = donors.length;
+dashboardDonors.innerText = donors.length;
   
     donorList.innerHTML = "";
 
@@ -603,6 +607,10 @@ async function loadRequests() {
     const requests = await contract.getRequests();
 const active = requests.filter(r => !r.fulfilled);
 totalRequests.innerText = active.length;
+dashboardRequests.innerText = active.length;
+
+const fulfilled = requests.filter(r => r.fulfilled);
+dashboardFulfilled.innerText = fulfilled.length;
   
     requestList.innerHTML = "";
 
