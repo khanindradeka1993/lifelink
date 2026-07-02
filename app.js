@@ -404,7 +404,10 @@ connectBtn.addEventListener("click", async () => {
             currentAccount.substring(0, 6) +
             "..." +
             currentAccount.substring(currentAccount.length - 4);
-await loadDonors();
+connectBtn.innerText = "✅ Wallet Connected";
+connectBtn.style.background = "#16a34a";
+connectBtn.disabled = true;
+      await loadDonors();
 await loadRequests();
       
     } catch (error) {
