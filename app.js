@@ -366,6 +366,9 @@ const totalDonors = document.getElementById("totalDonors");
 const dashboardDonors = document.getElementById("dashboardDonors");
 const dashboardRequests = document.getElementById("dashboardRequests");
 const dashboardFulfilled = document.getElementById("dashboardFulfilled");
+const topBloodGroup = document.getElementById("topBloodGroup");
+const totalCities = document.getElementById("totalCities");
+const totalSOS = document.getElementById("totalSOS");
 
 let currentAccount = "";
 
@@ -611,6 +614,31 @@ dashboardRequests.innerText = active.length;
 
 const fulfilled = requests.filter(r => r.fulfilled);
 dashboardFulfilled.innerText = fulfilled.length;
+// Analytics Dashboard
+totalSOS.innerText = requests.length;
+
+// Count blood groups
+const bloodCount = {};
+
+requests.forEach((r) => {
+    bloodCount[r.bloodGroup] = (bloodCount[r.bloodGroup] || 0) + 1;
+});
+
+let topGroup = "-";
+let max = 0;
+
+for (const group in bloodCount) {
+    if (bloodCount[group] > max) {
+        max = bloodCount[group];
+        topGroup = group;
+    }
+}
+
+topBloodGroup.innerText = topGroup;
+
+// Count unique cities
+const cities = [...new Set(requests.map(r => r.city.toLowerCase()))];
+totalCities.innerText = cities.length;
   
     requestList.innerHTML = "";
 
