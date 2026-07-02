@@ -503,14 +503,14 @@ totalDonors.innerText = donors.length;
     });
 
     searchResults.innerHTML = "";
+if (filtered.length === 0) {
 
-    if (filtered.length === 0) {
+    searchResults.innerHTML =
+        "<p>❌ No nearby donors found in this city.</p>";
 
-        searchResults.innerHTML =
-            "<p>No donors found.</p>";
-
-        return;
-    }
+    return;
+}
+    
 
     filtered.forEach((donor) => {
 
@@ -521,8 +521,8 @@ totalDonors.innerText = donors.length;
         margin-top:10px;
         border-radius:10px;
     ">
-        <strong>${donor.bloodGroup}</strong><br>
-        City: ${donor.city}<br>
+        🩸 <strong>${donor.bloodGroup}</strong><br>
+📍 ${donor.city}<br>
 
             <button
   onclick="window.location.href='tel:${donor.phone}'"
