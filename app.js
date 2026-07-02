@@ -606,7 +606,9 @@ totalRequests.innerText = active.length;
   
     requestList.innerHTML = "";
 
-    requests.reverse().forEach((req) => {
+    const reversedRequests = [...requests].reverse();
+
+reversedRequests.forEach((req) => {
 
         if (req.fulfilled) return;
 
