@@ -614,16 +614,21 @@ dashboardRequests.innerText = active.length;
 
 const fulfilled = requests.filter(r => r.fulfilled);
 dashboardFulfilled.innerText = fulfilled.length;
-// Analytics Dashboard
+
+// Analytics
 totalSOS.innerText = requests.length;
 
-// Count blood groups
 const bloodCount = {};
 
 requests.forEach((r) => {
-    bloodCount[r.bloodGroup] = (bloodCount[r.bloodGroup] || 0) + 1;
-});
+    const group = String(r.bloodGroup);
 
+    if (!bloodCount[group]) {
+        bloodCount[group] = 0;
+    }
+
+    bloodCount[group]++;
+});
 let topGroup = "-";
 let max = 0;
 
@@ -633,11 +638,13 @@ for (const group in bloodCount) {
         topGroup = group;
     }
 }
-
+  
 topBloodGroup.innerText = topGroup;
 
 // Count unique cities
-const cities = [...new Set(requests.map(r => r.city.toLowerCase()))];
+const cities = [...new Set(
+    requests.map(r => String(r.city).toLowerCase())
+)];
 totalCities.innerText = cities.length;
   
     requestList.innerHTML = "";
