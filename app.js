@@ -598,7 +598,7 @@ async function loadRequests() {
 
     requestList.innerHTML = "";
 
-    requests.forEach((req) => {
+    requests.reverse().forEach((req) => {
 
         if (req.fulfilled) return;
 
