@@ -171,8 +171,24 @@ margin-top:10px;
 🚨 Send SOS Request
 </button>
 <div id="requestList"></div>
+<hr>
+
+<h2>🏥 Hospital Dashboard</h2>
+
+<div id="hospitalDashboard">
+  <div class="dashboard-card">
+    👥 Total Donors: <span id="dashboardDonors">0</span>
   </div>
 
+  <div class="dashboard-card">
+    🚨 Active Requests: <span id="dashboardRequests">0</span>
+  </div>
+
+  <div class="dashboard-card">
+    ✅ Fulfilled Requests: <span id="dashboardFulfilled">0</span>
+  </div>
+</div>
+  
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script src="app.js"></script>
 
