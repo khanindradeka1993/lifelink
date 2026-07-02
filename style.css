@@ -72,3 +72,29 @@ select {
   border-radius: 10px;
   background: white;
 }
+/* ===== Hero Section ===== */
+
+.hero{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.hero h1{
+    font-size:36px;
+    font-weight:700;
+    color:#dc3545;
+    margin-bottom:8px;
+}
+
+.hero h3{
+    font-size:20px;
+    color:#222;
+    font-weight:600;
+    margin-bottom:6px;
+}
+
+.hero p{
+    color:#6b7280;
+    font-size:15px;
+    letter-spacing:0.5px;
+}
