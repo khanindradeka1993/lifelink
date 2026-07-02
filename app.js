@@ -574,6 +574,11 @@ requestBtn.addEventListener("click", async () => {
     alert("Submitting SOS request...");
     await tx.wait();
 await loadRequests();
+   document.getElementById("patientName").value = "";
+document.getElementById("requestBloodGroup").selectedIndex = 0;
+document.getElementById("hospital").value = "";
+document.getElementById("requestCity").value = "";
+document.getElementById("contact").value = ""; 
     alert("🚨 SOS Request Created Successfully!");
   } catch (err) {
     console.log(err);
