@@ -604,15 +604,18 @@ async function loadRequests() {
 
         requestList.innerHTML += `
         <div style="
-            border:1px solid #ddd;
-            padding:10px;
-            margin-top:10px;
-            border-radius:10px;
-        ">
-            <strong>🚨 ${req.bloodGroup}</strong><br>
-            Patient: ${req.patientName}<br>
-            Hospital: ${req.hospital}<br>
-            City: ${req.city}<br>
+    border-left:6px solid #dc3545;
+    background:#fff5f5;
+    border-radius:12px;
+    padding:15px;
+    margin-top:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+">
+            <h3 style="color:#dc3545;margin:0;">🚨 ${req.bloodGroup}</h3>
+
+👤 <strong>${req.patientName}</strong><br>
+🏥 ${req.hospital}<br>
+📍 ${req.city}<br>
 
             <button
                 onclick="window.location.href='tel:${req.contact}'"
