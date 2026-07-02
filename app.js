@@ -594,7 +594,6 @@ document.getElementById("contact").value = "";
 // Load SOS Requests
 // ==========================
 
-const totalDonors = document.getElementById("totalDonors");
 const totalRequests = document.getElementById("totalRequests");
 const requestList = document.getElementById("requestList");
 
