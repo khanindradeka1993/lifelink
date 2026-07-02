@@ -487,7 +487,8 @@ searchBtn.addEventListener("click", async () => {
         document.getElementById("searchCity").value.toLowerCase();
 
     const donors = await contract.getDonors();
-
+totalDonors.innerText = donors.length;
+  
     const filtered = donors.filter((donor) => {
 
         return (
@@ -589,13 +590,17 @@ document.getElementById("contact").value = "";
 // Load SOS Requests
 // ==========================
 
+const totalDonors = document.getElementById("totalDonors");
+const totalRequests = document.getElementById("totalRequests");
 const requestList = document.getElementById("requestList");
 
 async function loadRequests() {
     if (!contract) return;
 
     const requests = await contract.getRequests();
-
+const active = requests.filter(r => !r.fulfilled);
+totalRequests.innerText = active.length;
+  
     requestList.innerHTML = "";
 
     requests.reverse().forEach((req) => {
