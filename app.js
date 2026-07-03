@@ -762,7 +762,10 @@ if (askAIBtn) {
 
       const data = await response.json();
 
-      answer.innerHTML = data.reply || "No response received.";
+console.log(data);
+alert(JSON.stringify(data));
+
+answer.innerHTML = data.reply || JSON.stringify(data);
 
     } catch (err) {
       console.error(err);
