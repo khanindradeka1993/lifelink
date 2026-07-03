@@ -31,11 +31,16 @@ export default async function handler(req, res) {
     );
 
     const data = await response.json();
-console.log(JSON.stringify(data));
-    
-    const reply =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "Sorry, I couldn't generate a response.";
+
+if (!response.ok) {
+  return res.status(500).json({
+    reply: JSON.stringify(data)
+  });
+}
+
+const reply = data.candidates[0].content.parts[0].text;
+
+res.status(200).json({ reply });
 
     res.status(200).json({ reply });
 
