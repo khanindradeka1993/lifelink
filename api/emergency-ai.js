@@ -11,7 +11,7 @@ console.log("Key:", key ? key.substring(0, 12) : "NOT FOUND");
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
-  "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+  "Authorization": "Bearer sk-or-v1-YOUR_OPENROUTER_KEY_HERE",
   "Content-Type": "application/json",
   "HTTP-Referer": "https://lifelink-q73z.vercel.app",
   "X-Title": "LifeLink"
