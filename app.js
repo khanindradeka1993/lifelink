@@ -732,3 +732,42 @@ await loadDonors();
     }
 
 }
+// ===============================
+// AI Emergency Assistant
+// ===============================
+
+const askAIBtn = document.getElementById("askAIBtn");
+
+if (askAIBtn) {
+  askAIBtn.addEventListener("click", async () => {
+
+    const question = document.getElementById("aiQuestion").value.trim();
+    const answer = document.getElementById("aiAnswer");
+
+    if (!question) {
+      answer.innerHTML = "⚠️ Please describe the emergency.";
+      return;
+    }
+
+    answer.innerHTML = "🤖 Thinking...";
+
+    try {
+      const response = await fetch("/api/emergency-ai", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ question })
+      });
+
+      const data = await response.json();
+
+      answer.innerHTML = data.reply || "No response received.";
+
+    } catch (err) {
+      console.error(err);
+      answer.innerHTML = "❌ Failed to contact AI.";
+    }
+
+  });
+}
