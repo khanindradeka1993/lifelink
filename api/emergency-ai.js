@@ -6,48 +6,43 @@ export default async function handler(req, res) {
   const { question } = req.body;
 
   try {
-  console.log("API KEY FOUND:", !!process.env.GEMINI_API_KEY);
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + process.env.GEMINI_API_KEY,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text:
-                    "You are an emergency healthcare assistant. Give short, clear first-aid advice. Always tell the user to contact emergency services immediately for life-threatening situations.\n\nEmergency: " +
-                    question
-                }
-              ]
-            }
-          ]
-        })
-      }
-    );
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "meta-llama/llama-3.1-8b-instruct:free",
+        messages: [
+          {
+            role: "system",
+            content: "You are an emergency healthcare assistant. Give short, clear first-aid advice. Always tell the user to contact emergency services immediately for life-threatening situations."
+          },
+          {
+            role: "user",
+            content: question
+          }
+        ]
+      })
+    });
 
     const data = await response.json();
 
-if (!response.ok) {
-  return res.status(500).json({
-    reply: JSON.stringify(data)
-  });
-}
+    if (!response.ok) {
+      return res.status(500).json({
+        reply: JSON.stringify(data)
+      });
+    }
 
-const reply = data.candidates[0].content.parts[0].text;
-
-res.status(200).json({ reply });
+    const reply = data.choices[0].message.content;
 
     res.status(200).json({ reply });
 
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      reply: "Server error while contacting Gemini."
+      reply: "Server error while contacting AI."
     });
   }
 }
