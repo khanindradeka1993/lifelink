@@ -6,7 +6,8 @@ export default async function handler(req, res) {
   const { question } = req.body;
 
   try {
-  console.log("Key exists:", !!process.env.OPENROUTER_API_KEY);  
+  const key = process.env.OPENROUTER_API_KEY;
+console.log("Key:", key ? key.substring(0, 12) : "NOT FOUND");  
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
