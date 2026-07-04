@@ -1,4 +1,7 @@
-alert("app.js loaded");
+alert("app.js started");
+
+const connectBtn = document.getElementById("connectBtn");
+alert(connectBtn);
 const CONTRACT_ADDRESS =
 "0xa7aFb8345779F26428D0B44e24c47c630cC52791";
 const CONTRACT_ABI =
