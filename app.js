@@ -470,10 +470,12 @@ document.getElementById("phone").value;
 
   await tx.wait();
 
+showExplorerButton(tx.hash);
+
 const donors = await contract.getDonors();
 alert("Total donors on chain: " + donors.length);
 await loadDonors();
-    
+
 alert("Donor registered on Arc ❤️");
 
 } catch (err) {
