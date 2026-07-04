@@ -796,3 +796,28 @@ try {
 
   });
 }
+function showExplorerButton(txHash) {
+
+  const explorer = `${EXPLORER}/tx/${txHash}`;
+
+  const html = `
+    <div style="margin:15px 0;">
+      <a href="${explorer}" target="_blank">
+        <button style="
+          width:100%;
+          padding:12px;
+          background:#2563eb;
+          color:white;
+          border:none;
+          border-radius:8px;
+          font-size:16px;
+          cursor:pointer;
+        ">
+          🔗 View Transaction on ArcScan
+        </button>
+      </a>
+    </div>
+  `;
+
+  document.getElementById("walletAddress").insertAdjacentHTML("afterend", html);
+}
