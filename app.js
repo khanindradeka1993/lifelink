@@ -371,6 +371,7 @@ const totalCities = document.getElementById("totalCities");
 const totalSOS = document.getElementById("totalSOS");
 
 let currentAccount = "";
+const EXPLORER = "https://testnet.arcscan.app";
 
 // Wallet Connect
 connectBtn.addEventListener("click", async () => {
