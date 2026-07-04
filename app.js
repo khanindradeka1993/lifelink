@@ -807,8 +807,29 @@ function showExplorerButton(txHash) {
 
   const explorer = `${EXPLORER}/tx/${txHash}`;
 
-  const html = `
-    <div style="margin:15px 0;">
+  let card = document.getElementById("txCard");
+
+  if (!card) {
+
+    card = document.createElement("div");
+    card.id = "txCard";
+
+    card.style.margin = "15px 0";
+
+    document.getElementById("walletAddress").insertAdjacentElement("afterend", card);
+
+  }
+
+  card.innerHTML = `
+    <div style="
+      background:#f8fafc;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      padding:12px;
+      text-align:center;
+    ">
+      <strong>📦 Latest Blockchain Transaction</strong><br><br>
+
       <a href="${explorer}" target="_blank">
         <button style="
           width:100%;
@@ -817,14 +838,11 @@ function showExplorerButton(txHash) {
           color:white;
           border:none;
           border-radius:8px;
-          font-size:16px;
           cursor:pointer;
         ">
-          🔗 View Transaction on ArcScan
+          🔗 View on ArcScan
         </button>
       </a>
     </div>
   `;
-
-  document.getElementById("walletAddress").insertAdjacentHTML("afterend", html);
 }
