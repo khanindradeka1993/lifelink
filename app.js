@@ -794,7 +794,6 @@ try {
 ❌ Failed to contact AI.
 </div>`;
 }
-    }
 
   });
 }
