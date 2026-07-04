@@ -742,34 +742,56 @@ if (askAIBtn) {
   askAIBtn.addEventListener("click", async () => {
 
     const question = document.getElementById("aiQuestion").value.trim();
-    const answer = document.getElementById("aiAnswer");
+    const chatBox = document.getElementById("chatBox");
 
     if (!question) {
-      answer.innerHTML = "⚠️ Please describe the emergency.";
-      return;
-    }
+  return;
+}
 
-    answer.innerHTML = "🤖 Thinking...";
+chatBox.innerHTML += `
+<div style="text-align:right;margin:10px 0;">
+  <div style="display:inline-block;background:#2563eb;color:white;padding:10px 15px;border-radius:15px;max-width:80%;">
+    ${question}
+  </div>
+</div>`;
 
-    try {
-      const response = await fetch("/api/emergency-ai", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ question })
-      });
+chatBox.innerHTML += `
+<div id="loading" style="margin:10px 0;color:#666;">
+🤖 Thinking...
+</div>`;
 
-      const data = await response.json();
+chatBox.scrollTop = chatBox.scrollHeight;
 
-console.log(data);
-alert(JSON.stringify(data));
+try {
+  const response = await fetch("/api/emergency-ai", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ question })
+  });
 
-answer.innerHTML = data.reply || JSON.stringify(data);
+  const data = await response.json();
 
-    } catch (err) {
-      console.error(err);
-      answer.innerHTML = "❌ Failed to contact AI.";
+  document.getElementById("loading").remove();
+
+  chatBox.innerHTML += `
+<div style="text-align:left;margin:10px 0;">
+  <div style="display:inline-block;background:#f1f5f9;padding:10px 15px;border-radius:15px;max-width:80%;">
+    🤖 ${data.reply}
+  </div>
+</div>`;
+
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+} catch (err) {
+  document.getElementById("loading").remove();
+
+  chatBox.innerHTML += `
+<div style="color:red;">
+❌ Failed to contact AI.
+</div>`;
+}
     }
 
   });
