@@ -725,9 +725,11 @@ async function fulfillRequest(id) {
 
         await tx.wait();
 
-        alert("✅ Request marked as fulfilled!");
+showExplorerButton(tx.hash);
 
-        await loadRequests();
+alert("✅ Request marked as fulfilled!");
+
+await loadRequests();
 await loadDonors();
 
     } catch (err) {
