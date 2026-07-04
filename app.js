@@ -591,6 +591,9 @@ requestBtn.addEventListener("click", async () => {
 
     alert("Submitting SOS request...");
     await tx.wait();
+
+showExplorerButton(tx.hash);
+
 await loadRequests();
    document.getElementById("patientName").value = "";
 document.getElementById("requestBloodGroup").selectedIndex = 0;
