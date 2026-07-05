@@ -369,6 +369,8 @@ const dashboardFulfilled = document.getElementById("dashboardFulfilled");
 const topBloodGroup = document.getElementById("topBloodGroup");
 const totalCities = document.getElementById("totalCities");
 const totalSOS = document.getElementById("totalSOS");
+const payBillBtn = document.getElementById("payBillBtn");
+const billStatus = document.getElementById("billStatus");
 
 let currentAccount = "";
 const EXPLORER = "https://testnet.arcscan.app";
