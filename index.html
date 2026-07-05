@@ -258,6 +258,35 @@ background:#f8f9fa;
 border-radius:10px;
 "></div>
 </div>
+<hr>
+
+<div class="card">
+  <h2>🏥 Hospital Bill Payment</h2>
+
+  <input
+    type="text"
+    id="hospitalName"
+    placeholder="Hospital Name"
+  >
+
+  <input
+    type="text"
+    id="billId"
+    placeholder="Bill ID"
+  >
+
+  <input
+    type="number"
+    id="billAmount"
+    placeholder="Amount (USDC)"
+  >
+
+  <button id="payBillBtn">
+    💳 Pay Hospital Bill
+  </button>
+
+  <div id="billStatus" style="margin-top:15px;"></div>
+</div>
   
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script src="app.js"></script>
