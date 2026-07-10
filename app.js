@@ -848,3 +848,28 @@ function showExplorerButton(txHash) {
     </div>
   `;
 }
+// ===========================
+// Health Profile (Temporary)
+// ===========================
+
+const saveProfileBtn = document.getElementById("saveProfileBtn");
+
+if (saveProfileBtn) {
+  saveProfileBtn.onclick = function () {
+
+    const profile = {
+      name: document.getElementById("profileName").value,
+      bloodGroup: document.getElementById("profileBloodGroup").value,
+      dob: document.getElementById("profileDOB").value,
+      gender: document.getElementById("profileGender").value,
+      emergency: document.getElementById("profileEmergency").value,
+      allergies: document.getElementById("profileAllergies").value,
+      address: document.getElementById("profileAddress").value
+    };
+
+    localStorage.setItem("lifelinkProfile", JSON.stringify(profile));
+
+    document.getElementById("profileStatus").innerHTML =
+      "✅ Health Profile Saved Successfully";
+  };
+}
