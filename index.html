@@ -287,6 +287,62 @@ border-radius:10px;
 
   <div id="billStatus" style="margin-top:15px;"></div>
 </div>
+<hr>
+
+<div class="card">
+  <h2>🪪 Health Profile</h2>
+
+  <input
+    type="text"
+    id="profileName"
+    placeholder="Full Name"
+  >
+
+  <select id="profileBloodGroup">
+    <option>A+</option>
+    <option>A-</option>
+    <option>B+</option>
+    <option>B-</option>
+    <option>AB+</option>
+    <option>AB-</option>
+    <option>O+</option>
+    <option>O-</option>
+  </select>
+
+  <input
+    type="date"
+    id="profileDOB"
+  >
+
+  <select id="profileGender">
+    <option>Male</option>
+    <option>Female</option>
+    <option>Other</option>
+  </select>
+
+  <input
+    type="text"
+    id="profileEmergency"
+    placeholder="Emergency Contact"
+  >
+
+  <input
+    type="text"
+    id="profileAllergies"
+    placeholder="Allergies (if any)"
+  >
+
+  <textarea
+    id="profileAddress"
+    placeholder="Address"
+    rows="3"></textarea>
+
+  <button id="saveProfileBtn">
+    💾 Save Health Profile
+  </button>
+
+  <div id="profileStatus"></div>
+</div>
   
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script src="app.js"></script>
