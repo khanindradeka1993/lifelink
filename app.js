@@ -4,6 +4,8 @@ const HEALTHCARE_CONTRACT_ADDRESS =
 "0xE32313e236784f57a7479a830E4a9c0ce22d0761";
 const EMERGENCY_CONTRACT_ADDRESS =
 "0x8d1183f802b5688e5244a493Ea965e856150c2Ef";
+const PAYMENT_CONTRACT_ADDRESS =
+"0x0CA164a6FE7FfEA47945761748D77cd0aa16Afb1";
 const CONTRACT_ABI =
 [
   {
@@ -751,6 +753,155 @@ const EMERGENCY_ABI = [
 "type": "function"
 }
 ];
+const PAYMENT_ABI = [
+{
+"inputs": [
+{
+"internalType": "address",
+"name": "usdcAddress",
+"type": "address"
+}
+],
+"stateMutability": "nonpayable",
+"type": "constructor"
+},
+{
+"anonymous": false,
+"inputs": [
+{
+"indexed": true,
+"internalType": "address",
+"name": "payer",
+"type": "address"
+},
+{
+"indexed": true,
+"internalType": "address",
+"name": "hospitalWallet",
+"type": "address"
+},
+{
+"indexed": false,
+"internalType": "uint256",
+"name": "amount",
+"type": "uint256"
+},
+{
+"indexed": false,
+"internalType": "string",
+"name": "billId",
+"type": "string"
+}
+],
+"name": "HospitalBillPaid",
+"type": "event"
+},
+{
+"inputs": [
+{
+"internalType": "string",
+"name": "hospitalName",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "billId",
+"type": "string"
+},
+{
+"internalType": "address",
+"name": "hospitalWallet",
+"type": "address"
+},
+{
+"internalType": "uint256",
+"name": "amount",
+"type": "uint256"
+}
+],
+"name": "payHospitalBill",
+"outputs": [],
+"stateMutability": "nonpayable",
+"type": "function"
+},
+{
+"inputs": [
+{
+"internalType": "uint256",
+"name": "index",
+"type": "uint256"
+}
+],
+"name": "getPayment",
+"outputs": [
+{
+"components": [
+{
+"internalType": "string",
+"name": "hospitalName",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "billId",
+"type": "string"
+},
+{
+"internalType": "address",
+"name": "hospitalWallet",
+"type": "address"
+},
+{
+"internalType": "uint256",
+"name": "amount",
+"type": "uint256"
+},
+{
+"internalType": "address",
+"name": "payer",
+"type": "address"
+},
+{
+"internalType": "uint256",
+"name": "timestamp",
+"type": "uint256"
+}
+],
+"internalType": "struct LifeLinkPaymentV3.Payment",
+"name": "",
+"type": "tuple"
+}
+],
+"stateMutability": "view",
+"type": "function"
+},
+{
+"inputs": [],
+"name": "paymentCount",
+"outputs": [
+{
+"internalType": "uint256",
+"name": "",
+"type": "uint256"
+}
+],
+"stateMutability": "view",
+"type": "function"
+},
+{
+"inputs": [],
+"name": "usdc",
+"outputs": [
+{
+"internalType": "contract IERC20",
+"name": "",
+"type": "address"
+}
+],
+"stateMutability": "view",
+"type": "function"
+}
+];
 
 let provider;
 let signer;
@@ -809,6 +960,11 @@ window.healthcareContract = new ethers.Contract(
 window.emergencyContract = new ethers.Contract(
     EMERGENCY_CONTRACT_ADDRESS,
     EMERGENCY_ABI,
+    signer
+);
+window.paymentContract = new ethers.Contract(
+    PAYMENT_CONTRACT_ADDRESS,
+    PAYMENT_ABI,
     signer
 );
       
@@ -1272,20 +1428,27 @@ if (payBillBtn) {
 
     const hospital = document.getElementById("hospitalName").value.trim();
     const billId = document.getElementById("billId").value.trim();
+  const hospitalWallet = document.getElementById("hospitalWallet").value.trim();
     const amount = document.getElementById("billAmount").value.trim();
 
-    if (!hospital || !billId || !amount) {
-      alert("Please fill all fields");
-      return;
-    }
+    if (!hospital || !billId || !hospitalWallet || !amount) {
+    alert("Please fill all fields");
+    return;
+}
 
     try {
 
-      const tx = await window.emergencyContract.payHospitalBill(
-        hospital,
-        billId,
-        amount
-      );
+if (!hospitalWallet) {
+  alert("Please enter Hospital Wallet Address");
+  return;
+}
+
+const tx = await window.paymentContract.payHospitalBill(
+    hospital,
+    billId,
+    hospitalWallet,
+    amount
+);
 
       billStatus.innerHTML = "⏳ Waiting for confirmation...";
 
