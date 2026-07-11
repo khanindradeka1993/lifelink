@@ -235,3 +235,4 @@ async function saveHealthProfile() {
 
 document.getElementById("profileStatus").innerHTML =
 "✅ Health Profile saved on blockchain";
+}
