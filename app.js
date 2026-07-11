@@ -355,7 +355,6 @@ const CONTRACT_ABI =
   }
 ]
 const HEALTHCARE_ABI = [
-[
 {
 "inputs": [
 {
