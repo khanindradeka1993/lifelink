@@ -6,6 +6,9 @@ const EMERGENCY_CONTRACT_ADDRESS =
 "0x8d1183f802b5688e5244a493Ea965e856150c2Ef";
 const PAYMENT_CONTRACT_ADDRESS =
 "0x0CA164a6FE7FfEA47945761748D77cd0aa16Afb1";
+const USDC_ABI = [
+  "function approve(address spender, uint256 amount) external returns (bool)"
+];
 const CONTRACT_ABI =
 [
   {
@@ -967,8 +970,13 @@ window.paymentContract = new ethers.Contract(
     PAYMENT_ABI,
     signer
 );
-      
-        walletAddress.innerText =
+window.usdcContract = new ethers.Contract(
+    "0x3600000000000000000000000000000000000000",
+    USDC_ABI,
+    signer
+);      
+  
+      walletAddress.innerText =
             "Connected: " +
             currentAccount.substring(0, 6) +
             "..." +
@@ -1442,12 +1450,18 @@ if (!hospitalWallet) {
   alert("Please enter Hospital Wallet Address");
   return;
 }
+const approveTx = await window.usdcContract.approve(
+    PAYMENT_CONTRACT_ADDRESS,
+    ethers.utils.parseUnits(amount, 6)
+);
 
+billStatus.innerHTML = "⏳ Approving USDC...";
+await approveTx.wait();
 const tx = await window.paymentContract.payHospitalBill(
     hospital,
     billId,
     hospitalWallet,
-    amount
+    ethers.utils.parseUnits(amount, 6)
 );
 
       billStatus.innerHTML = "⏳ Waiting for confirmation...";
