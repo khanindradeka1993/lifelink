@@ -1029,3 +1029,24 @@ function showExplorerButton(txHash) {
     </div>
   `;
 }
+payBillBtn.addEventListener("click", async () => {
+
+    if (!currentAccount) {
+        alert("Please connect wallet first");
+        return;
+    }
+
+    const hospital = document.getElementById("hospitalName").value;
+    const billId = document.getElementById("billId").value;
+    const amount = document.getElementById("billAmount").value;
+
+    if (!hospital || !billId || !amount) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    billStatus.innerHTML =
+        "✅ Payment of " + amount +
+        " USDC initiated for " + hospital +
+        " (Bill ID: " + billId + ")";
+});
