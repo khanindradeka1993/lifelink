@@ -1,5 +1,7 @@
 const CONTRACT_ADDRESS =
 "0xa7aFb8345779F26428D0B44e24c47c630cC52791";
+const HEALTHCARE_CONTRACT_ADDRESS =
+"0xE32313e236784f57a7479a830E4a9c0ce22d0761";
 const CONTRACT_ABI =
 [
   {
@@ -352,6 +354,181 @@ const CONTRACT_ABI =
     "type": "function"
   }
 ]
+const HEALTHCARE_ABI = [
+[
+{
+"inputs": [
+{
+"internalType": "string",
+"name": "_fullName",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_bloodGroup",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_dob",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_gender",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_emergencyContact",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_allergies",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_addressInfo",
+"type": "string"
+}
+],
+"name": "createProfile",
+"outputs": [],
+"stateMutability": "nonpayable",
+"type": "function"
+},
+{
+"anonymous": false,
+"inputs": [
+{
+"indexed": true,
+"internalType": "address",
+"name": "user",
+"type": "address"
+}
+],
+"name": "ProfileCreated",
+"type": "event"
+},
+{
+"anonymous": false,
+"inputs": [
+{
+"indexed": true,
+"internalType": "address",
+"name": "user",
+"type": "address"
+}
+],
+"name": "ProfileUpdated",
+"type": "event"
+},
+{
+"inputs": [
+{
+"internalType": "string",
+"name": "_fullName",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_bloodGroup",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_dob",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_gender",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_emergencyContact",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_allergies",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_addressInfo",
+"type": "string"
+}
+],
+"name": "updateProfile",
+"outputs": [],
+"stateMutability": "nonpayable",
+"type": "function"
+},
+{
+"inputs": [
+{
+"internalType": "address",
+"name": "_user",
+"type": "address"
+}
+],
+"name": "getProfile",
+"outputs": [
+{
+"internalType": "string",
+"name": "",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "",
+"type": "string"
+},
+{
+"internalType": "address",
+"name": "",
+"type": "address"
+},
+{
+"internalType": "uint256",
+"name": "",
+"type": "uint256"
+}
+],
+"stateMutability": "view",
+"type": "function"
+}
+]
+  
 let provider;
 let signer;
 let contract;
@@ -401,7 +578,12 @@ connectBtn.addEventListener("click", async () => {
             CONTRACT_ABI,
             signer
         );
-
+healthcareContract = new ethers.Contract(
+    HEALTHCARE_CONTRACT_ADDRESS,
+    HEALTHCARE_ABI,
+    signer
+);
+      
         walletAddress.innerText =
             "Connected: " +
             currentAccount.substring(0, 6) +
@@ -847,29 +1029,4 @@ function showExplorerButton(txHash) {
       </a>
     </div>
   `;
-}
-// ===========================
-// Health Profile (Temporary)
-// ===========================
-
-const saveProfileBtn = document.getElementById("saveProfileBtn");
-
-if (saveProfileBtn) {
-  saveProfileBtn.onclick = function () {
-
-    const profile = {
-      name: document.getElementById("profileName").value,
-      bloodGroup: document.getElementById("profileBloodGroup").value,
-      dob: document.getElementById("profileDOB").value,
-      gender: document.getElementById("profileGender").value,
-      emergency: document.getElementById("profileEmergency").value,
-      allergies: document.getElementById("profileAllergies").value,
-      address: document.getElementById("profileAddress").value
-    };
-
-    localStorage.setItem("lifelinkProfile", JSON.stringify(profile));
-
-    document.getElementById("profileStatus").innerHTML =
-      "✅ Health Profile Saved Successfully";
-  };
 }
