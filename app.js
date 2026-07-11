@@ -529,7 +529,7 @@ const EMERGENCY_ABI = [
 "type": "function"
 }
 ];
-const HEALTHCARE_ABI = [
+const EMERGENCY_ABI = [
 {
 "anonymous": false,
 "inputs": [
