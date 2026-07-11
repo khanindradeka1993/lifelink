@@ -356,7 +356,7 @@ const CONTRACT_ABI =
     "type": "function"
   }
 ]
-const HEALTHCARE_ABI = [
+const EMERGENCY_ABI = [
 {
 "inputs": [
 {
