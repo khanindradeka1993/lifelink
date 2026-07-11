@@ -578,9 +578,9 @@ connectBtn.addEventListener("click", async () => {
             CONTRACT_ABI,
             signer
         );
-healthcareContract = new ethers.Contract(
-    HEALTHCARE_CONTRACT_ADDRESS,
-    HEALTHCARE_ABI,
+window.healthcareContract = new ethers.Contract(
+    window.HEALTHCARE_CONTRACT_ADDRESS,
+    window.HEALTHCARE_ABI,
     signer
 );
       
