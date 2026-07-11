@@ -527,7 +527,7 @@ const HEALTHCARE_ABI = [
 "stateMutability": "view",
 "type": "function"
 }
-]
+];
   
 let provider;
 let signer;
