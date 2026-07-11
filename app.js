@@ -2,6 +2,8 @@ const CONTRACT_ADDRESS =
 "0xa7aFb8345779F26428D0B44e24c47c630cC52791";
 const HEALTHCARE_CONTRACT_ADDRESS =
 "0xE32313e236784f57a7479a830E4a9c0ce22d0761";
+const EMERGENCY_CONTRACT_ADDRESS =
+"0x8d1183f802b5688e5244a493Ea965e856150c2Ef";
 const CONTRACT_ABI =
 [
   {
@@ -527,7 +529,229 @@ const HEALTHCARE_ABI = [
 "type": "function"
 }
 ];
-  
+const HEALTHCARE_ABI = [
+{
+"anonymous": false,
+"inputs": [
+{
+"indexed": true,
+"internalType": "uint256",
+"name": "id",
+"type": "uint256"
+}
+],
+"name": "AmbulanceCompleted",
+"type": "event"
+},
+{
+"anonymous": false,
+"inputs": [
+{
+"indexed": true,
+"internalType": "uint256",
+"name": "id",
+"type": "uint256"
+},
+{
+"indexed": true,
+"internalType": "address",
+"name": "requester",
+"type": "address"
+}
+],
+"name": "AmbulanceRequested",
+"type": "event"
+},
+{
+"inputs": [
+{
+"internalType": "uint256",
+"name": "_id",
+"type": "uint256"
+}
+],
+"name": "completeRequest",
+"outputs": [],
+"stateMutability": "nonpayable",
+"type": "function"
+},
+{
+"anonymous": false,
+"inputs": [
+{
+"indexed": true,
+"internalType": "uint256",
+"name": "id",
+"type": "uint256"
+},
+{
+"indexed": true,
+"internalType": "address",
+"name": "payer",
+"type": "address"
+}
+],
+"name": "HospitalBillPaid",
+"type": "event"
+},
+{
+"inputs": [
+{
+"internalType": "string",
+"name": "_hospitalName",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_billId",
+"type": "string"
+},
+{
+"internalType": "uint256",
+"name": "_amount",
+"type": "uint256"
+}
+],
+"name": "payHospitalBill",
+"outputs": [],
+"stateMutability": "nonpayable",
+"type": "function"
+},
+{
+"inputs": [
+{
+"internalType": "string",
+"name": "_patientName",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_pickupLocation",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_hospital",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_contact",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "_emergencyLevel",
+"type": "string"
+}
+],
+"name": "requestAmbulance",
+"outputs": [],
+"stateMutability": "nonpayable",
+"type": "function"
+},
+{
+"inputs": [],
+"name": "getAmbulanceRequests",
+"outputs": [
+{
+"components": [
+{
+"internalType": "uint256",
+"name": "id",
+"type": "uint256"
+},
+{
+"internalType": "string",
+"name": "patientName",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "pickupLocation",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "hospital",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "contact",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "emergencyLevel",
+"type": "string"
+},
+{
+"internalType": "address",
+"name": "requester",
+"type": "address"
+},
+{
+"internalType": "bool",
+"name": "completed",
+"type": "bool"
+}
+],
+"internalType": "struct LifeLinkEmergency.AmbulanceRequest[]",
+"name": "",
+"type": "tuple[]"
+}
+],
+"stateMutability": "view",
+"type": "function"
+},
+{
+"inputs": [],
+"name": "getPayments",
+"outputs": [
+{
+"components": [
+{
+"internalType": "uint256",
+"name": "id",
+"type": "uint256"
+},
+{
+"internalType": "string",
+"name": "hospitalName",
+"type": "string"
+},
+{
+"internalType": "string",
+"name": "billId",
+"type": "string"
+},
+{
+"internalType": "uint256",
+"name": "amount",
+"type": "uint256"
+},
+{
+"internalType": "address",
+"name": "payer",
+"type": "address"
+},
+{
+"internalType": "uint256",
+"name": "timestamp",
+"type": "uint256"
+}
+],
+"internalType": "struct LifeLinkEmergency.HospitalPayment[]",
+"name": "",
+"type": "tuple[]"
+}
+],
+"stateMutability": "view",
+"type": "function"
+}
+];
+
 let provider;
 let signer;
 let contract;
