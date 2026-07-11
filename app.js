@@ -1258,3 +1258,48 @@ function showExplorerButton(txHash) {
     </div>
   `;
 }
+// ===============================
+// Hospital Bill Payment
+// ===============================
+
+if (payBillBtn) {
+  payBillBtn.addEventListener("click", async () => {
+
+    if (!window.emergencyContract) {
+      alert("Please connect wallet first");
+      return;
+    }
+
+    const hospital = document.getElementById("hospitalName").value.trim();
+    const billId = document.getElementById("billId").value.trim();
+    const amount = document.getElementById("billAmount").value.trim();
+
+    if (!hospital || !billId || !amount) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    try {
+
+      const tx = await window.emergencyContract.payHospitalBill(
+        hospital,
+        billId,
+        amount
+      );
+
+      billStatus.innerHTML = "⏳ Waiting for confirmation...";
+
+      await tx.wait();
+
+      showExplorerButton(tx.hash);
+
+      billStatus.innerHTML =
+        "✅ Hospital bill recorded on blockchain.";
+
+    } catch (err) {
+      console.log(err);
+      alert(err.message);
+    }
+
+  });
+}
