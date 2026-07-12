@@ -55,24 +55,44 @@ h1 {
     transition: all 0.3s ease;
 }
 
-.card h2 {
-  margin-bottom: 15px;
+.card h2{
+    margin-bottom:18px;
+    font-size:32px;
+    font-weight:700;
+    color:#111827;
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
-input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
+input{
+    width:100%;
+    padding:14px;
+    margin-bottom:14px;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    font-size:16px;
+    background:#ffffff;
+    transition:0.3s;
 }
-select {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: white;
+
+select{
+    width:100%;
+    padding:14px;
+    margin-bottom:14px;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    background:#ffffff;
+    font-size:16px;
+    transition:0.3s;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    outline:none;
+    border-color:#2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,0.15);
 }
 /* ===== Hero Section ===== */
 
@@ -124,4 +144,25 @@ button:hover {
 
 button:active {
   transform: scale(0.98);
+}
+
+button{
+    margin-top:8px;
+    margin-bottom:8px;
+}
+
+button:hover{
+    box-shadow:0 8px 20px rgba(37,99,235,0.25);
+}
+hr{
+    border:none;
+    height:2px;
+    background:linear-gradient(to right,#2563eb,#22c55e);
+    margin:30px 0;
+}
+
+h3{
+    color:#1f2937;
+    font-weight:700;
+    margin-bottom:15px;
 }
