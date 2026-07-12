@@ -98,3 +98,28 @@ select {
     font-size:15px;
     letter-spacing:0.5px;
 }
+
+/* ===========================
+   Premium Buttons
+=========================== */
+
+button {
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #15803d;
+  transform: scale(1.03);
+}
+
+button:active {
+  transform: scale(0.98);
+}
