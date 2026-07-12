@@ -223,3 +223,20 @@ h3{
 .heroRight{
     font-size:70px;
 }
+/* ===== LifeLink Logo ===== */
+
+.hero-logo{
+    font-size:70px;
+    text-align:center;
+    margin-bottom:15px;
+    animation: heartbeat 1.6s infinite;
+    filter: drop-shadow(0 8px 18px rgba(255,0,60,.35));
+}
+
+@keyframes heartbeat{
+    0%{transform:scale(1);}
+    25%{transform:scale(1.12);}
+    40%{transform:scale(1);}
+    60%{transform:scale(1.12);}
+    100%{transform:scale(1);}
+}
