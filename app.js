@@ -1542,15 +1542,21 @@ async function loadAmbulanceRequests() {
 
   requests.forEach((r) => {
 
-    ambulanceList.innerHTML += `
-      <div class="card" style="margin-top:10px;">
-        <b>${r.patientName}</b><br>
-        🚑 ${r.emergencyLevel}<br>
-        📍 ${r.pickupLocation}<br>
-        🏥 ${r.hospital}<br>
-        📞 ${r.contact}
-      </div>
-    `;
+  ambulanceList.innerHTML += `
+<div class="card" style="margin-top:10px;">
+
+<b>${r.patientName}</b><br>
+
+🚨 ${r.emergencyLevel}<br>
+📍 ${r.pickupLocation}<br>
+🏥 ${r.hospital}<br><br>
+
+<a href="tel:${r.contact}">
+<button>📞 Call Patient</button>
+</a>
+
+</div>
+`;
   });
 
 }
