@@ -925,6 +925,9 @@ const totalCities = document.getElementById("totalCities");
 const totalSOS = document.getElementById("totalSOS");
 const payBillBtn = document.getElementById("payBillBtn");
 const billStatus = document.getElementById("billStatus");
+const ambulanceBtn = document.getElementById("ambulanceBtn");
+const ambulanceStatus = document.getElementById("ambulanceStatus");
+const ambulanceList = document.getElementById("ambulanceList");
 
 let currentAccount = "";
 const EXPLORER = "https://testnet.arcscan.app";
