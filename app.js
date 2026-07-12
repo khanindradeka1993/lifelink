@@ -1483,3 +1483,73 @@ const tx = await window.paymentContract.payHospitalBill(
 
   });
 }
+// ================================
+// Emergency Ambulance
+// ================================
+
+if (ambulanceBtn) {
+  ambulanceBtn.addEventListener("click", async () => {
+
+    if (!window.emergencyContract) {
+      alert("Please connect wallet first");
+      return;
+    }
+
+    const patient = document.getElementById("ambulancePatient").value.trim();
+    const pickup = document.getElementById("pickupLocation").value.trim();
+    const hospital = document.getElementById("ambulanceHospital").value.trim();
+    const contact = document.getElementById("ambulanceContact").value.trim();
+    const level = document.getElementById("emergencyLevel").value;
+
+    if (!patient || !pickup || !hospital || !contact) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    try {
+      ambulanceStatus.innerHTML = "🚑 Sending ambulance request...";
+
+      const tx = await window.emergencyContract.requestAmbulance(
+        patient,
+        pickup,
+        hospital,
+        contact,
+        level
+      );
+
+      await tx.wait();
+
+      ambulanceStatus.innerHTML = "✅ Ambulance request recorded on blockchain.";
+
+      loadAmbulanceRequests();
+
+    } catch (err) {
+      console.log(err);
+      alert(err.message);
+    }
+
+  });
+}
+
+async function loadAmbulanceRequests() {
+
+  if (!window.emergencyContract) return;
+
+  const requests = await window.emergencyContract.getAmbulanceRequests();
+
+  ambulanceList.innerHTML = "";
+
+  requests.forEach((r) => {
+
+    ambulanceList.innerHTML += `
+      <div class="card" style="margin-top:10px;">
+        <b>${r.patientName}</b><br>
+        🚑 ${r.emergencyLevel}<br>
+        📍 ${r.pickupLocation}<br>
+        🏥 ${r.hospital}<br>
+        📞 ${r.contact}
+      </div>
+    `;
+  });
+
+}
