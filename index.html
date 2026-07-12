@@ -347,7 +347,53 @@ border-radius:10px;
 
   <div id="profileStatus"></div>
 </div>
-  
+<hr>
+
+<div class="card">
+  <h2>🚑 Emergency Ambulance</h2>
+
+  <input
+    type="text"
+    id="ambulancePatient"
+    placeholder="Patient Name"
+  >
+
+  <input
+    type="text"
+    id="pickupLocation"
+    placeholder="Pickup Location"
+  >
+
+  <input
+    type="text"
+    id="ambulanceHospital"
+    placeholder="Destination Hospital"
+  >
+
+  <input
+    type="text"
+    id="ambulanceContact"
+    placeholder="Contact Number"
+  >
+
+  <select id="emergencyLevel">
+    <option value="Low">🟢 Low</option>
+    <option value="Medium">🟡 Medium</option>
+    <option value="High">🟠 High</option>
+    <option value="Critical">🔴 Critical</option>
+  </select>
+
+  <button id="ambulanceBtn">
+    🚑 Request Ambulance
+  </button>
+
+  <div id="ambulanceStatus" style="margin-top:15px;"></div>
+
+  <h3 style="margin-top:20px;">Live Ambulance Requests</h3>
+
+  <div id="ambulanceList"></div>
+</div>
+    
   </div>
 <script src="app.js"></script>
 <script src="health-profile.js"></script>
