@@ -989,6 +989,7 @@ connectBtn.style.background = "#16a34a";
 connectBtn.disabled = true;
       await loadDonors();
 await loadRequests();
+await loadAmbulanceRequests();
       
     } catch (error) {
         console.log(error);
