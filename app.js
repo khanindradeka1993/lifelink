@@ -928,6 +928,19 @@ const billStatus = document.getElementById("billStatus");
 const ambulanceBtn = document.getElementById("ambulanceBtn");
 const ambulanceStatus = document.getElementById("ambulanceStatus");
 const ambulanceList = document.getElementById("ambulanceList");
+const searchPatientBtn = document.getElementById("searchPatientBtn");
+const doctorWallet = document.getElementById("doctorWallet");
+const doctorStatus = document.getElementById("doctorStatus");
+
+const patientProfileCard = document.getElementById("patientProfileCard");
+
+const viewName = document.getElementById("viewName");
+const viewBlood = document.getElementById("viewBlood");
+const viewDOB = document.getElementById("viewDOB");
+const viewGender = document.getElementById("viewGender");
+const viewEmergency = document.getElementById("viewEmergency");
+const viewAllergies = document.getElementById("viewAllergies");
+const viewAddress = document.getElementById("viewAddress");
 
 let currentAccount = "";
 const EXPLORER = "https://testnet.arcscan.app";
@@ -1590,4 +1603,52 @@ async function completeAmbulance(id) {
 
     }
 
+}
+
+if (searchPatientBtn) {
+    searchPatientBtn.addEventListener("click", async () => {
+
+        if (!window.healthcareContract) {
+            alert("Connect wallet first");
+            return;
+        }
+
+        const wallet = doctorWallet.value.trim();
+
+        if (!ethers.utils.isAddress(wallet)) {
+            alert("Enter a valid wallet address");
+            return;
+        }
+
+        try {
+
+            doctorStatus.innerHTML = "🔍 Searching patient...";
+
+            const profile =
+                await window.healthcareContract.getProfile(wallet);
+
+            viewName.textContent = profile[0];
+            viewBlood.textContent = profile[1];
+            viewDOB.textContent = profile[2];
+            viewGender.textContent = profile[3];
+            viewEmergency.textContent = profile[4];
+            viewAllergies.textContent = profile[5];
+            viewAddress.textContent = profile[6];
+
+            patientProfileCard.style.display = "block";
+
+            doctorStatus.innerHTML =
+                "✅ Patient record loaded.";
+
+        } catch (err) {
+
+            console.log(err);
+
+            doctorStatus.innerHTML =
+                "❌ Patient profile not found.";
+
+            patientProfileCard.style.display = "none";
+        }
+
+    });
 }
