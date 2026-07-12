@@ -1541,7 +1541,8 @@ async function loadAmbulanceRequests() {
   ambulanceList.innerHTML = "";
 
   requests.forEach((r) => {
-
+if (r.completed) return;
+    
   ambulanceList.innerHTML += `
 <div class="card" style="margin-top:10px;">
 
@@ -1554,9 +1555,39 @@ async function loadAmbulanceRequests() {
 <a href="tel:${r.contact}">
 <button>📞 Call Patient</button>
 </a>
+<button onclick="completeAmbulance(${r.id})">
+✅ Complete Request
+</button>
 
 </div>
 `;
   });
+
+}
+async function completeAmbulance(id) {
+
+    if (!window.emergencyContract) {
+        alert("Connect wallet first");
+        return;
+    }
+
+    try {
+
+        ambulanceStatus.innerHTML = "⏳ Completing request...";
+
+        const tx = await window.emergencyContract.completeRequest(id);
+
+        await tx.wait();
+
+        ambulanceStatus.innerHTML = "✅ Request completed.";
+
+        loadAmbulanceRequests();
+
+    } catch (err) {
+
+        console.log(err);
+        alert(err.message);
+
+    }
 
 }
