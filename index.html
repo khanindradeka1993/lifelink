@@ -394,6 +394,41 @@ border-radius:10px;
 
   <div id="ambulanceList"></div>
 </div>
+<hr>
+
+<div class="card">
+    <h2>🩺 Doctor Portal</h2>
+
+    <input
+        type="text"
+        id="doctorWallet"
+        placeholder="Patient Wallet Address (0x...)"
+    >
+
+    <button id="searchPatientBtn">
+        🔍 Search Patient
+    </button>
+
+    <div id="doctorStatus" style="margin-top:15px;"></div>
+
+    <div id="patientProfileCard" style="display:none; margin-top:20px;">
+        <h3>📋 Patient Health Record</h3>
+
+        <p><b>👤 Name:</b> <span id="viewName"></span></p>
+
+        <p><b>🩸 Blood Group:</b> <span id="viewBlood"></span></p>
+
+        <p><b>🎂 DOB:</b> <span id="viewDOB"></span></p>
+
+        <p><b>⚧ Gender:</b> <span id="viewGender"></span></p>
+
+        <p><b>📞 Emergency Contact:</b> <span id="viewEmergency"></span></p>
+
+        <p><b>🤧 Allergies:</b> <span id="viewAllergies"></span></p>
+
+        <p><b>🏠 Address:</b> <span id="viewAddress"></span></p>
+    </div>
+</div>
     
   </div>
 <script src="app.js"></script>
