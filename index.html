@@ -416,7 +416,25 @@ font-weight:600;
 <hr>
 
 <div class="card">
-    <h2>🤖 AI Emergency Assistant</h2>
+    <h2 style="
+display:flex;
+align-items:center;
+gap:10px;
+color:#7c3aed;
+font-size:28px;
+margin-bottom:15px;
+">
+🤖 AI Emergency Assistant
+</h2>
+
+<p style="
+color:#6b7280;
+margin-top:-5px;
+margin-bottom:20px;
+font-size:15px;
+">
+Get instant first-aid guidance during emergencies.
+</p>
 
     <textarea
         id="aiQuestion"
@@ -430,16 +448,27 @@ font-weight:600;
         "
     ></textarea>
 
-    <button id="askAIBtn">
-        Ask AI
-    </button>
+    <button id="askAIBtn" style="
+width:100%;
+background:linear-gradient(135deg,#7c3aed,#8b5cf6);
+color:white;
+padding:16px;
+border:none;
+border-radius:14px;
+font-size:17px;
+font-weight:bold;
+box-shadow:0 8px 20px rgba(124,58,237,.35);
+">
+🤖 Ask AI Assistant
+</button>
 
     <div id="chatBox" style="
 max-height:350px;
 overflow-y:auto;
 margin-top:15px;
 padding:10px;
-background:#f8f9fa;
+background:#f3f4f6;
+border:1px solid #e5e7eb;
 border-radius:10px;
 "></div>
 </div>
