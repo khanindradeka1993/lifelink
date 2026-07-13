@@ -375,21 +375,39 @@ font-weight:600;
     <hr>
 
 <div class="card">
-<h2>🏥 Hospital Dashboard</h2>
+<h2 style="
+display:flex;
+align-items:center;
+gap:10px;
+color:#2563eb;
+font-size:28px;
+margin-bottom:20px;
+">
+🏥 Hospital Dashboard
+</h2>
+
+<p style="
+color:#6b7280;
+margin-top:-10px;
+margin-bottom:20px;
+font-size:15px;
+">
+Monitor donors and emergency requests in real time.
+</p>
 
 <div id="hospitalDashboard"></div>
 
-<div class="dashboard-card">
-    👥 Total Donors: <span id="dashboardDonors">0</span>
-  </div>
+<div class="dashboard-card" style="background:#eef6ff;padding:15px;border-radius:12px;margin-bottom:12px;">
+👥 <b>Total Donors:</b> <span id="dashboardDonors">0</span>
+</div>
 
-  <div class="dashboard-card">
-    🚨 Active Requests: <span id="dashboardRequests">0</span>
-  </div>
+<div class="dashboard-card" style="background:#fff4e5;padding:15px;border-radius:12px;margin-bottom:12px;">
+🚨 <b>Active Requests:</b> <span id="dashboardRequests">0</span>
+</div>
 
-  <div class="dashboard-card">
-    ✅ Fulfilled Requests: <span id="dashboardFulfilled">0</span>
-  </div>
+<div class="dashboard-card" style="background:#ecfdf5;padding:15px;border-radius:12px;">
+✅ <b>Fulfilled Requests:</b> <span id="dashboardFulfilled">0</span>
+</div>
 </div>
 <hr>
 
