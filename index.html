@@ -243,7 +243,25 @@ cursor:pointer;
 
 <hr style="margin:20px 0;">
 
-<h2>🔍 Search Donors</h2>
+<h2 style="
+display:flex;
+align-items:center;
+gap:10px;
+color:#2563eb;
+margin-bottom:20px;
+font-size:28px;
+">
+🔍 Search Donors
+</h2>
+
+<p style="
+color:#6b7280;
+margin-top:-10px;
+margin-bottom:20px;
+font-size:15px;
+">
+Find nearby blood donors instantly.
+</p>
 <select id="searchBloodGroup">
   <option value="">Select Blood Group</option>
   <option value="A+">A+</option>
@@ -260,14 +278,43 @@ cursor:pointer;
   id="searchCity"
   placeholder="Enter City"
 />
-<button id="searchBtn">
-  📍 Nearby Donors
+<button id="searchBtn" style="
+width:100%;
+background:linear-gradient(135deg,#16a34a,#22c55e);
+color:white;
+padding:16px;
+border:none;
+border-radius:14px;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 8px 20px rgba(34,197,94,.35);
+">
+📍 Find Nearby Donors
 </button>
 <div id="searchResults"></div>
 </div>
  <hr>
 
-<h2>🚨 SOS Emergency Blood Request</h2>
+<h2 style="
+display:flex;
+align-items:center;
+gap:10px;
+color:#dc2626;
+font-size:28px;
+margin-bottom:15px;
+">
+🚨 SOS Emergency Request
+</h2>
+
+<p style="
+color:#6b7280;
+margin-top:-5px;
+margin-bottom:20px;
+font-size:15px;
+">
+Request urgent blood assistance from nearby donors.
+</p>
 
 <input
 id="patientName"
@@ -312,9 +359,19 @@ font-weight:bold;
 cursor:pointer;
 margin-top:10px;
 ">
-🚨 Send SOS Request
+🩸 Send Emergency SOS
 </button>
-<div id="requestList"></div>
+<div style="
+background:#fef2f2;
+border-left:5px solid #dc2626;
+padding:12px;
+border-radius:12px;
+margin:15px 0;
+color:#991b1b;
+font-weight:600;
+">
+🚨 Emergency requests are immediately visible to nearby donors.
+</div>
 <hr>
 
 <div class="card">
