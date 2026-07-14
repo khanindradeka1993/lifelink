@@ -254,7 +254,7 @@ box-shadow:0 12px 25px rgba(0,0,0,.12);
 transform:scale(.95);
 }
 
-.mainLogo{
+.hero-logo{
     width:140px;
     height:140px;
     object-fit:contain;
