@@ -545,7 +545,25 @@ border-radius:10px;
 <hr>
 
 <div class="card">
-  <h2>🪪 Health Profile</h2>
+  <h2 style="
+display:flex;
+align-items:center;
+gap:10px;
+color:#0f766e;
+font-size:28px;
+margin-bottom:20px;
+">
+🪪 Health Profile
+</h2>
+
+<p style="
+color:#6b7280;
+margin-top:-10px;
+margin-bottom:20px;
+font-size:15px;
+">
+Store your essential medical information securely.
+</p>
 
   <input
     type="text"
@@ -593,8 +611,19 @@ border-radius:10px;
     placeholder="Address"
     rows="3"></textarea>
 
-  <button id="saveProfileBtn">
-    💾 Save Health Profile
+  <button id="saveProfileBtn" style="
+width:100%;
+padding:16px;
+background:linear-gradient(135deg,#0f766e,#14b8a6);
+color:white;
+border:none;
+border-radius:14px;
+font-size:18px;
+font-weight:bold;
+box-shadow:0 8px 20px rgba(20,184,166,.35);
+cursor:pointer;
+">
+💾 Save Health Profile
   </button>
 
   <div id="profileStatus"></div>
