@@ -1652,3 +1652,21 @@ if (searchPatientBtn) {
 
     });
 }
+
+// ===============================
+// Quick Action Navigation
+// ===============================
+
+document.querySelectorAll(".quick-action").forEach(button => {
+    button.addEventListener("click", () => {
+        const target = button.dataset.target;
+        const section = document.getElementById(target);
+
+        if (section) {
+            section.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    });
+});
