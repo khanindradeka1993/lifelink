@@ -631,7 +631,25 @@ cursor:pointer;
 <hr>
 
 <div class="card">
-  <h2>🚑 Emergency Ambulance</h2>
+  <h2 style="
+display:flex;
+align-items:center;
+gap:10px;
+color:#ea580c;
+font-size:28px;
+margin-bottom:20px;
+">
+🚑 Emergency Ambulance
+</h2>
+
+<p style="
+color:#6b7280;
+margin-top:-10px;
+margin-bottom:20px;
+font-size:15px;
+">
+Request an ambulance instantly for emergency transport.
+</p>
 
   <input
     type="text"
@@ -664,8 +682,19 @@ cursor:pointer;
     <option value="Critical">🔴 Critical</option>
   </select>
 
-  <button id="ambulanceBtn">
-    🚑 Request Ambulance
+  <button id="ambulanceBtn" style="
+width:100%;
+padding:16px;
+background:linear-gradient(135deg,#ea580c,#f97316);
+color:white;
+border:none;
+border-radius:14px;
+font-size:18px;
+font-weight:bold;
+box-shadow:0 8px 20px rgba(249,115,22,.35);
+cursor:pointer;
+">
+🚑 Request Emergency Ambulance
   </button>
 
   <div id="ambulanceStatus" style="margin-top:15px;"></div>
