@@ -46,7 +46,7 @@ h1 {
   word-break: break-all;
 }
 
-..card {
+.card {
     background: #ffffff;
     padding: 22px;
     border-radius: 20px;
@@ -226,11 +226,13 @@ h3{
 /* ===== LifeLink Logo ===== */
 
 .hero-logo{
-    font-size:70px;
-    text-align:center;
-    margin-bottom:15px;
-    animation: heartbeat 1.6s infinite;
-    filter: drop-shadow(0 8px 18px rgba(255,0,60,.35));
+    width:140px;
+    height:140px;
+    object-fit:contain;
+    display:block;
+    margin:0 auto 15px;
+    animation:heartbeat 1.6s infinite;
+    filter:drop-shadow(0 8px 18px rgba(255,0,60,.35));
 }
 
 @keyframes heartbeat{
@@ -252,12 +254,4 @@ box-shadow:0 12px 25px rgba(0,0,0,.12);
 
 .quick-action:active{
 transform:scale(.95);
-}
-
-.hero-logo{
-    width:140px;
-    height:140px;
-    object-fit:contain;
-    display:block;
-    margin:auto;
 }
