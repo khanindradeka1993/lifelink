@@ -511,7 +511,25 @@ border-radius:10px;
 <hr>
 
 <div class="card">
-  <h2>🏥 Hospital Bill Payment</h2>
+  <h2 style="
+display:flex;
+align-items:center;
+gap:10px;
+color:#059669;
+font-size:28px;
+margin-bottom:20px;
+">
+🏥 Hospital Bill Payment
+</h2>
+
+<p style="
+color:#6b7280;
+margin-top:-10px;
+margin-bottom:20px;
+font-size:15px;
+">
+Pay hospital bills securely using USDC on Arc Testnet.
+</p>
 
   <input
     type="text"
@@ -536,8 +554,19 @@ border-radius:10px;
     placeholder="Amount (USDC)"
   >
 
-  <button id="payBillBtn">
-    💳 Pay Hospital Bill
+  <button id="payBillBtn" style="
+width:100%;
+padding:16px;
+background:linear-gradient(135deg,#059669,#10b981);
+color:white;
+border:none;
+border-radius:14px;
+font-size:18px;
+font-weight:bold;
+box-shadow:0 8px 20px rgba(16,185,129,.35);
+cursor:pointer;
+">
+💳 Pay Hospital Bill
   </button>
 
   <div id="billStatus" style="margin-top:15px;"></div>
@@ -706,7 +735,25 @@ cursor:pointer;
 <hr>
 
 <div class="card">
-    <h2>🩺 Doctor Portal</h2>
+    <h2 style="
+display:flex;
+align-items:center;
+gap:10px;
+color:#2563eb;
+font-size:28px;
+margin-bottom:20px;
+">
+🩺 Doctor Portal
+</h2>
+
+<p style="
+color:#6b7280;
+margin-top:-10px;
+margin-bottom:20px;
+font-size:15px;
+">
+Search a patient's blockchain health profile using their wallet address.
+</p>
 
     <input
         type="text"
@@ -714,8 +761,19 @@ cursor:pointer;
         placeholder="Patient Wallet Address (0x...)"
     >
 
-    <button id="searchPatientBtn">
-        🔍 Search Patient
+    <button id="searchPatientBtn" style="
+width:100%;
+padding:16px;
+background:linear-gradient(135deg,#2563eb,#3b82f6);
+color:white;
+border:none;
+border-radius:14px;
+font-size:18px;
+font-weight:bold;
+box-shadow:0 8px 20px rgba(37,99,235,.35);
+cursor:pointer;
+">
+🔍 Search Patient Record
     </button>
 
     <div id="doctorStatus" style="margin-top:15px;"></div>
