@@ -240,3 +240,16 @@ h3{
     60%{transform:scale(1.12);}
     100%{transform:scale(1);}
 }
+
+.quick-action{
+transition:.25s ease;
+}
+
+.quick-action:hover{
+transform:translateY(-3px);
+box-shadow:0 12px 25px rgba(0,0,0,.12);
+}
+
+.quick-action:active{
+transform:scale(.95);
+}
