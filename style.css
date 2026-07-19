@@ -312,3 +312,65 @@ select{
 .card h4{
     color:#FFFFFF !important;
 }
+
+/* ===== Final UI Fix ===== */
+
+/* All cards dark */
+.card,
+.request-card,
+.donor-card,
+.dashboard-card,
+.analytics-card,
+.ai-card,
+.payment-card,
+.profile-card,
+.ambulance-card{
+    background:#1E293B !important;
+    color:#FFFFFF !important;
+}
+
+/* White cards in SOS */
+.sos-card,
+.sosRequest,
+.emergency-card{
+    background:#1E293B !important;
+    color:#FFFFFF !important;
+}
+
+/* Dashboard statistic boxes */
+.dashboard-card div,
+.analytics-card div{
+    color:#111827 !important;
+    font-weight:700;
+}
+
+/* Paragraphs */
+.card p,
+.card span{
+    color:#CBD5E1 !important;
+}
+
+/* Inputs */
+input,
+select,
+textarea{
+    background:#334155 !important;
+    color:#FFFFFF !important;
+    border:1px solid #94A3B8 !important;
+}
+
+/* Placeholder */
+input::placeholder,
+textarea::placeholder{
+    color:#94A3B8 !important;
+}
+
+/* Buttons */
+button{
+    border-radius:14px;
+}
+
+/* Card heading */
+.card h2{
+    color:#FFFFFF !important;
+}
