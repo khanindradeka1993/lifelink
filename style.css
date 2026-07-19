@@ -6,7 +6,8 @@
 }
 
 body{
-    background:linear-gradient(180deg,#eef6ff 0%,#f8fafc 100%);
+    background:#0B1220;
+    color:#ffffff;
     padding:20px;
 }
 
@@ -47,7 +48,7 @@ h1 {
 }
 
 .card {
-    background: #ffffff;
+    background: #1E293B;
     padding: 22px;
     border-radius: 20px;
     margin-top: 25px;
@@ -77,7 +78,8 @@ input{
     border:1px solid #d1d5db;
     border-radius:12px;
     font-size:16px;
-    background:#ffffff;
+    background:#334155;
+color:white;
     transition:0.3s;
 }
 
@@ -87,7 +89,8 @@ select{
     margin-bottom:14px;
     border:1px solid #d1d5db;
     border-radius:12px;
-    background:#ffffff;
+    background:#334155;
+color:white;
     font-size:16px;
     transition:0.3s;
 }
