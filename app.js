@@ -1,5 +1,5 @@
 const CONTRACT_ADDRESS =
-"0xa7aFb8345779F26428D0B44e24c47c630cC52791";
+"0x3e4c9Ec9598A507707d08Fd847Fe9909F2bb91AB";
 const HEALTHCARE_CONTRACT_ADDRESS =
 "0xE32313e236784f57a7479a830E4a9c0ce22d0761";
 const EMERGENCY_CONTRACT_ADDRESS =
@@ -48,6 +48,57 @@ const CONTRACT_ABI =
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "fulfillRequest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_bloodGroup",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_city",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_phone",
+        "type": "string"
+      },
+      {
+        "internalType": "int256",
+        "name": "_latitude",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "_longitude",
+        "type": "int256"
+      }
+    ],
+    "name": "registerDonor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "",
         "type": "uint256"
       }
@@ -75,6 +126,16 @@ const CONTRACT_ABI =
         "type": "string"
       },
       {
+        "internalType": "int256",
+        "name": "latitude",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "longitude",
+        "type": "int256"
+      },
+      {
         "internalType": "address",
         "name": "wallet",
         "type": "address"
@@ -86,19 +147,6 @@ const CONTRACT_ABI =
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_id",
-        "type": "uint256"
-      }
-    ],
-    "name": "fulfillRequest",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -126,6 +174,16 @@ const CONTRACT_ABI =
             "internalType": "string",
             "name": "phone",
             "type": "string"
+          },
+          {
+            "internalType": "int256",
+            "name": "latitude",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "longitude",
+            "type": "int256"
           },
           {
             "internalType": "address",
@@ -204,34 +262,6 @@ const CONTRACT_ABI =
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_name",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_bloodGroup",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_city",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_phone",
-        "type": "string"
-      }
-    ],
-    "name": "registerDonor",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
@@ -284,72 +314,8 @@ const CONTRACT_ABI =
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_bloodGroup",
-        "type": "string"
-      }
-    ],
-    "name": "searchDonors",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "bloodGroup",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "city",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "phone",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "wallet",
-            "type": "address"
-          },
-          {
-            "internalType": "bool",
-            "name": "available",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct LifeLinkDonor.Donor[]",
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "totalDonors",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "totalRequests",
     "outputs": [
       {
         "internalType": "uint256",
