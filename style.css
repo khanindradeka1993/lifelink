@@ -195,11 +195,11 @@ h3{
 }
 
 .hero h3{
-    color:#E2E8F0;
+    color:#FFFFFF;
 }
 
 .hero p{
-    color:#94A3B8;
+    color:#CBD5E1;
 }
 
 .heroCard{
@@ -291,9 +291,24 @@ select{
 }
 
 .heroLeft h2{
-    color:#60A5FA;
+    color:#FFFFFF;
 }
 
 .heroLeft p{
     color:#CBD5E1;
+}
+.card p{
+    color:#CBD5E1 !important;
+}
+
+.card small{
+    color:#CBD5E1 !important;
+}
+
+.card span{
+    color:#FFFFFF !important;
+}
+
+.card h4{
+    color:#FFFFFF !important;
 }
