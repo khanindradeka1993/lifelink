@@ -1204,8 +1204,15 @@ document.getElementById("requestCity").value = "";
 document.getElementById("contact").value = ""; 
     alert("🚨 SOS Request Created Successfully!");
   } catch (err) {
-    console.log(err);
-    alert(err.message);
+    console.error(err);
+
+    if (err.error && err.error.message) {
+        alert(err.error.message);
+    } else if (err.reason) {
+        alert(err.reason);
+    } else {
+        alert(JSON.stringify(err, null, 2));
+    }
   }
 });
 // ==========================
