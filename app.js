@@ -1015,14 +1015,31 @@ document.getElementById("phone").value;
     alert("Please fill all fields");
     return;
   }
+let latitude = 0;
+let longitude = 0;
 
+try {
+    const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+
+    latitude = Math.round(position.coords.latitude * 1000000);
+    longitude = Math.round(position.coords.longitude * 1000000);
+
+} catch (e) {
+    alert("Unable to get your location. Please allow GPS access.");
+    return;
+}
+  
   try {
 
   const tx = await contract.registerDonor(
     name,
     bloodGroup,
     city,
-    phone
+    phone,
+    latitude,
+    longitude
 );
 
   alert("Transaction submitted ⏳");
