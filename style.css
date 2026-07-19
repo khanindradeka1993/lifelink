@@ -374,3 +374,11 @@ button{
 .card h2{
     color:#FFFFFF !important;
 }
+
+#map{
+    width:100%;
+    height:350px;
+    border-radius:15px;
+    margin-top:15px;
+    border:2px solid #2563eb;
+}
