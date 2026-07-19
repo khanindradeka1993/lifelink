@@ -249,3 +249,51 @@ box-shadow:0 12px 25px rgba(0,0,0,.12);
 .quick-action:active{
 transform:scale(.95);
 }
+
+/* ===== Final Dark Theme Fix ===== */
+
+.card p{
+    color:#CBD5E1 !important;
+}
+
+.card h2{
+    color:#FFFFFF !important;
+}
+
+.card h3{
+    color:#FFFFFF !important;
+}
+
+.card label{
+    color:#E2E8F0 !important;
+}
+
+textarea{
+    width:100%;
+    padding:14px;
+    background:#334155;
+    color:#FFFFFF;
+    border:1px solid #94A3B8;
+    border-radius:12px;
+}
+
+input::placeholder,
+textarea::placeholder{
+    color:#AAB4C5;
+}
+
+select{
+    color:#FFFFFF;
+}
+
+.heroCard{
+    background:#1E293B;
+}
+
+.heroLeft h2{
+    color:#60A5FA;
+}
+
+.heroLeft p{
+    color:#CBD5E1;
+}
