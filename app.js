@@ -1186,7 +1186,7 @@ requestBtn.addEventListener("click", async () => {
   }
 
   try {
-    const tx = await window.emergencyContract.createRequest(
+    const tx = await contract.createRequest(
       patientName,
       bloodGroup,
       hospital,
@@ -1228,7 +1228,7 @@ const requestList = document.getElementById("requestList");
 async function loadRequests() {
     if (!contract) return;
 
-    const requests = await window.emergencyContract.getRequests();
+    const requests = await contract.getRequests();
 const active = requests.filter(r => !r.fulfilled);
 totalRequests.innerText = active.length;
 dashboardRequests.innerText = active.length;
@@ -1336,7 +1336,7 @@ async function fulfillRequest(id) {
 
     try {
 
-        const tx = await window.emergencyContract.fulfillRequest(id);
+        const tx = await contract.fulfillRequest(id);
 
         alert("Updating request...");
 
