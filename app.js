@@ -975,15 +975,16 @@ await loadAmbulanceRequests();
     }
 
 });
-
 // Load donors
 async function loadDonors() {
     if (!contract) return;
 
     const donors = await contract.getDonors();
-totalDonors.innerText = donors.length;
-dashboardDonors.innerText = donors.length;
-  
+
+    totalDonors.innerText = donors.length;
+    dashboardDonors.innerText = donors.length;
+
+    // Donor List
     donorList.innerHTML = "";
 
     donors.forEach((donor) => {
@@ -995,10 +996,40 @@ dashboardDonors.innerText = donors.length;
             border-radius:10px;
         ">
             <strong>${donor.bloodGroup}</strong><br>
-City: ${donor.city}
+            City: ${donor.city}
         </div>
         `;
     });
+
+    // Donor Map
+    const mapDiv = document.getElementById("map");
+
+    if (mapDiv) {
+        mapDiv.innerHTML = "";
+
+        if (window.donorMap) {
+            window.donorMap.remove();
+        }
+
+        window.donorMap = L.map("map").setView([26.1445, 91.7362], 11);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(window.donorMap);
+
+        donors.forEach((donor) => {
+            if (Number(donor.latitude) !== 0 && Number(donor.longitude) !== 0) {
+                L.marker([
+                    Number(donor.latitude) / 1000000,
+                    Number(donor.longitude) / 1000000
+                ])
+                .addTo(window.donorMap)
+                .bindPopup(
+                    `<b>${donor.name}</b><br>${donor.bloodGroup}<br>${donor.city}`
+                );
+            }
+        });
+    }
 }
 
 // Register donor
