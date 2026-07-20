@@ -1163,32 +1163,6 @@ if (filtered.length === 0) {
 });
 
 });
-const mapDiv = document.getElementById("map");
-
-mapDiv.innerHTML = "";
-
-if (window.donorMap) {
-    window.donorMap.remove();
-}
-
-window.donorMap = L.map("map").setView([26.1445, 91.7362], 11);
-
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "&copy; OpenStreetMap contributors"
-}).addTo(window.donorMap);
-
-donors.forEach((donor) => {
-    if (donor.latitude != 0 && donor.longitude != 0) {
-        L.marker([
-            donor.latitude / 1000000,
-            donor.longitude / 1000000
-        ])
-        .addTo(window.donorMap)
-        .bindPopup(
-            `<b>${donor.name}</b><br>${donor.bloodGroup}<br>${donor.city}`
-        );
-    }
-});
 
 // =====================
 // SOS Blood Request
