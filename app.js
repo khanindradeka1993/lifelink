@@ -1169,11 +1169,8 @@ if (filtered.length === 0) {
 // =====================
 
 const requestBtn = document.getElementById("requestBtn");
-console.log("requestBtn =", requestBtn);
-alert("SOS JS Loaded");
 
 requestBtn.addEventListener("click", async () => {
-    alert("SOS button clicked");
   if (!contract) {
     alert("Please connect wallet first");
     return;
