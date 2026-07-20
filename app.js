@@ -1146,7 +1146,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors"
 }).addTo(window.donorMap);
 
-filtered.forEach((donor) => {
+donors.forEach((donor) => {
     if (donor.latitude != 0 && donor.longitude != 0) {
         L.marker([
             donor.latitude / 1000000,
