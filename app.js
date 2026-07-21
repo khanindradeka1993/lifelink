@@ -921,6 +921,39 @@ connectBtn.addEventListener("click", async () => {
 
     try {
 
+const ARC_CHAIN_ID = "0x4ceaf2"; // 5042002 in hexadecimal
+
+const chainId = await window.ethereum.request({
+  method: "eth_chainId"
+});
+
+if (chainId !== ARC_CHAIN_ID) {
+  try {
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: ARC_CHAIN_ID }]
+    });
+  } catch (error) {
+    if (error.code === 4902) {
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [{
+          chainId: ARC_CHAIN_ID,
+          chainName: "Arc Network Testnet",
+          nativeCurrency: {
+            name: "USDC",
+            symbol: "USDC",
+            decimals: 6
+          },
+          rpcUrls: ["https://rpc.quicknode.testnet.arc.network"],
+          blockExplorerUrls: ["https://testnet.arcscan.app"]
+        }]
+      });
+    } else {
+      throw error;
+    }
+  }
+}      
         const accounts = await ethereum.request({
             method: "eth_requestAccounts"
         });
