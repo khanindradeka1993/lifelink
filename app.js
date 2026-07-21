@@ -921,7 +921,7 @@ connectBtn.addEventListener("click", async () => {
 
     try {
 
-const ARC_CHAIN_ID = "0x4ceaf2"; // 5042002 in hexadecimal
+const ARC_CHAIN_ID = "0x4cef52"; // 5042002 in hexadecimal
 
 const chainId = await window.ethereum.request({
   method: "eth_chainId"
@@ -943,7 +943,7 @@ if (chainId !== ARC_CHAIN_ID) {
           nativeCurrency: {
             name: "USDC",
             symbol: "USDC",
-            decimals: 6
+            decimals: 18
           },
           rpcUrls: ["https://rpc.quicknode.testnet.arc.network"],
           blockExplorerUrls: ["https://testnet.arcscan.app"]
