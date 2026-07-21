@@ -1440,30 +1440,49 @@ function showExplorerButton(txHash) {
   }
 
   card.innerHTML = `
-    <div style="
-      background:#f8fafc;
-      border:1px solid #cbd5e1;
-      border-radius:10px;
-      padding:12px;
-      text-align:center;
-    ">
-      <strong>📦 Latest Blockchain Transaction</strong><br><br>
+<div style="
+background:#1E293B;
+border:1px solid #334155;
+border-radius:16px;
+padding:18px;
+text-align:center;
+box-shadow:0 8px 20px rgba(0,0,0,.25);
+">
 
-      <a href="${explorer}" target="_blank">
-        <button style="
-          width:100%;
-          padding:12px;
-          background:#2563eb;
-          color:white;
-          border:none;
-          border-radius:8px;
-          cursor:pointer;
-        ">
-          🔗 View on ArcScan
-        </button>
-      </a>
-    </div>
-  `;
+<h3 style="
+color:#ffffff;
+margin:0 0 12px 0;
+">
+📦 Latest Blockchain Transaction
+</h3>
+
+<p style="
+color:#94a3b8;
+font-size:13px;
+word-break:break-all;
+margin-bottom:16px;
+">
+${txHash}
+</p>
+
+<a href="${explorer}" target="_blank">
+<button style="
+width:100%;
+padding:14px;
+background:linear-gradient(135deg,#2563eb,#3b82f6);
+color:white;
+border:none;
+border-radius:12px;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+">
+🔗 View on ArcScan
+</button>
+</a>
+
+</div>
+`;
 }
 // ===============================
 // Hospital Bill Payment
