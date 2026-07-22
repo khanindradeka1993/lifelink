@@ -70,6 +70,8 @@ Functions:
 - Ethers.js
 - Arc Testnet
 - USDC
+- OpenRouter API
+- Vercel
 
 ---
 
@@ -82,6 +84,15 @@ https://lifelink-q73z.vercel.app
 # 🎯 Vision
 
 LifeLink aims to make emergency healthcare faster, transparent, and accessible by using blockchain technology to connect patients, blood donors, hospitals, and emergency responders.
+
+---
+
+## 🎯 Objectives
+
+- Improve emergency response using blockchain technology.
+- Connect blood donors with patients quickly.
+- Increase transparency in healthcare records.
+- Simplify hospital payments using USDC.
 
 ---
 
