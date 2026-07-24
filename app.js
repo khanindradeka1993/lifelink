@@ -1112,19 +1112,36 @@ try {
 
 showExplorerButton(tx.hash);
 
-const donors = await contract.getDonors();
-alert("Total donors on chain: " + donors.length);
-await loadDonors();
+try {
+    const donors = await contract.getDonors();
+    alert("Total donors on chain: " + donors.length);
 
-alert("Donor registered on Arc ❤️");
+    await loadDonors();
+} catch (e) {
+    console.log("Refresh failed:", e);
+}
+
+alert("✅ Donor registered on Arc ❤️");
 
 } catch (err) {
 
-  console.log(err);
+    console.log(err);
 
-  alert(err.message);
-console.log(err);
-}
+    if (
+        err.message &&
+        (
+            err.message.includes("429") ||
+            err.message.includes("rate limited") ||
+            err.message.includes("CALL_EXCEPTION")
+        )
+    ) {
+        console.log("Ignoring RPC refresh error.");
+        return;
+    }
+
+    alert(err.message);
+
+  }
 });
 
 // Show donors when page opens
@@ -1234,7 +1251,11 @@ requestBtn.addEventListener("click", async () => {
 
 showExplorerButton(tx.hash);
 
-await loadRequests();
+try {
+    await loadRequests();
+} catch (e) {
+    console.log("Refresh failed:", e);
+}
    document.getElementById("patientName").value = "";
 document.getElementById("requestBloodGroup").selectedIndex = 0;
 document.getElementById("hospital").value = "";
@@ -1381,13 +1402,30 @@ showExplorerButton(tx.hash);
 
 alert("✅ Request marked as fulfilled!");
 
-await loadRequests();
-await loadDonors();
+try {
+    await loadRequests();
+    await loadDonors();
+} catch (e) {
+    console.log("Refresh failed:", e);
+}
 
     } catch (err) {
 
-        console.log(err);
-        alert(err.message);
+    console.log(err);
+
+    if (
+        err.message &&
+        (
+            err.message.includes("429") ||
+            err.message.includes("rate limited") ||
+            err.message.includes("CALL_EXCEPTION")
+        )
+    ) {
+        console.log("Ignoring RPC refresh error.");
+        return;
+    }
+
+    alert(err.message);
 
     }
 
