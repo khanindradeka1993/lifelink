@@ -1454,7 +1454,7 @@ chatBox.innerHTML += `
 </div>`;
 
 chatBox.innerHTML += `
-<div id="loading" style="margin:10px 0;color:#666;">
+<div id="loading" style="margin:10px 0;color:#CBD5E1;">
 🤖 Thinking...
 </div>`;
 
@@ -1475,7 +1475,7 @@ try {
 
   chatBox.innerHTML += `
 <div style="text-align:left;margin:10px 0;">
-  <div style="display:inline-block;background:#f1f5f9;padding:10px 15px;border-radius:15px;max-width:80%;">
+  <div style="display:inline-block;background:#1E293B;color:#FFFFFF;padding:10px 15px;border-radius:15px;border:1px solid #475569;max-width:80%;">
     🤖 ${data.reply}
   </div>
 </div>`;
