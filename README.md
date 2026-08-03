@@ -46,7 +46,7 @@ LifeLinkDonor     LifeLinkHealthcare   LifeLinkEmergency
                 ▼                      ▼
          LifeLinkPayment        OpenRouter AI
              (USDC)          Emergency Assistant
-```
+---
 
 # ⚙️ Smart Contracts
 
