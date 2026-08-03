@@ -449,10 +449,3 @@ button{
     gap:25px;
 }
 }
-
-/* SOS Card Shadow */
-#sosSection{
-    display:block;
-    padding-top:25px;
-    box-shadow:0 -12px 30px rgba(37,99,235,.25);
-}
