@@ -5,6 +5,29 @@
 LifeLink helps connect blood donors, patients, hospitals, doctors, and ambulances through blockchain technology, enabling faster emergency response and transparent healthcare services.
 
 ---
+## 🏗️ System Architecture
+
+```
+                    LifeLink Frontend
+             (HTML • CSS • JavaScript)
+                        │
+                        ▼
+                 MetaMask Wallet
+                        │
+                        ▼
+                  Arc Testnet
+                        │
+ ┌──────────────────────┼──────────────────────┐
+ │                      │                      │
+ ▼                      ▼                      ▼
+LifeLinkDonor     LifeLinkHealthcare   LifeLinkEmergency
+ │                      │                      │
+ │                      │                      │
+ └──────────────┬───────┴──────────────┐
+                ▼                      ▼
+         LifeLinkPayment        OpenRouter AI
+             (USDC)          Emergency Assistant
+```
 
 # 🚀 Features
 
