@@ -382,3 +382,62 @@ button{
     margin-top:15px;
     border:2px solid #2563eb;
 }
+/* =====================================
+   Desktop Responsive Layout
+===================================== */
+
+@media screen and (min-width: 992px){
+
+    body{
+        padding:40px;
+    }
+
+    .container{
+        max-width:1400px;
+        width:95%;
+        margin:auto;
+    }
+
+    .heroCard{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:30px;
+    }
+
+    .card,
+    .request-card,
+    .donor-card,
+    .dashboard-card,
+    .analytics-card,
+    .ai-card,
+    .payment-card,
+    .profile-card,
+    .ambulance-card,
+    .emergency-card{
+        width:100%;
+    }
+
+    input,
+    select,
+    textarea,
+    button{
+        font-size:17px;
+    }
+
+    #map{
+        height:500px;
+    }
+
+    h1{
+        font-size:52px;
+    }
+
+    h2{
+        font-size:32px;
+    }
+
+    p{
+        font-size:17px;
+    }
+}
