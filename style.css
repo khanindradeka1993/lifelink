@@ -382,6 +382,9 @@ button{
     margin-top:15px;
     border:2px solid #2563eb;
 }
+.dashboard-grid{
+    display:block;
+}
 /* =====================================
    Desktop Responsive Layout
 ===================================== */
@@ -442,7 +445,7 @@ button{
     }
 .dashboard-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(420px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
     gap:25px;
 }
 }
