@@ -5,6 +5,25 @@
 LifeLink helps connect blood donors, patients, hospitals, doctors, and ambulances through blockchain technology, enabling faster emergency response and transparent healthcare services.
 
 ---
+
+# 🚀 Features
+
+- 🩸 Blood Donor Registration
+- 🔍 Search Blood Donors
+- 🗺️ Nearby Blood Donor Map
+- 🚨 Emergency SOS Requests
+- 🚑 Ambulance Request System
+- 👨‍⚕️ Doctor Portal
+- 🏥 Hospital Dashboard
+- 📊 Healthcare Analytics Dashboard
+- 🤖 AI Emergency Assistant
+- 💳 Hospital Bill Payment with USDC
+- 👤 Health Profile
+- 🔗 Wallet Integration
+- 📦 Blockchain Transaction History
+
+---
+
 ## 🏗️ System Architecture
 
 ```
@@ -28,24 +47,6 @@ LifeLinkDonor     LifeLinkHealthcare   LifeLinkEmergency
          LifeLinkPayment        OpenRouter AI
              (USDC)          Emergency Assistant
 ```
-
-# 🚀 Features
-
-- 🩸 Blood Donor Registration
-- 🔍 Search Blood Donors
-- 🗺️ Nearby Blood Donor Map
-- 🚨 Emergency SOS Requests
-- 🚑 Ambulance Request System
-- 👨‍⚕️ Doctor Portal
-- 🏥 Hospital Dashboard
-- 📊 Healthcare Analytics Dashboard
-- 🤖 AI Emergency Assistant
-- 💳 Hospital Bill Payment with USDC
-- 👤 Health Profile
-- 🔗 Wallet Integration
-- 📦 Blockchain Transaction History
-
----
 
 # ⚙️ Smart Contracts
 
