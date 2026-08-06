@@ -452,3 +452,50 @@ margin-bottom:0;
 .dashboard-grid > .card{
     height:100%;
 }
+/* =====================================================
+   LifeLink V2 Desktop Dashboard
+=====================================================*/
+}
+@media (min-width:1200px){
+
+.container{
+    max-width:1700px;
+    width:96%;
+    margin:auto;
+}
+
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:28px;
+    align-items:start;
+}
+
+.card{
+    margin:0;
+    height:100%;
+}
+
+.full-width{
+    grid-column:1 / -1;
+}
+
+.section-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:28px;
+}
+
+#map{
+    height:520px;
+}
+
+.hero{
+    margin-bottom:40px;
+}
+
+button{
+    width:100%;
+}
+
+}
