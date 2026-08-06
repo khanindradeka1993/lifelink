@@ -418,7 +418,8 @@ button{
     .profile-card,
     .ambulance-card,
     .emergency-card{
-        width:100%;
+        width:auto;
+margin-bottom:0;
     }
 
     input,
@@ -445,7 +446,9 @@ button{
     }
 .dashboard-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(420px,1fr));
     gap:25px;
 }
+.dashboard-grid > .card{
+    height:100%;
 }
