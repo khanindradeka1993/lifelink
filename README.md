@@ -1,237 +1,209 @@
+<div align="center">
+
 # ❤️ LifeLink
 
-A decentralized emergency healthcare platform built on **Arc Testnet** that connects blood donors, patients, hospitals, and emergency responders using blockchain technology.
+### Decentralized Emergency Healthcare Network
 
-LifeLink helps reduce emergency response time by securely storing donor information, emergency requests, healthcare records, and healthcare payments on-chain.
+**Built on Arc Testnet**
+
+Connecting **Patients • Blood Donors • Doctors • Hospitals • Emergency Responders** through blockchain technology.
+
+🌐 **Live Demo**  
+https://lifelink-q73z.vercel.app
+
+💻 **GitHub Repository**  
+https://github.com/khanindradeka1993/lifelink
+
+![Arc Testnet](https://img.shields.io/badge/Network-Arc%20Testnet-2563EB?style=for-the-badge)
+![Solidity](https://img.shields.io/badge/Solidity-0.8.x-363636?style=for-the-badge)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?style=for-the-badge)
+![Ethers.js](https://img.shields.io/badge/Ethers.js-v5-3C3C3D?style=for-the-badge)
+![USDC](https://img.shields.io/badge/Payments-USDC-2775CA?style=for-the-badge)
+![OpenRouter AI](https://img.shields.io/badge/AI-OpenRouter-8B5CF6?style=for-the-badge)
+
+</div>
 
 ---
 
-# 🚀 Features
+## ❤️ About LifeLink
 
-- 🩸 Blood Donor Registration
-- 🔍 Search Blood Donors
-- 🗺️ Nearby Blood Donor Map
-- 🆘 Emergency SOS Requests
-- 🚑 Ambulance Request System
-- 🏥 Doctor Portal
-- 🏥 Hospital Dashboard
-- 📊 Healthcare Analytics Dashboard
-- 🤖 AI Emergency Assistant
-- 💳 Hospital Bill Payment using USDC
-- 👤 Health Profile Management
-- 👛 Wallet Integration
-- ⛓️ Blockchain Transaction History
+LifeLink is a decentralized emergency healthcare network built on **Arc Testnet**. It combines blockchain technology, AI-powered assistance, digital health records, emergency coordination, and USDC payments into one secure platform.
 
+LifeLink enables patients, blood donors, doctors, hospitals, and emergency responders to interact through transparent smart contracts, helping improve emergency response and healthcare accessibility.
 ---
 
-# 🏗️ System Architecture
+# 🌍 The Problem
 
+Healthcare emergencies require immediate action, yet traditional healthcare systems often face delays due to fragmented information and disconnected services.
+
+Common challenges include:
+
+- 🩸 Difficulty finding compatible blood donors quickly
+- 🚑 Delayed emergency response coordination
+- 🏥 Limited access to patient health records
+- 💳 Slow and fragmented healthcare payment systems
+- 📄 Medical records stored across multiple platforms
+- 🔍 Limited transparency during emergency situations
+
+These challenges can delay critical treatment when every second matters.
+---
+
+# 💡 Our Solution
+
+LifeLink is a decentralized emergency healthcare platform built on **Arc Testnet** that connects patients, blood donors, doctors, hospitals, and emergency responders through blockchain technology.
+
+LifeLink provides:
+
+- 🩸 Instant blood donor registration and search
+- 🚨 Blockchain-powered SOS emergency requests
+- 🚑 Emergency ambulance request system
+- 🤖 AI emergency first-aid assistant
+- 👨‍⚕️ Doctor portal to access patient health records
+- 🩺 Secure on-chain health profile storage
+- 💳 USDC hospital bill payments
+- 🗺️ Nearby donor map with real-time locations
+- 📊 Live healthcare analytics dashboard
+
+Every action is recorded on-chain using smart contracts, providing transparency, security, and trust.
+---
+
+# ✨ Key Features
+
+| Feature | Description |
+|---------|-------------|
+| 🩸 Blood Donor Registration | Register as a blood donor directly on the blockchain. |
+| 🔍 Donor Search | Find compatible blood donors by blood group and city. |
+| 🗺️ Nearby Donor Map | View nearby registered donors on an interactive map. |
+| 🚨 SOS Emergency Request | Broadcast urgent blood requests to the network instantly. |
+| 🚑 Emergency Ambulance | Request emergency ambulance services on-chain. |
+| 🩺 Digital Health Profile | Store and manage personal medical information securely. |
+| 👨‍⚕️ Doctor Portal | Doctors can retrieve patient records using wallet addresses. |
+| 🤖 AI Emergency Assistant | Receive instant AI-powered first-aid guidance during emergencies. |
+| 💳 Hospital Bill Payment | Pay hospital bills securely using USDC on Arc Testnet. |
+| 📊 Analytics Dashboard | Monitor donors, emergency requests, SOS activity, and network statistics in real time. |
+| 🔐 Blockchain Security | Smart contracts provide transparency, security, and immutable records. |
+---
+
+# 📱 Application Workflow
+
+```text
+Connect Wallet
+       │
+       ▼
+Choose a Feature
+       │
+       ├── 🩸 Register as Blood Donor
+       │
+       ├── 🔍 Search Nearby Donors
+       │
+       ├── 🚨 Create SOS Emergency Request
+       │
+       ├── 🚑 Request Emergency Ambulance
+       │
+       ├── 🩺 Create Health Profile
+       │
+       ├── 👨‍⚕️ Doctor Searches Patient Record
+       │
+       ├── 🤖 Ask AI Emergency Assistant
+       │
+       └── 💳 Pay Hospital Bill with USDC
 ```
-                 LifeLink Frontend
-          (HTML • CSS • JavaScript)
-                     │
-                     ▼
-               MetaMask Wallet
-                     │
-                     ▼
-                 Arc Testnet
-                     │
- ┌───────────────────┼───────────────────┐
- │                   │                   │
- ▼                   ▼                   ▼
-LifeLinkDonor   LifeLinkHealthcare  LifeLinkEmergency
- │                   │                   │
- └──────────────┬────┴──────────────┐
-                ▼                   ▼
-         LifeLinkPayment      OpenRouter AI
-            (USDC)         Emergency Assistant
-```
 
+Every interaction is securely recorded using smart contracts deployed on **Arc Testnet**, ensuring transparency, reliability, and trust.
 ---
 
-# 🔄 Core Workflow
+# 📸 Application Screenshots
 
-1. User connects MetaMask wallet.
-2. Blood donors register on-chain.
-3. Patients search compatible nearby donors.
-4. Nearby Donor Map displays matching donors.
-5. Emergency blood requests are stored on-chain.
-6. Ambulance requests are created for emergency response.
-7. AI Assistant provides first-aid guidance.
-8. Hospital bills can be paid using USDC.
-9. All important healthcare actions remain transparent on Arc Testnet.
+> Below are some screenshots showcasing the LifeLink application interface and core features.
 
----
+### 🏠 Home Dashboard
 
-# ⚙️ Smart Contracts
+![Home Dashboard](screenshots/dashboard.png)
 
-## 1. ❤️ LifeLinkDonor
+### 🩸 Blood Donor Registration
 
-**Address**
+![Blood Donor Registration](screenshots/donor-registration.png)
 
-`0x3e4c9Ec9598A507707d08Fd847Fe9909F2bb91AB`
+### 🔍 Search Donors & Nearby Donor Map
 
-### Purpose
+![Search Donors](screenshots/search-donor.png)
 
-Core contract responsible for blood donor management and emergency blood requests.
+![Nearby Donor Map](screenshots/donor-map.png)
 
-### Functions
+### 🚨 SOS Emergency Request
 
-- ❤️ Register Blood Donors
-- 🔍 Search Blood Donors
-- 🗺️ Nearby Blood Donor Map
-- 🩸 Create Blood Requests
-- ✅ Donor Availability Management
+![SOS Emergency](screenshots/sos-request.png)
 
----
+### 🚑 Emergency Ambulance
 
-## 2. 🏥 LifeLinkHealthcare
+![Emergency Ambulance](screenshots/ambulance.png)
 
-**Address**
+### 🩺 Health Profile
 
-`0xE32313e236784f57a7479a830E4a9c0ce22d0761`
+![Health Profile](screenshots/health-profile.png)
 
-### Purpose
+### 👨‍⚕️ Doctor Portal
 
-Stores healthcare profiles and supports future doctor and hospital integrations.
+![Doctor Portal](screenshots/doctor-portal.png)
 
-### Functions
+### 🤖 AI Emergency Assistant
 
-- Store Health Profiles
-- Healthcare Record Management
-- Hospital Support
+![AI Assistant](screenshots/ai-assistant.png)
 
----
+### 💳 Hospital Bill Payment
 
-## 3. 🚑 LifeLinkEmergency
-
-**Address**
-
-`0x8d1183f802b5688e5244a493Ea965e856150c2Ef`
-
-### Purpose
-
-Handles emergency response coordination.
-
-### Functions
-
-- SOS Requests
-- Ambulance Request System
-- Emergency Coordination
-
----
-
-## 4. 💳 LifeLinkPayment
-
-**Address**
-
-`0x0CA164a6FE7FfEA47945761748D77cd0aa16Afb1`
-
-### Purpose
-
-Processes healthcare payments using USDC on Arc Testnet.
-
-### Functions
-
-- Hospital Payments
-- USDC Transactions
-- Payment Records
-
+![Hospital Bill Payment](screenshots/hospital-payment.png)
 ---
 
 # 🛠️ Tech Stack
 
-- Solidity
-- HTML
-- CSS
-- JavaScript
-- Ethers.js
-- Arc Testnet
-- MetaMask
-- USDC
-- OpenRouter API
-- Vercel
-
+| Category | Technology |
+|----------|------------|
+| Blockchain | Arc Testnet |
+| Smart Contracts | Solidity |
+| Wallet | MetaMask |
+| Frontend | HTML5, CSS3, JavaScript |
+| Web3 Library | Ethers.js |
+| Maps | Leaflet.js + OpenStreetMap |
+| AI Assistant | OpenRouter AI API |
+| Payments | USDC |
+| Deployment | Vercel |
+| Version Control | Git & GitHub |
 ---
 
-# 🌐 Live Demo
+# 📜 Smart Contracts
 
-https://lifelink-q73z.vercel.app
+LifeLink uses multiple smart contracts deployed on **Arc Testnet**.
 
+| Contract | Purpose |
+|----------|---------|
+| 🩸 Blood Donor Contract | Blood donor registration and emergency requests |
+| 🩺 Healthcare Contract | On-chain patient health profiles |
+| 🚑 Emergency Contract | Ambulance requests and emergency coordination |
+| 💳 Payment Contract | Secure USDC hospital bill payments |
 ---
 
-# 🎯 Vision
+# 📂 Project Structure
 
-LifeLink aims to make emergency healthcare faster, transparent, and accessible by using blockchain technology to connect patients, blood donors, hospitals, doctors, and emergency responders.
-
----
-
-# 🎯 Objectives
-
-- Improve emergency response using blockchain.
-- Connect blood donors with patients quickly.
-- Enable nearby donor discovery.
-- Improve transparency in healthcare.
-- Simplify healthcare payments using USDC.
-- Build a decentralized healthcare ecosystem on Arc.
+```text
+LifeLink/
+│
+├── index.html
+├── style.css
+├── app.js
+├── README.md
+└── screenshots/
+```
 
 ---
 
 # 🚀 Roadmap
 
-## ✅ Completed
-
-- Blood Donor Registry
-- Blood Search
-- Nearby Donor Map
-- Blood Request System
-- Ambulance Request System
-- Healthcare Dashboard
-- Doctor Portal
-- AI Emergency Assistant
-- Hospital Payment
-- Smart Contract Verification
-
-## 🔄 In Progress
-
-- Circle Wallet Stack Integration
-- Better Desktop Layout
-- Emergency Notifications
-- Hospital Dashboard Improvements
-- Doctor Dashboard Improvements
-
-## 🎯 Future
-
-- Mainnet Deployment
-- Multi-language Support
-- Hospital Network Expansion
-- Emergency Analytics
-- Mobile Application
-
----
-
-# 💡 Community Feedback
-
-Current improvements based on Arc community feedback:
-
-- Add Circle Wallet Stack for email/passkey login.
-- Improve desktop responsiveness.
-- Expand project documentation.
-- Continue polishing the user experience.
-
----
-
-# 🔗 Built on Arc
-
-LifeLink is built on **Arc Testnet** using verified Solidity smart contracts and integrates USDC-based healthcare payments to demonstrate real-world blockchain healthcare use cases.
-
----
-
-# 🚀 Project Status
-
-**Working Prototype**
-
-Core healthcare features have been implemented and deployed on Arc Testnet. The project is actively being improved based on feedback from the Arc community.
+- 🌐 Deploy LifeLink on Arc Mainnet from Day One when Arc Mainnet launches.
+- 🔐 Complete Circle User-Controlled Wallet integration.
+- 📱 Continue improving the mobile experience and application performance.
+- 🏥 Expand LifeLink adoption among hospitals, doctors, blood donors, and emergency responders.
+- 🌍 Make decentralized emergency healthcare accessible to communities worldwide.
 
 ---
 
@@ -239,10 +211,21 @@ Core healthcare features have been implemented and deployed on Arc Testnet. The 
 
 **Khanindra Deka**
 
-Independent Builder
+Passionate Web3 builder creating decentralized healthcare solutions on **Arc Testnet**.
 
-GitHub:
-https://github.com/khanindradeka1993/lifelink
+- **GitHub:** https://github.com/khanindradeka1993
+- **X (Twitter):** https://x.com/khanindradeka20
 
-X:
-https://x.com/khanindradeka20
+---
+
+# 📄 License
+
+This project is released under the **MIT License**.
+
+---
+
+# ❤️ Support the Project
+
+If you find **LifeLink** useful, please ⭐ star this repository and share your feedback.
+
+Together, we can build a faster, more transparent, and decentralized emergency healthcare network powered by blockchain.
