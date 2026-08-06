@@ -183,16 +183,18 @@ LifeLink uses multiple smart contracts deployed on **Arc Testnet**.
 | 💳 Payment Contract | Secure USDC hospital bill payments |
 ---
 
-# 📂 Project Structure
+## 📂 Project Structure
 
 ```text
 LifeLink/
-│
-├── index.html
-├── style.css
-├── app.js
-├── README.md
-└── screenshots/
+│── index.html
+│── style.css
+│── app.js
+│── health-profile.js
+│── README.md
+│── api/
+│   └── emergency-ai.js
+│── screenshots/
 ```
 
 ---
