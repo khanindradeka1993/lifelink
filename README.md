@@ -117,42 +117,33 @@ Every interaction is securely recorded using smart contracts deployed on **Arc T
 > Below are some screenshots showcasing the LifeLink application interface and core features.
 
 ### 🏠 Home Dashboard
-
-![Home Dashboard](screenshots/dashboard.png)
+![Home Dashboard](screenshots/Screenshot_20260806-154716~2.jpg)
 
 ### 🩸 Blood Donor Registration
-
-![Blood Donor Registration](screenshots/donor-registration.png)
+![Blood Donor Registration](screenshots/Screenshot_20260806-154753~2.jpg)
 
 ### 🔍 Search Donors & Nearby Donor Map
+![Search Donors](screenshots/Screenshot_20260806-154810~2.jpg)
 
-![Search Donors](screenshots/search-donor.png)
-
-![Nearby Donor Map](screenshots/donor-map.png)
+![Nearby Donor Map](screenshots/Screenshot_20260806-201935~2.jpg)
 
 ### 🚨 SOS Emergency Request
-
-![SOS Emergency](screenshots/sos-request.png)
+![SOS Emergency](screenshots/Screenshot_20260806-154824~2.jpg)
 
 ### 🚑 Emergency Ambulance
-
-![Emergency Ambulance](screenshots/ambulance.png)
+![Emergency Ambulance](screenshots/Screenshot_20260806-154855~2.jpg)
 
 ### 🩺 Health Profile
-
-![Health Profile](screenshots/health-profile.png)
+![Health Profile](screenshots/Screenshot_20260806-154850~2.jpg)
 
 ### 👨‍⚕️ Doctor Portal
-
-![Doctor Portal](screenshots/doctor-portal.png)
+![Doctor Portal](screenshots/Screenshot_20260806-154902~2.jpg)
 
 ### 🤖 AI Emergency Assistant
-
-![AI Assistant](screenshots/ai-assistant.png)
+![AI Assistant](screenshots/Screenshot_20260806-154841~2.jpg)
 
 ### 💳 Hospital Bill Payment
-
-![Hospital Bill Payment](screenshots/hospital-payment.png)
+![Hospital Bill Payment](screenshots/Screenshot_20260806-154845~2.jpg)
 ---
 
 # 🛠️ Tech Stack
