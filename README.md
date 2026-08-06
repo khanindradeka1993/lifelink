@@ -123,7 +123,7 @@ Every interaction is securely recorded using smart contracts deployed on **Arc T
 ![Blood Donor Registration](screenshots/Screenshot_20260806-154753~2.jpg)
 
 ### 🔍 Search Donors & Nearby Donor Map
-![Search Donors](screenshots/Screenshot_20260806-154810~2.jpg)
+![Search Donors](screenshots/Screenshot_20260806-154810~3.jpg)
 
 ![Nearby Donor Map](screenshots/Screenshot_20260806-201935~2.jpg)
 
