@@ -495,24 +495,3 @@ button{
 }
 
 }
-.desktop-row{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:28px;
-    margin-bottom:28px;
-}
-
-.desktop-row .card{
-    margin-bottom:0;
-    height:100%;
-}
-
-@media (max-width:1199px){
-    .desktop-row{
-        display:block;
-    }
-
-    .desktop-row .card{
-        margin-bottom:25px;
-    }
-}
