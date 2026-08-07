@@ -202,7 +202,8 @@ cursor:pointer;
 </div> <!-- Close Quick Actions grid -->
 
 <div class="desktop-dashboard">
-    <div id="registerSection" class="card" style="
+ <div class="left-column">
+  <div id="registerSection" class="card" style="
 background:#ffffff;
 border-radius:22px;
 padding:25px;
@@ -328,7 +329,10 @@ box-shadow:0 8px 20px rgba(34,197,94,.35);
 </button>
 <div id="searchResults"></div>
 </div>
-<div class="card">
+</div> <!-- left-column -->
+
+<div class="right-column">
+   <div class="card">
     <h2>🗺️ Nearby Donor Map</h2>
     <div id="map"></div>
 </div>
@@ -836,7 +840,8 @@ cursor:pointer;
         <p><b>🏠 Address:</b> <span id="viewAddress"></span></p>
     </div>
 </div> <!-- doctorSection -->
-</div> <!-- dashboard-grid -->
+</div> <!-- right-column -->
+</div> <!-- desktop-dashboard -->
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="health-profile.js"></script>
