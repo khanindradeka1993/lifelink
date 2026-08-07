@@ -464,12 +464,13 @@ margin-bottom:0;
     margin:auto;
 }
 
-.desktop-dashboard{
+  .desktop-dashboard{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:30px;
     align-items:start;
-}
+    grid-auto-flow:row;
+  }
 
 .left-column,
 .right-column{
