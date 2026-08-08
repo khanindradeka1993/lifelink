@@ -386,40 +386,106 @@ button{
     display:block;
 }
 /* =====================================
-   Desktop Responsive Layout
+   LifeLink Desktop Layout — Fixed
+   Mobile/base styles above remain unchanged.
 ===================================== */
 
 @media screen and (min-width: 992px){
 
     body{
-        padding:40px;
+        padding:32px 40px 50px;
     }
 
     .container{
-        max-width:1400px;
-        width:95%;
-        margin:auto;
+        width:100%;
+          max-width:1600px;
+        margin:0 auto;
+    }
+
+    .hero{
+        max-width:1200px;
+        margin:0 auto 35px;
+    }
+
+    .hero h1{
+        font-size:52px;
+    }
+
+    .hero h3{
+        font-size:22px;
+    }
+
+    .hero p{
+        font-size:17px;
     }
 
     .heroCard{
+        width:100%;
         display:flex;
         justify-content:space-between;
         align-items:center;
-        gap:30px;
+        gap:40px;
     }
 
-    .card,
-    .request-card,
-    .donor-card,
-    .dashboard-card,
-    .analytics-card,
-    .ai-card,
-    .payment-card,
-    .profile-card,
-    .ambulance-card,
-    .emergency-card{
-        width:auto;
-margin-bottom:0;
+    /* Quick actions use the available desktop width */
+    .quick-actions,
+    .quick-actions-grid,
+    .dashboard-grid{
+        width:100%;
+    }
+
+    .dashboard-grid{
+        display:grid;
+        grid-template-columns:repeat(3, minmax(0, 1fr));
+        gap:24px;
+    }
+
+    /* Main dashboard: genuine two-column web layout */
+    .desktop-dashboard{
+        width:100%;
+        display:grid;
+        grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);
+        gap:28px;
+        align-items:start;
+    }
+
+    .left-column,
+    .right-column{
+        width:100%;
+        min-width:0;
+        display:flex;
+        flex-direction:column;
+        gap:28px;
+    }
+
+    .left-column > .card,
+    .right-column > .card,
+    .left-column > .request-card,
+    .right-column > .request-card,
+    .left-column > .donor-card,
+    .right-column > .donor-card,
+    .left-column > .dashboard-card,
+    .right-column > .dashboard-card,
+    .left-column > .analytics-card,
+    .right-column > .analytics-card,
+    .left-column > .ai-card,
+    .right-column > .ai-card,
+    .left-column > .payment-card,
+    .right-column > .payment-card,
+    .left-column > .profile-card,
+    .right-column > .profile-card,
+    .left-column > .ambulance-card,
+    .right-column > .ambulance-card,
+    .left-column > .emergency-card,
+    .right-column > .emergency-card{
+        width:100%;
+        min-width:0;
+        margin-top:0;
+        margin-bottom:0;
+    }
+
+    .card{
+        width:100%;
     }
 
     input,
@@ -429,8 +495,13 @@ margin-bottom:0;
         font-size:17px;
     }
 
+    button{
+        width:100%;
+    }
+
     #map{
-        height:500px;
+        width:100%;
+        height:520px;
     }
 
     h1{
@@ -444,61 +515,64 @@ margin-bottom:0;
     p{
         font-size:17px;
     }
-.dashboard-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(420px,1fr));
-    gap:25px;
-}
-.dashboard-grid > .card{
-    height:100%;
-}
-/* =====================================================
-   LifeLink V2 Desktop Dashboard
-=====================================================*/
-}
-@media (min-width:1200px){
-
-.container{
-    max-width:1700px;
-    width:96%;
-    margin:auto;
 }
 
-  .desktop-dashboard{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:30px;
-    align-items:start;
-    grid-auto-flow:row;
-  }
+/* =====================================
+   Large Desktop
+===================================== */
 
-.left-column,
-.right-column{
-    display:flex;
-    flex-direction:column;
-    gap:30px;
-    width:100%;
+@media screen and (min-width: 1200px){
+
+    body{
+        padding-left:50px;
+        padding-right:50px;
+    }
+
+    .container{
+        max-width:1750px;
+    }
+
+    .desktop-dashboard{
+        grid-template-columns:minmax(0, 1.05fr) minmax(0, 0.95fr);
+        gap:32px;
+    }
+
+    .left-column,
+    .right-column{
+        gap:32px;
+    }
+
+    .dashboard-grid{
+        grid-template-columns:repeat(3, minmax(0, 1fr));
+        gap:28px;
+    }
+
+    #map{
+        height:560px;
+    }
 }
 
-.left-column .card,
-.right-column .card{
-    width:100%;
-}
+/* =====================================
+   Extra Wide Desktop
+===================================== */
 
-  .card{
-    margin-bottom:0;
-}
+@media screen and (min-width: 1500px){
 
-#map{
-    height:550px;
-}
+    .container{
+        max-width:1850px;
+    }
 
-.hero{
-    margin-bottom:40px;
-}
+    .desktop-dashboard{
+        grid-template-columns:minmax(0, 1.1fr) minmax(0, 0.9fr);
+        gap:36px;
+    }
 
-button{
-    width:100%;
-}
+    .left-column,
+    .right-column{
+        gap:36px;
+    }
 
+    .dashboard-grid{
+        grid-template-columns:repeat(4, minmax(0, 1fr));
+    }
 }
