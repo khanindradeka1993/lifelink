@@ -551,3 +551,66 @@ footer{
     gap: 20px !important;
   }
 }
+
+/* LifeLink — Desktop Auto Gap-Fill / Masonry-Style Polish */
+
+@media (min-width: 900px) {
+  .desktop-dashboard {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-auto-flow: row dense !important;
+    align-items: start !important;
+    align-content: start !important;
+    column-gap: 24px !important;
+    row-gap: 24px !important;
+  }
+
+  .desktop-dashboard > .left-column,
+  .desktop-dashboard > .right-column {
+    display: contents !important;
+  }
+
+  .desktop-dashboard > .left-column > .card,
+  .desktop-dashboard > .right-column > .card {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    align-self: start !important;
+    box-sizing: border-box !important;
+    height: fit-content !important;
+  }
+
+  .desktop-dashboard #map {
+    width: 100% !important;
+    min-height: 420px !important;
+  }
+}
+
+@media (min-width: 700px) and (max-width: 899px) {
+  .desktop-dashboard {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 20px !important;
+  }
+
+  .desktop-dashboard > .left-column,
+  .desktop-dashboard > .right-column {
+    display: contents !important;
+  }
+}
+
+@media (max-width: 699px) {
+  .desktop-dashboard {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .desktop-dashboard > .left-column,
+  .desktop-dashboard > .right-column {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+}
