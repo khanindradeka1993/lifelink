@@ -503,3 +503,51 @@ footer{
     grid-template-columns: 1fr !important;
   }
 }
+
+/* =========================================================
+   LIFELINK - FINAL DESKTOP CARD FLOW FIX
+   Makes left/right column wrappers transparent on desktop
+   so ALL cards flow naturally across the 2-column grid.
+   ========================================================= */
+
+@media (min-width: 900px) {
+
+  .desktop-dashboard {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 22px !important;
+    align-items: start !important;
+  }
+
+  /* Remove the artificial two-column containers.
+     Their cards become direct grid items. */
+  .desktop-dashboard > .left-column,
+  .desktop-dashboard > .right-column {
+    display: contents !important;
+  }
+
+  /* Every card becomes an individual grid item */
+  .desktop-dashboard .card {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* Keep normal single-column layout on smaller screens */
+@media (max-width: 899px) {
+
+  .desktop-dashboard {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .left-column,
+  .right-column {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+}
