@@ -1786,28 +1786,3 @@ document.querySelectorAll(".quick-action").forEach(button => {
         }
     });
 });
-const sdkTest = document.createElement("div");
-
-sdkTest.style.cssText = `
-  position:fixed;
-  bottom:20px;
-  left:20px;
-  right:20px;
-  padding:15px;
-  background:#1e293b;
-  color:white;
-  border-radius:12px;
-  text-align:center;
-  font-weight:bold;
-  z-index:99999;
-`;
-
-if (typeof W3SSdk !== "undefined") {
-  sdkTest.innerHTML = "✅ Circle Web3 SDK Loaded";
-  sdkTest.style.background = "#16a34a";
-} else {
-  sdkTest.innerHTML = "❌ Circle Web3 SDK NOT Loaded";
-  sdkTest.style.background = "#dc2626";
-}
-
-document.body.appendChild(sdkTest);
