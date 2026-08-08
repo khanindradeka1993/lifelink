@@ -98,7 +98,7 @@ color:white;
 text-shadow:0 2px 8px rgba(0,0,0,.2);
 ">
 0
-</h1>
+  </h1>
 </div>
 
 <div style="
@@ -199,10 +199,11 @@ cursor:pointer;
 🩺<br><small>Doctor</small>
 </div>
 
-</div> <!-- Close Quick Actions grid -->
+  </div> <!-- Close Quick Actions grid -->
 
 <div class="desktop-dashboard">
- <div class="left-column">
+  <div class="left-column">
+
   <div id="registerSection" class="card" style="
 background:#ffffff;
 border-radius:22px;
@@ -277,7 +278,9 @@ cursor:pointer;
 <div id="donorList"></div>
 
 <hr style="margin:20px 0;">
+</div>
 
+<div class="card">
 <h2 id="searchSection" style="
 display:flex;
 align-items:center;
@@ -295,7 +298,7 @@ margin-top:-10px;
 margin-bottom:20px;
 font-size:15px;
 ">
-Find nearby blood donors instantly.
+  Find nearby blood donors instantly.
 </p>
 <select id="searchBloodGroup">
   <option value="">Select Blood Group</option>
@@ -329,10 +332,12 @@ box-shadow:0 8px 20px rgba(34,197,94,.35);
 </button>
 <div id="searchResults"></div>
 </div>
-</div> <!-- left-column -->
 
-<div class="right-column">
-  <div class="card">
+
+  </div> <!-- left-column -->
+
+  <div class="right-column">
+<div class="card">
     <h2>🗺️ Nearby Donor Map</h2>
     <div id="map"></div>
 </div>
@@ -393,7 +398,7 @@ placeholder="Contact Number">
 <button id="requestBtn" style="
 width:100%;
 background:#2563eb;
-color:white;
+  color:white;
 border:none;
 padding:12px;
 border-radius:8px;
@@ -493,7 +498,7 @@ Real-time insights from the LifeLink healthcare network.
 <span id="totalSOS">0</span>
 </div>
 
-<hr>
+  <hr>
 </div>
   
 <div id="aiSection" class="card">
@@ -593,8 +598,8 @@ Pay hospital bills securely using USDC on Arc Testnet.
   id="hospitalWallet"
   placeholder="Hospital Wallet Address (0x...)"
 >
-  
-  <input
+
+    <input
     type="number"
     id="billAmount"
     placeholder="Amount (USDC)"
@@ -840,7 +845,7 @@ cursor:pointer;
         <p><b>🏠 Address:</b> <span id="viewAddress"></span></p>
     </div>
 </div> <!-- doctorSection -->
-</div> <!-- right-column -->
+  </div> <!-- right-column -->
 </div> <!-- desktop-dashboard -->
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
