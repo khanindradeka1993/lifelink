@@ -320,3 +320,186 @@ footer{
     height:340px !important;
   }
 }
+
+/* =========================================================
+   LifeLink — FINAL DESKTOP LAYOUT FIX
+   Add this block at the END of style.css
+   Does not change HTML, JS, contracts, or functionality.
+   ========================================================= */
+
+/* Desktop: use the whole browser width */
+@media (min-width: 900px) {
+
+  html, body {
+    width: 100%;
+    min-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .container {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 28px 32px 40px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Header / hero */
+  .hero {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 0 24px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Login / wallet area */
+  .heroCard,
+  #authSection,
+  .auth-card {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Top statistics */
+  .dashboard {
+    width: 100% !important;
+    max-width: none !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 20px !important;
+    margin: 22px 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Quick action buttons */
+  .quick-actions,
+  .quickActions {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Main two-column desktop area */
+  .desktop-dashboard,
+  .main-grid,
+  .content-grid {
+    width: 100% !important;
+    max-width: none !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 22px !important;
+    align-items: start !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Never let an inner card force the page wider */
+  .desktop-dashboard > *,
+  .main-grid > *,
+  .content-grid > * {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Cards should fill their grid column */
+  .card,
+  .panel,
+  section {
+    box-sizing: border-box !important;
+  }
+
+  /* Maps / iframes / Leaflet */
+  #map,
+  #donorMap,
+  .leaflet-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Forms */
+  input,
+  select,
+  textarea,
+  button {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Prevent accidental right-side overflow */
+  img,
+  iframe,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  /* Footer */
+  footer {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* Medium laptop / tablet */
+@media (min-width: 700px) and (max-width: 899px) {
+
+  .container {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+  }
+
+  .dashboard {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .quick-actions,
+  .quickActions {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .desktop-dashboard,
+  .main-grid,
+  .content-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Phones: keep the responsive mobile layout */
+@media (max-width: 699px) {
+
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 14px !important;
+    box-sizing: border-box !important;
+  }
+
+  .dashboard {
+    grid-template-columns: 1fr !important;
+  }
+
+  .quick-actions,
+  .quickActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .desktop-dashboard,
+  .main-grid,
+  .content-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
