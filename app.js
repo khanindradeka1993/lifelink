@@ -1,4 +1,3 @@
-import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
 const CONTRACT_ADDRESS =
 "0x3e4c9Ec9598A507707d08Fd847Fe9909F2bb91AB";
 const HEALTHCARE_CONTRACT_ADDRESS =
