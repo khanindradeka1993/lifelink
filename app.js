@@ -1786,3 +1786,4 @@ document.querySelectorAll(".quick-action").forEach(button => {
         }
     });
 });
+console.log("Circle SDK:", typeof W3SSdk);
