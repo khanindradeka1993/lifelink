@@ -1,0 +1,19 @@
+{
+  "name": "lifelink",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@circle-fin/w3s-pw-web-sdk": "^1.1.11",
+    "ethers": "^5.7.2",
+    "leaflet": "^1.9.4"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0"
+  }
+}
