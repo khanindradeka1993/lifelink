@@ -479,3 +479,96 @@ footer{
     height: 340px !important;
   }
 }
+/* =========================================================
+   LIFELINK — FINAL TRUE MASONRY DESKTOP FIX
+   Fixes empty space between cards.
+   No HTML / JS changes.
+   ========================================================= */
+
+@media (min-width: 900px) {
+
+  .desktop-dashboard {
+    width: 100% !important;
+    display: block !important;
+    column-count: 2 !important;
+    column-gap: 24px !important;
+    column-fill: balance !important;
+  }
+
+  /* Make the two old wrappers transparent */
+  .desktop-dashboard > .left-column,
+  .desktop-dashboard > .right-column {
+    display: contents !important;
+  }
+
+  /* Every card becomes a masonry item */
+  .desktop-dashboard .card {
+    width: 100% !important;
+    display: inline-block !important;
+    vertical-align: top !important;
+    box-sizing: border-box !important;
+
+    margin: 0 0 24px 0 !important;
+
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+
+    min-width: 0 !important;
+  }
+
+  /* Keep the map stable */
+  .desktop-dashboard #map {
+    width: 100% !important;
+    height: 500px !important;
+    min-height: 500px !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* Tablet */
+@media (min-width: 700px) and (max-width: 899px) {
+
+  .desktop-dashboard {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 20px !important;
+  }
+
+  .desktop-dashboard > .left-column,
+  .desktop-dashboard > .right-column {
+    display: contents !important;
+  }
+
+  .desktop-dashboard .card {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #map {
+    height: 420px !important;
+  }
+}
+
+/* Phone */
+@media (max-width: 699px) {
+
+  .desktop-dashboard {
+    display: block !important;
+  }
+
+  .desktop-dashboard > .left-column,
+  .desktop-dashboard > .right-column {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+
+  .desktop-dashboard .card {
+    width: 100% !important;
+    margin-bottom: 20px !important;
+  }
+
+  #map {
+    height: 340px !important;
+  }
+}
