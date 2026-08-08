@@ -1,17 +1,26 @@
-import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
-
 const appId = import.meta.env.VITE_CIRCLE_APP_ID;
 
-if (!appId) {
-  console.error("❌ Circle APP ID is missing");
-} else {
-  const circleSdk = new W3SSdk({
-    appSettings: {
-      appId: appId,
-    },
-  });
+async function initializeCircleWallet() {
+  if (!appId) {
+    console.error("❌ Circle App ID is missing");
+    return;
+  }
 
-  window.circleSdk = circleSdk;
+  try {
+    const { W3SSdk } = await import("@circle-fin/w3s-pw-web-sdk");
 
-  console.log("✅ Circle W3S SDK initialized");
+    const circleSdk = new W3SSdk({
+      appSettings: {
+        appId: appId
+      }
+    });
+
+    window.circleSdk = circleSdk;
+
+    console.log("✅ Circle W3S SDK initialized");
+  } catch (error) {
+    console.error("❌ Circle W3S SDK failed to load:", error);
+  }
 }
+
+initializeCircleWallet();
