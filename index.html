@@ -6,921 +6,481 @@
   <title>LifeLink</title>
 
   <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
-  <body>
+<body>
+<div class="container">
 
-  <div class="container">
-
-    <div class="hero">
+  <div class="hero">
 
     <img src="file_00000000b968722fb6f2374889be7c3f.png" class="hero-logo">
 
     <h1>LifeLink</h1>
-
     <h3>Emergency Healthcare Network</h3>
-
     <p>Built on Arc Testnet</p>
 
     <div class="heroCard">
+      <div class="heroLeft">
+        <h2>Save Lives Faster</h2>
+        <p>Connect. Help. Save.</p>
+        <p>Together we can make a difference.</p>
+      </div>
+      <div class="heroRight">🛡️</div>
+    </div>
 
-        <div class="heroLeft">
-            <h2>Save Lives Faster</h2>
-            <p>Connect. Help. Save.</p>
-            <p>Together we can make a difference.</p>
-        </div>
+    <button id="connectBtn">Connect Wallet</button>
+    <button id="googleLoginBtn">Continue with Google</button>
 
-        <div class="heroRight">
-            🛡️
-        </div>
+    <p id="walletAddress" style="
+      margin-top:15px;
+      padding:10px;
+      background:#1E293B;
+      border-radius:10px;
+      font-weight:bold;
+      color:#ffffff;
+      text-align:center;
+    ">Wallet not connected</p>
+
+    <div id="txCard"></div>
+
+    <!-- Top statistics -->
+    <div id="dashboard" style="
+      display:flex;
+      gap:20px;
+      margin:20px 0;
+    ">
+
+      <div style="
+        flex:1;
+        background:linear-gradient(135deg,#2563eb,#3b82f6);
+        box-shadow:0 8px 20px rgba(37,99,235,.25);
+        color:white;
+        padding:20px;
+        min-height:140px;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        border-radius:18px;
+        text-align:center;
+      ">
+        <div style="font-size:30px;">❤️</div>
+        <div style="font-size:14px;opacity:.9;margin-top:8px;">Total Donors</div>
+        <h1 id="totalDonors" style="
+          margin:8px 0 0;
+          font-size:34px;
+          font-weight:800;
+          color:white;
+        ">0</h1>
+      </div>
+
+      <div style="
+        flex:1;
+        background:linear-gradient(135deg,#2563eb,#3b82f6);
+        box-shadow:0 8px 20px rgba(37,99,235,.25);
+        color:white;
+        padding:20px;
+        min-height:140px;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        border-radius:18px;
+        text-align:center;
+      ">
+        <div style="font-size:30px;">🚨</div>
+        <div style="font-size:14px;opacity:.9;margin-top:8px;">Active SOS</div>
+        <h1 id="totalRequests" style="
+          margin:8px 0 0;
+          font-size:34px;
+          font-weight:800;
+          color:white;
+        ">0</h1>
+      </div>
 
     </div>
 
-
-    <button id="connectBtn">
-      Connect Wallet
-    </button>
-<button id="googleLoginBtn">
-    Continue with Google
-</button>
-
-      <p id="walletAddress" style="
-margin-top:15px;
-padding:10px;
-background:#1E293B;
-border-radius:10px;
-font-weight:bold;
-color:#ffffff;
-text-align:center;
-">
-    Wallet not connected
-    </p>
-<div id="txCard"></div>
-      <div id="dashboard" style="
-display:flex;
-gap:10px;
-margin:20px 0;
-">
-
-<div style="
-flex:1;
-background:linear-gradient(135deg,#2563eb,#3b82f6);
-box-shadow:0 8px 20px rgba(37,99,235,0.25);
-color:white;
-padding:20px;
-min-height:140px;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-border-radius:18px;
-text-align:center;
-">
-<div style="font-size:30px;">❤️</div>
-
-<div style="
-font-size:14px;
-opacity:.9;
-margin-top:8px;
-">
-Total Donors
-</div>
-
-<h1 id="totalDonors" style="
-margin:8px 0 0 0;
-font-size:34px;
-font-weight:800;
-color:white;
-text-shadow:0 2px 8px rgba(0,0,0,.2);
-">
-0
-  </h1>
-</div>
-
-<div style="
-flex:1;
-background:linear-gradient(135deg,#2563eb,#3b82f6);
-box-shadow:0 8px 20px rgba(37,99,235,0.25);
-color:white;
-padding:20px;
-min-height:140px;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-border-radius:18px;
-text-align:center;
-">
-<div style="font-size:30px;">🚨</div>
-
-<div style="
-font-size:14px;
-opacity:.9;
-margin-top:8px;
-">
-Active SOS
-</div>
-
-<h1 id="totalRequests" style="
-margin:8px 0 0 0;
-font-size:34px;
-font-weight:800;
-color:white;
-text-shadow:0 2px 8px rgba(0,0,0,.2);
-">
-0
-</h1>
-</div>
-
-</div>
-
+    <!-- Quick Actions -->
     <h2 style="margin:25px 0 15px;">⚡ Quick Actions</h2>
 
-<div style="
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:12px;
-margin-bottom:25px;
-">
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+      margin-bottom:25px;
+    ">
+
+      <div class="quick-action" data-target="registerSection" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;padding:15px;border-radius:18px;text-align:center;cursor:pointer;">
+        🩸<br><small>Register</small>
+      </div>
+
+      <div class="quick-action" data-target="searchSection" style="background:linear-gradient(135deg,#2563eb,#3b82f6);color:white;padding:15px;border-radius:15px;text-align:center;cursor:pointer;">
+        🔍<br><small>Search</small>
+      </div>
+
+      <div class="quick-action" data-target="sosSection" style="background:linear-gradient(135deg,#f97316,#ea580c);color:white;padding:15px;border-radius:15px;text-align:center;cursor:pointer;">
+        🚨<br><small>SOS</small>
+      </div>
+
+      <div class="quick-action" data-target="ambulanceSection" style="background:linear-gradient(135deg,#10b981,#059669);color:white;padding:15px;border-radius:15px;text-align:center;cursor:pointer;">
+        🚑<br><small>Ambulance</small>
+      </div>
+
+      <div class="quick-action" data-target="aiSection" style="background:linear-gradient(135deg,#ec4899,#db2777);color:white;padding:15px;border-radius:15px;text-align:center;cursor:pointer;">
+        🤖<br><small>AI</small>
+      </div>
+
+      <div class="quick-action" data-target="doctorSection" style="background:linear-gradient(135deg,#ef4444,#b91c1c);color:white;padding:15px;border-radius:15px;text-align:center;cursor:pointer;">
+        🩺<br><small>Doctor</small>
+      </div>
 
-<div class="quick-action" data-target="registerSection" style="
-background:linear-gradient(135deg,#8b5cf6,#7c3aed);
-color:white;
-padding:15px;
-border-radius:18px;
-text-align:center;
-box-shadow:0 10px 25px rgba(124,58,237,.45);
-cursor:pointer;
-">
-🩸<br><small>Register</small>
-</div>
-
-<div class="quick-action" data-target="searchSection" style="background:linear-gradient(135deg,#2563eb,#3b82f6);
-color:white;padding:15px;border-radius:15px;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.08);cursor:pointer;">
-🔍<br><small>Search</small>
-</div>
-
-<div class="quick-action" data-target="sosSection" style="background:linear-gradient(135deg,#f97316,#ea580c);
-color:white;padding:15px;border-radius:15px;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.08);cursor:pointer;">
-🚨<br><small>SOS</small>
-</div>
-
-<div class="quick-action" data-target="ambulanceSection" style="background:linear-gradient(135deg,#10b981,#059669);
-color:white;padding:15px;border-radius:15px;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.08);cursor:pointer;">
-🚑<br><small>Ambulance</small>
-</div>
-
-<div class="quick-action" data-target="aiSection" style="
-background:linear-gradient(135deg,#ec4899,#db2777);
-color:white;
-padding:15px;
-border-radius:15px;
-text-align:center;
-box-shadow:0 6px 18px rgba(236,72,153,.35);
-cursor:pointer;
-">
-🤖<br><small>AI</small>
-</div>
-
-<div class="quick-action" data-target="doctorSection" style="
-background:linear-gradient(135deg,#ef4444,#b91c1c);
-color:white;
-padding:15px;
-border-radius:15px;
-text-align:center;
-box-shadow:0 6px 18px rgba(239,68,68,.35);
-border:1px solid rgba(255,255,255,.15);
-cursor:pointer;
-">
-🩺<br><small>Doctor</small>
-</div>
-
-  </div> <!-- Close Quick Actions grid -->
-
-<div class="desktop-dashboard">
-  <div class="left-column">
-
-  <div id="registerSection" class="card" style="
-background:#ffffff;
-border-radius:22px;
-padding:25px;
-box-shadow:0 12px 30px rgba(0,0,0,0.08);
-margin-bottom:25px;
-">
-
-      <h2 style="
-display:flex;
-align-items:center;
-gap:10px;
-color:#dc2626;
-margin-bottom:20px;
-font-size:28px;
-">
-🩸 Blood Donor Registration
-      </h2>
-        <p style="
-margin-top:8px;
-color:#6b7280;
-font-size:15px;
-font-weight:500;
-">
-Register yourself and help save lives.
-</p>
-
-      <input
-        type="text"
-        id="name"
-        placeholder="Your Name"
-      >
-
-      <select id="bloodGroup">
-  <option value="">Select Blood Group</option>
-  <option value="A+">A+</option>
-  <option value="A-">A-</option>
-  <option value="B+">B+</option>
-  <option value="B-">B-</option>
-  <option value="AB+">AB+</option>
-  <option value="AB-">AB-</option>
-  <option value="O+">O+</option>
-  <option value="O-">O-</option>
-</select>
-
-      <input
-        type="text"
-        id="city"
-        placeholder="City"
-      >
-
-      <input
-id="phone"
-type="tel"
-placeholder="Phone Number"
-/>
-      <button id="registerBtn" style="
-width:100%;
-padding:15px;
-border:none;
-border-radius:14px;
-background:linear-gradient(135deg,#2563eb,#3b82f6);
-color:white;
-font-size:18px;
-font-weight:bold;
-box-shadow:0 8px 20px rgba(37,99,235,.3);
-cursor:pointer;
-">
-🩸 Register as Donor
-      </button>
-<h3 style="margin-top:20px;">Registered Donors</h3>
-<div id="donorList"></div>
-
-<hr style="margin:20px 0;">
-</div>
-
-<div class="card">
-<h2 id="searchSection" style="
-display:flex;
-align-items:center;
-gap:10px;
-color:#2563eb;
-margin-bottom:20px;
-font-size:28px;
-">
-🔍 Search Donors
-</h2>
-
-<p style="
-color:#6b7280;
-margin-top:-10px;
-margin-bottom:20px;
-font-size:15px;
-">
-  Find nearby blood donors instantly.
-</p>
-<select id="searchBloodGroup">
-  <option value="">Select Blood Group</option>
-  <option value="A+">A+</option>
-  <option value="A-">A-</option>
-  <option value="B+">B+</option>
-  <option value="B-">B-</option>
-  <option value="AB+">AB+</option>
-  <option value="AB-">AB-</option>
-  <option value="O+">O+</option>
-  <option value="O-">O-</option>
-</select>
-<input
-  type="text"
-  id="searchCity"
-  placeholder="Enter City"
-/>
-<button id="searchBtn" style="
-width:100%;
-background:linear-gradient(135deg,#16a34a,#22c55e);
-color:white;
-padding:16px;
-border:none;
-border-radius:14px;
-font-size:17px;
-font-weight:bold;
-cursor:pointer;
-box-shadow:0 8px 20px rgba(34,197,94,.35);
-">
-📍 Find Nearby Donors
-</button>
-<div id="searchResults"></div>
-</div>
-
-
-  </div> <!-- left-column -->
-
-  <div class="right-column">
-<div class="card">
-    <h2>🗺️ Nearby Donor Map</h2>
-    <div id="map"></div>
-</div>
-
-
-<div class="card">
-<h2 id="sosSection" style="
-display:flex;
-align-items:center;
-gap:10px;
-color:#dc2626;
-font-size:28px;
-margin-bottom:15px;
-">
-🚨 SOS Emergency Request
-</h2>
-
-<p style="
-color:#6b7280;
-margin-top:-5px;
-margin-bottom:20px;
-font-size:15px;
-">
-Request urgent blood assistance from nearby donors.
-</p>
-
-<input
-id="patientName"
-type="text"
-placeholder="Patient Name">
-
-<select id="requestBloodGroup">
-<option>A+</option>
-<option>A-</option>
-<option>B+</option>
-<option>B-</option>
-<option>AB+</option>
-<option>AB-</option>
-<option>O+</option>
-<option>O-</option>
-</select>
-
-<input
-id="hospital"
-type="text"
-placeholder="Hospital">
-
-<input
-id="requestCity"
-type="text"
-placeholder="City">
-
-<input
-id="contact"
-type="text"
-placeholder="Contact Number">
-
-<button id="requestBtn" style="
-width:100%;
-background:#2563eb;
-  color:white;
-border:none;
-padding:12px;
-border-radius:8px;
-font-size:16px;
-font-weight:bold;
-cursor:pointer;
-margin-top:10px;
-">
-🩸 Send Emergency SOS
-</button>
-<div style="
-background:#fef2f2;
-border-left:5px solid #dc2626;
-padding:12px;
-border-radius:12px;
-margin:15px 0;
-color:#991b1b;
-font-weight:600;
-">
-🚨 Emergency requests are immediately visible to nearby donors.
-</div>
-<div id="requestList"></div>
-</div>
-  <hr>
-
-<div id="hospitalSection" class="card">
-<h2 style="
-display:flex;
-align-items:center;
-gap:10px;
-color:#2563eb;
-font-size:28px;
-margin-bottom:20px;
-">
-🏥 Hospital Dashboard
-</h2>
-
-<p style="
-color:#6b7280;
-margin-top:-10px;
-margin-bottom:20px;
-font-size:15px;
-">
-Monitor donors and emergency requests in real time.
-</p>
-
-<div id="hospitalDashboard"></div>
-
-<div class="dashboard-card" style="background:#eef6ff;padding:15px;border-radius:12px;margin-bottom:12px;">
-👥 <b>Total Donors:</b> <span id="dashboardDonors">0</span>
-</div>
-
-<div class="dashboard-card" style="background:#fff4e5;padding:15px;border-radius:12px;margin-bottom:12px;">
-🚨 <b>Active Requests:</b> <span id="dashboardRequests">0</span>
-</div>
-
-<div class="dashboard-card" style="background:#ecfdf5;padding:15px;border-radius:12px;">
-✅ <b>Fulfilled Requests:</b> <span id="dashboardFulfilled">0</span>
-</div>
-</div>
-
-<div class="card">
-<h2 style="
-display:flex;
-align-items:center;
-gap:10px;
-color:#0f766e;
-font-size:28px;
-margin-bottom:20px;
-">
-📊 Analytics Dashboard
-</h2>
-
-<p style="
-color:#6b7280;
-margin-top:-10px;
-margin-bottom:20px;
-font-size:15px;
-">
-Real-time insights from the LifeLink healthcare network.
-</p>
-
-<div id="analyticsDashboard"></div>
-
-<div class="dashboard-card" style="background:#fef3c7;padding:15px;border-radius:12px;margin-bottom:12px;">
-🩸 <b>Most Needed Blood Group:</b>
-<span id="topBloodGroup">-</span>
-</div>
-
-<div class="dashboard-card" style="background:#dbeafe;padding:15px;border-radius:12px;margin-bottom:12px;">
-🏙️ <b>Total Cities:</b>
-<span id="totalCities">0</span>
-</div>
-
-<div class="dashboard-card" style="background:#ede9fe;padding:15px;border-radius:12px;">
-📈 <b>Total SOS Created:</b>
-<span id="totalSOS">0</span>
-</div>
-
-  <hr>
-</div>
-  
-<div id="aiSection" class="card">
-    <h2 style="
-display:flex;
-align-items:center;
-gap:10px;
-color:#7c3aed;
-font-size:28px;
-margin-bottom:15px;
-">
-🤖 AI Emergency Assistant
-</h2>
-
-<p style="
-color:#6b7280;
-margin-top:-5px;
-margin-bottom:20px;
-font-size:15px;
-">
-Get instant first-aid guidance during emergencies.
-</p>
-
-    <textarea
-        id="aiQuestion"
-        placeholder="Describe the emergency... (e.g. A person is unconscious after an accident)"
-        style="
-            width:100%;
-            height:120px;
-            padding:12px;
-            border-radius:8px;
-            margin-bottom:10px;
-        "
-    ></textarea>
-
-    <button id="askAIBtn" style="
-width:100%;
-background:linear-gradient(135deg,#7c3aed,#8b5cf6);
-color:white;
-padding:16px;
-border:none;
-border-radius:14px;
-font-size:17px;
-font-weight:bold;
-box-shadow:0 8px 20px rgba(124,58,237,.35);
-">
-🤖 Ask AI Assistant
-</button>
-
-    <div id="chatBox" style="
-max-height:350px;
-overflow-y:auto;
-margin-top:15px;
-padding:10px;
-background:#1E293B;
-border:1px solid #475569;
-border-radius:10px;
-"></div>
-</div>
-
-
-
-<div class="card">
-  <h2 style="
-display:flex;
-align-items:center;
-gap:10px;
-color:#059669;
-font-size:28px;
-margin-bottom:20px;
-">
-🏥 Hospital Bill Payment
-</h2>
-
-<p style="
-color:#6b7280;
-margin-top:-10px;
-margin-bottom:20px;
-font-size:15px;
-">
-Pay hospital bills securely using USDC on Arc Testnet.
-</p>
-
-  <input
-    type="text"
-    id="hospitalName"
-    placeholder="Hospital Name"
-  >
-
-  <input
-    type="text"
-    id="billId"
-    placeholder="Bill ID"
-  >
-<input
-  type="text"
-  id="hospitalWallet"
-  placeholder="Hospital Wallet Address (0x...)"
->
-
-    <input
-    type="number"
-    id="billAmount"
-    placeholder="Amount (USDC)"
-  >
-
-  <button id="payBillBtn" style="
-width:100%;
-padding:16px;
-background:linear-gradient(135deg,#059669,#10b981);
-color:white;
-border:none;
-border-radius:14px;
-font-size:18px;
-font-weight:bold;
-box-shadow:0 8px 20px rgba(16,185,129,.35);
-cursor:pointer;
-">
-💳 Pay Hospital Bill
-  </button>
-
-  <div id="billStatus" style="margin-top:15px;"></div>
-</div>
-
-
-<div class="card">
-  <h2 style="
-display:flex;
-align-items:center;
-gap:10px;
-color:#0f766e;
-font-size:28px;
-margin-bottom:20px;
-">
-🪪 Health Profile
-</h2>
-
-<p style="
-color:#6b7280;
-margin-top:-10px;
-margin-bottom:20px;
-font-size:15px;
-">
-Store your essential medical information securely.
-</p>
-
-  <input
-    type="text"
-    id="profileName"
-    placeholder="Full Name"
-  >
-
-  <select id="profileBloodGroup">
-    <option>A+</option>
-    <option>A-</option>
-    <option>B+</option>
-    <option>B-</option>
-    <option>AB+</option>
-    <option>AB-</option>
-    <option>O+</option>
-    <option>O-</option>
-  </select>
-
-  <label for="profileDOB">📅 Date of Birth</label>
-  <input
-    type="date"
-    id="profileDOB"
-  >
-
-  <select id="profileGender">
-    <option>Male</option>
-    <option>Female</option>
-    <option>Other</option>
-  </select>
-
-  <input
-    type="text"
-    id="profileEmergency"
-    placeholder="Emergency Contact"
-  >
-
-  <input
-    type="text"
-    id="profileAllergies"
-  placeholder="Medical History (e.g. Diabetes, Hypertension)"  
-  >
-
-  <textarea
-    id="profileAddress"
-    placeholder="Address"
-    rows="3"></textarea>
-
-  <button id="saveProfileBtn" style="
-width:100%;
-padding:16px;
-background:linear-gradient(135deg,#0f766e,#14b8a6);
-color:white;
-border:none;
-border-radius:14px;
-font-size:18px;
-font-weight:bold;
-box-shadow:0 8px 20px rgba(20,184,166,.35);
-cursor:pointer;
-">
-💾 Save Health Profile
-  </button>
-
-  <div id="profileStatus"></div>
-</div>
-
-<div id="ambulanceSection" class="card">
-  <h2 style="
-display:flex;
-align-items:center;
-gap:10px;
-color:#ea580c;
-font-size:28px;
-margin-bottom:20px;
-">
-🚑 Emergency Ambulance
-</h2>
-
-<p style="
-color:#6b7280;
-margin-top:-10px;
-margin-bottom:20px;
-font-size:15px;
-">
-Request an ambulance instantly for emergency transport.
-</p>
-
-  <input
-    type="text"
-    id="ambulancePatient"
-    placeholder="Patient Name"
-  >
-
-  <input
-    type="text"
-    id="pickupLocation"
-    placeholder="Pickup Location"
-  >
-
-  <input
-    type="text"
-    id="ambulanceHospital"
-    placeholder="Destination Hospital"
-  >
-
-  <input
-    type="text"
-    id="ambulanceContact"
-    placeholder="Contact Number"
-  >
-
-  <select id="emergencyLevel">
-    <option value="Low">🟢 Low</option>
-    <option value="Medium">🟡 Medium</option>
-    <option value="High">🟠 High</option>
-    <option value="Critical">🔴 Critical</option>
-  </select>
-
-  <button id="ambulanceBtn" style="
-width:100%;
-padding:16px;
-background:linear-gradient(135deg,#ea580c,#f97316);
-color:white;
-border:none;
-border-radius:14px;
-font-size:18px;
-font-weight:bold;
-box-shadow:0 8px 20px rgba(249,115,22,.35);
-cursor:pointer;
-">
-🚑 Request Emergency Ambulance
-  </button>
-
-  <div id="ambulanceStatus" style="margin-top:15px;"></div>
-
-  <h3 style="margin-top:20px;">Live Ambulance Requests</h3>
-
-  <div id="ambulanceList"></div>
-</div>
-
-<div id="doctorSection" class="card">
-    <h2 style="
-display:flex;
-align-items:center;
-gap:10px;
-color:#2563eb;
-font-size:28px;
-margin-bottom:20px;
-">
-🩺 Doctor Portal
-</h2>
-
-<p style="
-color:#6b7280;
-margin-top:-10px;
-margin-bottom:20px;
-font-size:15px;
-">
-Search a patient's blockchain health profile using their wallet address.
-</p>
-
-    <input
-        type="text"
-        id="doctorWallet"
-        placeholder="Patient Wallet Address (0x...)"
-    >
-
-    <button id="searchPatientBtn" style="
-width:100%;
-padding:16px;
-background:linear-gradient(135deg,#2563eb,#3b82f6);
-color:white;
-border:none;
-border-radius:14px;
-font-size:18px;
-font-weight:bold;
-box-shadow:0 8px 20px rgba(37,99,235,.35);
-cursor:pointer;
-">
-🔍 Search Patient Record
-    </button>
-
-    <div id="doctorStatus" style="margin-top:15px;"></div>
-
-    <div id="patientProfileCard" style="display:none; margin-top:20px;">
-        <h3>📋 Patient Health Record</h3>
-
-        <p><b>👤 Name:</b> <span id="viewName"></span></p>
-
-        <p><b>🩸 Blood Group:</b> <span id="viewBlood"></span></p>
-
-        <p><b>🎂 DOB:</b> <span id="viewDOB"></span></p>
-
-        <p><b>⚧ Gender:</b> <span id="viewGender"></span></p>
-
-        <p><b>📞 Emergency Contact:</b> <span id="viewEmergency"></span></p>
-
-        <p><b>🩺 Medical History:</b> <span id="viewAllergies"></span></p>
-
-        <p><b>🏠 Address:</b> <span id="viewAddress"></span></p>
     </div>
-</div> <!-- doctorSection -->
-  </div> <!-- right-column -->
-</div> <!-- desktop-dashboard -->
+
+    <!-- ==================================================
+         REAL DESKTOP TWO-COLUMN STRUCTURE
+         Left column and right column stay open until the
+         very end. This is the important fix.
+    =================================================== -->
+    <div class="desktop-dashboard">
+
+      <!-- ================= LEFT COLUMN ================= -->
+      <div class="left-column">
+
+        <!-- Donor Registration -->
+        <div id="registerSection" class="card">
+          <h2>🩸 Blood Donor Registration</h2>
+          <p>Register yourself and help save lives.</p>
+
+          <input type="text" id="name" placeholder="Your Name">
+
+          <select id="bloodGroup">
+            <option value="">Select Blood Group</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+          </select>
+
+          <input type="text" id="city" placeholder="City">
+          <input type="tel" id="phone" placeholder="Phone Number">
+
+          <button id="registerBtn">🩸 Register as Donor</button>
+
+          <h3>Registered Donors</h3>
+          <div id="donorList"></div>
+        </div>
+
+        <!-- Search Donors -->
+        <div class="card">
+          <h2 id="searchSection">🔍 Search Donors</h2>
+          <p>Find nearby blood donors instantly.</p>
+
+          <select id="searchBloodGroup">
+            <option value="">Select Blood Group</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+          </select>
+
+          <input type="text" id="searchCity" placeholder="Enter City">
+          <button id="searchBtn">📍 Find Nearby Donors</button>
+
+          <div id="searchResults"></div>
+        </div>
+
+        <!-- Hospital Dashboard -->
+        <div id="hospitalSection" class="card">
+          <h2>🏥 Hospital Dashboard</h2>
+          <p>Monitor donors and emergency requests in real time.</p>
+
+          <div id="hospitalDashboard"></div>
+
+          <div class="dashboard-card">
+            👥 <b>Total Donors:</b> <span id="dashboardDonors">0</span>
+          </div>
+
+          <div class="dashboard-card">
+            🚨 <b>Active Requests:</b> <span id="dashboardRequests">0</span>
+          </div>
+
+          <div class="dashboard-card">
+            ✅ <b>Fulfilled Requests:</b> <span id="dashboardFulfilled">0</span>
+          </div>
+        </div>
+
+        <!-- Analytics -->
+        <div class="card">
+          <h2>📊 Analytics Dashboard</h2>
+          <p>Real-time insights from the LifeLink healthcare network.</p>
+
+          <div id="analyticsDashboard"></div>
+
+          <div class="dashboard-card">
+            🩸 <b>Most Needed Blood Group:</b>
+            <span id="topBloodGroup">-</span>
+          </div>
+
+          <div class="dashboard-card">
+            🏙️ <b>Total Cities:</b>
+            <span id="totalCities">0</span>
+          </div>
+
+          <div class="dashboard-card">
+            📈 <b>Total SOS Created:</b>
+            <span id="totalSOS">0</span>
+          </div>
+        </div>
+
+        <!-- AI -->
+        <div id="aiSection" class="card">
+          <h2>🤖 AI Emergency Assistant</h2>
+          <p>Get instant first-aid guidance during emergencies.</p>
+
+          <textarea
+            id="aiQuestion"
+            placeholder="Describe the emergency... (e.g. A person is unconscious after an accident)"
+            style="width:100%;height:120px;padding:12px;border-radius:8px;margin-bottom:10px;"
+          ></textarea>
+
+          <button id="askAIBtn">🤖 Ask AI Assistant</button>
+
+          <div id="chatBox" style="
+            max-height:350px;
+            overflow-y:auto;
+            margin-top:15px;
+            padding:10px;
+            background:#1E293B;
+            border:1px solid #475569;
+            border-radius:10px;
+          "></div>
+        </div>
+
+      </div>
+      <!-- ================= END LEFT COLUMN ============== -->
+
+
+      <!-- ================= RIGHT COLUMN ================ -->
+      <div class="right-column">
+
+        <!-- Nearby Donor Map -->
+        <div class="card">
+          <h2>🗺️ Nearby Donor Map</h2>
+          <div id="map"></div>
+        </div>
+
+        <!-- SOS -->
+        <div class="card">
+          <h2 id="sosSection">🚨 SOS Emergency Request</h2>
+          <p>Request urgent blood assistance from nearby donors.</p>
+
+          <input id="patientName" type="text" placeholder="Patient Name">
+
+          <select id="requestBloodGroup">
+            <option>A+</option>
+            <option>A-</option>
+            <option>B+</option>
+            <option>B-</option>
+            <option>AB+</option>
+            <option>AB-</option>
+            <option>O+</option>
+            <option>O-</option>
+          </select>
+
+            <input id="hospital" type="text" placeholder="Hospital">
+          <input id="requestCity" type="text" placeholder="City">
+          <input id="contact" type="text" placeholder="Contact Number">
+
+          <button id="requestBtn">🩸 Send Emergency SOS</button>
+
+          <div style="
+            background:#fef2f2;
+            border-left:5px solid #dc2626;
+            padding:12px;
+            border-radius:12px;
+            margin:15px 0;
+            color:#991b1b;
+            font-weight:600;
+          ">
+            🚨 Emergency requests are immediately visible to nearby donors.
+          </div>
+
+          <div id="requestList"></div>
+        </div>
+
+        <!-- Hospital Bill Payment -->
+        <div class="card">
+          <h2>🏥 Hospital Bill Payment</h2>
+          <p>Pay hospital bills securely using USDC on Arc Testnet.</p>
+
+          <input type="text" id="hospitalName" placeholder="Hospital Name">
+          <input type="text" id="billId" placeholder="Bill ID">
+          <input type="text" id="hospitalWallet" placeholder="Hospital Wallet Address (0x...)">
+          <input type="number" id="billAmount" placeholder="Amount (USDC)">
+
+          <button id="payBillBtn">💳 Pay Hospital Bill</button>
+          <div id="billStatus" style="margin-top:15px;"></div>
+        </div>
+
+        <!-- Health Profile -->
+        <div class="card">
+          <h2>🪪 Health Profile</h2>
+          <p>Store your essential medical information securely.</p>
+
+          <input type="text" id="profileName" placeholder="Full Name">
+
+          <select id="profileBloodGroup">
+            <option>A+</option>
+            <option>A-</option>
+            <option>B+</option>
+            <option>B-</option>
+            <option>AB+</option>
+            <option>AB-</option>
+            <option>O+</option>
+            <option>O-</option>
+          </select>
+
+          <label for="profileDOB">📅 Date of Birth</label>
+          <input type="date" id="profileDOB">
+
+          <select id="profileGender">
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+
+          <input type="text" id="profileEmergency" placeholder="Emergency Contact">
+
+          <input
+            type="text"
+            id="profileAllergies"
+            placeholder="Medical History (e.g. Diabetes, Hypertension)"
+          >
+
+          <textarea id="profileAddress" placeholder="Address" rows="3"></textarea>
+
+          <button id="saveProfileBtn">💾 Save Health Profile</button>
+          <div id="profileStatus"></div>
+        </div>
+
+        <!-- Ambulance -->
+        <div id="ambulanceSection" class="card">
+          <h2>🚑 Emergency Ambulance</h2>
+          <p>Request an ambulance instantly for emergency transport.</p>
+
+          <input type="text" id="ambulancePatient" placeholder="Patient Name">
+          <input type="text" id="pickupLocation" placeholder="Pickup Location">
+          <input type="text" id="ambulanceHospital" placeholder="Destination Hospital">
+          <input type="text" id="ambulanceContact" placeholder="Contact Number">
+
+          <select id="emergencyLevel">
+            <option value="Low">🟢 Low</option>
+            <option value="Medium">🟡 Medium</option>
+            <option value="High">🟠 High</option>
+            <option value="Critical">🔴 Critical</option>
+          </select>
+
+          <button id="ambulanceBtn">🚑 Request Emergency Ambulance</button>
+
+          <div id="ambulanceStatus" style="margin-top:15px;"></div>
+
+          <h3>Live Ambulance Requests</h3>
+          <div id="ambulanceList"></div>
+        </div>
+
+        <!-- Doctor Portal -->
+        <div id="doctorSection" class="card">
+          <h2>🩺 Doctor Portal</h2>
+          <p>Search a patient's blockchain health profile using their wallet address.</p>
+
+          <input
+            type="text"
+            id="doctorWallet"
+            placeholder="Patient Wallet Address (0x...)"
+          >
+
+          <button id="searchPatientBtn">🔍 Search Patient Record</button>
+
+          <div id="doctorStatus" style="margin-top:15px;"></div>
+
+          <div id="patientProfileCard" style="display:none;margin-top:20px;">
+            <h3>📋 Patient Health Record</h3>
+
+            <p><b>👤 Name:</b> <span id="viewName"></span></p>
+            <p><b>🩸 Blood Group:</b> <span id="viewBlood"></span></p>
+            <p><b>🎂 DOB:</b> <span id="viewDOB"></span></p>
+            <p><b>⚧ Gender:</b> <span id="viewGender"></span></p>
+            <p><b>📞 Emergency Contact:</b> <span id="viewEmergency"></span></p>
+            <p><b>🩺 Medical History:</b> <span id="viewAllergies"></span></p>
+            <p><b>🏠 Address:</b> <span id="viewAddress"></span></p>
+          </div>
+        </div>
+
+      </div>
+      <!-- ================= END RIGHT COLUMN ============== -->
+
+    </div>
+    <!-- ================= END DESKTOP DASHBOARD ========= -->
+
+    <footer style="
+      margin-top:40px;
+      padding:30px 20px;
+      background:linear-gradient(135deg,#0f172a,#1e293b);
+      color:white;
+      text-align:center;
+      border-radius:22px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+    ">
+      <img
+        src="file_00000000b968722fb6f2374889be7c3f.png"
+        style="width:70px;height:70px;object-fit:contain;display:block;margin:0 auto 15px;"
+      >
+
+            <h2 style="
+        color:#ffffff;
+        font-size:42px;
+        font-weight:800;
+        letter-spacing:1px;
+        margin:15px auto 10px;
+        width:100%;
+        display:flex;
+        justify-content:center;
+        text-align:center;
+      ">LifeLink</h2>
+
+      <p style="color:#cbd5e1;font-size:18px;margin-bottom:8px;">
+        Emergency Healthcare Network
+      </p>
+
+      <p style="color:#60a5fa;font-weight:bold;font-size:16px;margin-bottom:20px;">
+        Built on Arc Testnet • Powered by USDC
+      </p>
+
+      <hr style="width:70%;margin:20px auto;border:none;height:1px;background:#334155;">
+
+      <p style="font-size:18px;font-weight:bold;color:#ffffff;">
+        Developed by Khanindra Deka
+      </p>
+    </footer>
+
+  </div>
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="health-profile.js"></script>
 <script src="app.js"></script>
-      
-<footer style="
-margin-top:40px;
-padding:30px 20px;
-background:linear-gradient(135deg,#0f172a,#1e293b);
-color:white;
-text-align:center;
-border-radius:22px;
-box-shadow:0 10px 30px rgba(0,0,0,.25);
-">
 
-<img src="file_00000000b968722fb6f2374889be7c3f.png"
-style="
-width:70px;
-height:70px;
-object-fit:contain;
-display:block;
-margin:0 auto 15px;
-">
-
-<h2 style="
-color:#ffffff;
-font-size:42px;
-font-weight:800;
-letter-spacing:1px;
-margin:15px auto 10px;
-width:100%;
-display:flex;
-justify-content:center;
-text-align:center;
-text-shadow:0 4px 15px rgba(37,99,235,.45);
-">
-LifeLink
-</h2>
-
-<p style="
-color:#cbd5e1;
-font-size:18px;
-margin-bottom:8px;
-">
-Emergency Healthcare Network
-</p>
-
-<p style="
-color:#60a5fa;
-font-weight:bold;
-font-size:16px;
-margin-bottom:20px;
-">
-Built on Arc Testnet • Powered by USDC
-</p>
-
-<hr style="
-width:70%;
-margin:20px auto;
-border:none;
-height:1px;
-background:#334155;
-">
-
-<p style="
-font-size:18px;
-font-weight:bold;
-color:#ffffff;
-">
-Developed by Khanindra Deka
-</p>
-
-</footer>
-</div> <!-- hero -->
-</div> <!-- container -->
 </body>
 </html>
