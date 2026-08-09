@@ -75,25 +75,26 @@ await initializeCircleUser();
     // Create Circle SDK
     // ------------------------------------------
 
-    circleSdk = new W3SSdk({
+    circleSdk = new W3SSdk(
+  {
+    appSettings: {
+      appId: appId
+    },
 
-      configs: {
-        appSettings: {
-          appId: appId
-        },
+    loginConfigs: {
+      deviceToken: deviceToken,
+      deviceEncryptionKey: deviceEncryptionKey,
 
-        socialLoginConfig: {
-          google: {
-            clientId: googleClientId,
-            redirectUri: window.location.origin,
-            selectAccountPrompt: true
-          }
-        }
-      },
+      google: {
+        clientId: googleClientId,
+        redirectUri: window.location.origin,
+        selectAccountPrompt: true
+      }
+    }
+  },
 
-      socialLoginCompleteCallback: onLoginComplete
-
-    });
+  onLoginComplete
+);
 
 
     window.circleSdk = circleSdk;
