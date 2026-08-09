@@ -875,6 +875,7 @@ const PAYMENT_ABI = [
 let provider;
 let signer;
 let contract;
+let circleWallet = null;
 
 const connectBtn = document.getElementById("connectBtn");
 const walletAddress = document.getElementById("walletAddress");
