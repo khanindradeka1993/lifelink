@@ -6,6 +6,8 @@ const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 let circleSdk = null;
 let loginResult = null;
+let deviceToken = localStorage.getItem("circleDeviceToken");
+let deviceEncryptionKey = localStorage.getItem("circleDeviceEncryptionKey");
 
 
 // ==========================================
@@ -149,14 +151,23 @@ await initializeCircleUser();
     }
 
 
-    const deviceToken =
-      data.deviceToken ||
-      data.data?.deviceToken;
+    deviceToken =
+  data.deviceToken ||
+  data.data?.deviceToken;
 
+deviceEncryptionKey =
+  data.deviceEncryptionKey ||
+  data.data?.deviceEncryptionKey;
 
-    const deviceEncryptionKey =
-      data.deviceEncryptionKey ||
-      data.data?.deviceEncryptionKey;
+localStorage.setItem(
+  "circleDeviceToken",
+  deviceToken
+);
+
+localStorage.setItem(
+  "circleDeviceEncryptionKey",
+  deviceEncryptionKey
+);
 
 
     if (!deviceToken || !deviceEncryptionKey) {
