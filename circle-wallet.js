@@ -36,6 +36,10 @@ async function initializeCircle() {
     log("✅ Circle App ID found");
     log("✅ Google Client ID found");
 
+    /*
+     * IMPORTANT:
+     * Google login completion callback.
+     */
     const onLoginComplete = async (error, result) => {
       log("🔔 Circle social-login callback fired");
 
@@ -116,6 +120,10 @@ async function initializeCircle() {
       },
     };
 
+    /*
+     * IMPORTANT FIX:
+     * The social-login callback is supplied here.
+     */
     circleSdk = new W3SSdk(
       initialConfig,
       onLoginComplete
@@ -128,28 +136,37 @@ async function initializeCircle() {
     const deviceId =
       await circleSdk.getDeviceId();
 
-    log("🆔 Circle Device ID:", deviceId);
+    log(
+      "🆔 Circle Device ID:",
+      deviceId
+    );
 
     if (!deviceToken || !deviceEncryptionKey) {
-      log("🔵 Requesting Circle device token...");
-
-      const response = await fetch(
-        "/api/circle",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-            action: "createDeviceToken",
-            deviceId,
-          }),
-        }
+      log(
+        "🔵 Requesting Circle device token..."
       );
 
-      const data = await response.json();
+      const response =
+        await fetch(
+          "/api/circle",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+              action:
+                "createDeviceToken",
+              deviceId,
+            }),
+          }
+        );
+
+      const data =
+        await response.json();
 
       log(
         "🔵 Device token response:",
@@ -206,6 +223,10 @@ async function initializeCircle() {
       );
     }
 
+    /*
+     * Re-apply configuration after
+     * device token is available.
+     */
     circleSdk.updateConfigs(
       {
         appSettings: {
@@ -218,7 +239,8 @@ async function initializeCircle() {
 
           google: {
             clientId: googleClientId,
-            redirectUri: window.location.origin,
+            redirectUri:
+              window.location.origin,
             selectAccountPrompt: true,
           },
         },
@@ -246,9 +268,13 @@ async function initializeCircle() {
 
     googleButton.disabled = false;
 
+    /*
+     * Prevent duplicate listeners.
+     */
     if (
       googleButton.dataset
-        .circleListenerAttached === "true"
+        .circleListenerAttached ===
+      "true"
     ) {
       log(
         "ℹ️ Google listener already attached"
@@ -257,7 +283,8 @@ async function initializeCircle() {
       return;
     }
 
-    googleButton.dataset.circleListenerAttached =
+    googleButton.dataset
+      .circleListenerAttached =
       "true";
 
     googleButton.addEventListener(
@@ -266,7 +293,9 @@ async function initializeCircle() {
         event.preventDefault();
         event.stopPropagation();
 
-        log("🔵 GOOGLE BUTTON CLICKED");
+        log(
+          "🔵 GOOGLE BUTTON CLICKED"
+        );
 
         log(
           "🔐 Device token exists:",
@@ -292,6 +321,10 @@ async function initializeCircle() {
             "🔵 Starting Google login..."
           );
 
+          /*
+           * Re-apply configuration immediately
+           * before Google login.
+           */
           circleSdk.updateConfigs(
             {
               appSettings: {
@@ -303,10 +336,14 @@ async function initializeCircle() {
                 deviceEncryptionKey,
 
                 google: {
-                  clientId: googleClientId,
+                  clientId:
+                    googleClientId,
+
                   redirectUri:
                     window.location.origin,
-                  selectAccountPrompt: true,
+
+                  selectAccountPrompt:
+                    true,
                 },
               },
             },
@@ -359,6 +396,7 @@ async function initializeCircle() {
         "ℹ️ No OAuth query parameters on initial page load"
       );
     }
+
   } catch (error) {
     console.error(
       "❌ Circle initialization failed:",
@@ -368,8 +406,13 @@ async function initializeCircle() {
 }
 
 
+/* =====================================================
+   INITIALIZE CIRCLE USER
+   ===================================================== */
+
 async function initializeCircleUser() {
   try {
+
     const token =
       userToken ||
       loginResult?.userToken ||
@@ -415,8 +458,11 @@ async function initializeCircleUser() {
           },
 
           body: JSON.stringify({
-            action: "initializeUser",
-            userToken: token,
+            action:
+              "initializeUser",
+
+            userToken:
+              token,
           }),
         }
       );
@@ -432,6 +478,7 @@ async function initializeCircleUser() {
     if (!response.ok) {
 
       if (data.code === 155106) {
+
         log(
           "✅ Circle user already initialized"
         );
@@ -480,9 +527,13 @@ async function initializeCircleUser() {
 
     circleSdk.execute(
       challengeId,
-      async (error, result) => {
+      async (
+        error,
+        result
+      ) => {
 
         if (error) {
+
           console.error(
             "❌ Circle wallet creation failed:",
             error
@@ -510,7 +561,12 @@ async function initializeCircleUser() {
 }
 
 
+/* =====================================================
+   LOAD CIRCLE WALLETS
+   ===================================================== */
+
 async function loadCircleWallets() {
+
   try {
 
     const token =
@@ -521,6 +577,7 @@ async function loadCircleWallets() {
       );
 
     if (!token) {
+
       console.error(
         "❌ Cannot load wallets: userToken missing"
       );
@@ -540,8 +597,11 @@ async function loadCircleWallets() {
           },
 
           body: JSON.stringify({
-            action: "getWallets",
-            userToken: token,
+            action:
+              "getWallets",
+
+            userToken:
+              token,
           }),
         }
       );
@@ -555,6 +615,7 @@ async function loadCircleWallets() {
     );
 
     if (!response.ok) {
+
       throw new Error(
         data.error ||
         data.message ||
@@ -587,9 +648,9 @@ async function loadCircleWallets() {
 }
 
 
-/*
- * Public helpers
- */
+/* =====================================================
+   PUBLIC HELPERS
+   ===================================================== */
 
 window.circleSdk = null;
 
@@ -611,6 +672,10 @@ window.getCircleEncryptionKey =
     ) ||
     "";
 
+
+/* =====================================================
+   START
+   ===================================================== */
 
 if (
   document.readyState ===
