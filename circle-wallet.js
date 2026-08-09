@@ -345,7 +345,7 @@ async function initializeCircle() {
             },
         },
     },
-    onSocialLoginComplete: onLoginComplete
+    onLoginComplete
 );
 
           console.log("🔎 GOOGLE PROVIDER VALUE:", SocialLoginProvider.GOOGLE);
