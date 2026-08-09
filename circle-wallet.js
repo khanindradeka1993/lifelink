@@ -234,15 +234,29 @@ await initializeCircleUser();
 
 
     googleButton.addEventListener(
-      "click",
-      () => {
+  "click",
+  async () => {
 
-        console.log("🔵 Starting Google login...");
+    console.log("🔵 Starting Google login...");
 
-        circleSdk.performLogin(SocialLoginProvider.GOOGLE);
+    try {
+      const result = await circleSdk.performLogin(
+        SocialLoginProvider.GOOGLE
+      );
 
-      }
-    );
+      console.log("🔵 performLogin returned:", result);
+
+    } catch (error) {
+
+      console.error(
+        "❌ Google performLogin failed:",
+        error
+      );
+
+    }
+
+  }
+);
 
 
     console.log(
