@@ -124,10 +124,10 @@ async function initializeCircle() {
      * IMPORTANT FIX:
      * The social-login callback is supplied here.
      */
-    circleSdk = new W3SSdk(
-  initialConfig,
-  onLoginComplete
-);
+    circleSdk = new W3SSdk({
+  configs: initialConfig,
+  socialLoginCompleteCallback: onLoginComplete
+});
 
     window.circleSdk = circleSdk;
 
