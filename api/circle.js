@@ -74,6 +74,29 @@ export default async function handler(req, res) {
       return res.status(response.status).json(data);
     }
 
+    // Step 3: List Circle wallets
+if (action === "listWallets") {
+  if (!userToken) {
+    return res.status(400).json({
+      error: "Missing userToken"
+    });
+  }
+
+  const response = await fetch(
+    `${baseUrl}/wallets`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "X-User-Token": userToken
+      }
+    }
+  );
+
+  const data = await response.json();
+
+  return res.status(response.status).json(data);
+}
     return res.status(400).json({
       error: "Unknown action"
     });
