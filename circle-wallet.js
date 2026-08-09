@@ -1,4 +1,4 @@
-import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
+ import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
 import { SocialLoginProvider } from "@circle-fin/w3s-pw-web-sdk/dist/src/types";
 
 const appId = import.meta.env.VITE_CIRCLE_APP_ID;
@@ -6,13 +6,9 @@ const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 let circleSdk = null;
 let loginResult = null;
-let deviceToken = localStorage.getItem("circleDeviceToken");
-let deviceEncryptionKey = localStorage.getItem("circleDeviceEncryptionKey");
-
-
-// ==========================================
-// CIRCLE INITIALIZATION
-// ==========================================
+let deviceToken = localStorage.getItem("circleDeviceToken") || "";
+let deviceEncryptionKey =
+  localStorage.getItem("circleDeviceEncryptionKey") || "";
 
 async function initializeCircle() {
   try {
@@ -31,13 +27,7 @@ async function initializeCircle() {
     console.log("✅ Circle App ID found");
     console.log("✅ Google Client ID found");
 
-
-    // ------------------------------------------
-    // Google login callback
-    // ------------------------------------------
-
     const onLoginComplete = async (error, result) => {
-
       if (error) {
         console.error("❌ Google login failed:", error);
         alert("Google login failed");
@@ -45,236 +35,236 @@ async function initializeCircle() {
       }
 
       console.log("🎉 Google login successful!");
+      console.log("🔐 Circle credentials received");
 
       loginResult = result;
 
-      localStorage.setItem(
-        "circleUserToken",
-        result.userToken
-      );
+      if (result?.userToken) {
+        localStorage.setItem(
+          "circleUserToken",
+          result.userToken
+        );
+      }
 
-      localStorage.setItem(
-        "circleEncryptionKey",
-        result.encryptionKey
-      );
+      if (result?.encryptionKey) {
+        localStorage.setItem(
+          "circleEncryptionKey",
+          result.encryptionKey
+        );
+      }
 
-      console.log("✅ Circle credentials received");
+      circleSdk.setAuthentication({
+        userToken: result.userToken,
+        encryptionKey: result.encryptionKey
+      });
 
-circleSdk.setAuthentication({
-  userToken: result.userToken,
-  encryptionKey: result.encryptionKey
-});
+      console.log("✅ Circle SDK authenticated");
 
-console.log("✅ Circle SDK authenticated");
-
-await initializeCircleUser();
+      await initializeCircleUser();
     };
 
+    circleSdk = new W3SSdk({
+      appSettings: {
+        appId
+      },
 
-    // ------------------------------------------
-    // Create Circle SDK
-    // ------------------------------------------
+      loginConfigs: {
+        deviceToken,
+        deviceEncryptionKey,
 
-    circleSdk = new W3SSdk(
-  {
-    appSettings: {
-      appId: appId
-    },
+        google: {
+          clientId: googleClientId,
+          redirectUri: window.location.origin,
+          selectAccountPrompt: true
+        }
+      },
 
-    socialLoginConfig: {
-    google: {
-        clientId: googleClientId,
-        redirectUri: window.location.origin,
-        selectAccountPrompt: true
-    }
-},
-
-socialLoginCompleteCallback: onLoginComplete
-
+      socialLoginCompleteCallback: onLoginComplete
+    });
 
     window.circleSdk = circleSdk;
 
     console.log("✅ Circle SDK initialized");
 
-
-    // ------------------------------------------
-    // Get Device ID
-    // ------------------------------------------
-
     const deviceId = await circleSdk.getDeviceId();
 
-    console.log("✅ Circle Device ID:", deviceId);
-
-
-    // ------------------------------------------
-    // Ask backend for device token
-    // ------------------------------------------
-
-    console.log("🔵 Requesting Circle device token...");
-
-    const response = await fetch("/api/circle", {
-
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json"
-      },
-
-      body: JSON.stringify({
-
-        action: "createDeviceToken",
-
-        deviceId: deviceId
-
-      })
-
-    });
-
-
-    const data = await response.json();
-
-    console.log("🔵 Device token response:", data);
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.error ||
-        data.message ||
-        "Failed to create Circle device token"
-      );
-
-    }
-
-
-    deviceToken =
-  data.deviceToken ||
-  data.data?.deviceToken;
-
-deviceEncryptionKey =
-  data.deviceEncryptionKey ||
-  data.data?.deviceEncryptionKey;
-
-localStorage.setItem(
-  "circleDeviceToken",
-  deviceToken
-);
-
-localStorage.setItem(
-  "circleDeviceEncryptionKey",
-  deviceEncryptionKey
-);
-
+    console.log(
+      "✅ Circle Device ID:",
+      deviceId
+    );
 
     if (!deviceToken || !deviceEncryptionKey) {
-
-      throw new Error(
-        "Circle device token response is incomplete"
+      console.log(
+        "🔵 Requesting Circle device token..."
       );
 
+      const response = await fetch(
+        "/api/circle",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            action: "createDeviceToken",
+            deviceId
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      console.log(
+        "🔵 Device token response:",
+        data
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          data.message ||
+          "Failed to create Circle device token"
+        );
+      }
+
+      deviceToken =
+        data.deviceToken ||
+        data.data?.deviceToken ||
+        "";
+
+      deviceEncryptionKey =
+        data.deviceEncryptionKey ||
+        data.data?.deviceEncryptionKey ||
+        "";
+
+      if (
+        !deviceToken ||
+        !deviceEncryptionKey
+      ) {
+        throw new Error(
+          "Circle device token response is incomplete"
+        );
+      }
+
+      localStorage.setItem(
+        "circleDeviceToken",
+        deviceToken
+      );
+
+      localStorage.setItem(
+        "circleDeviceEncryptionKey",
+        deviceEncryptionKey
+      );
+
+      console.log(
+        "💾 Circle device login state saved"
+      );
+
+      console.log(
+        "✅ Circle device token received"
+      );
+
+    } else {
+
+      console.log(
+        "♻️ Restored Circle device login state"
+      );
     }
 
-
-    console.log("✅ Circle device token received");
-
-
-    // ------------------------------------------
-    // Configure Circle Google login
-    // ------------------------------------------
-
     circleSdk.updateConfigs(
-
       {
-
         appSettings: {
-          appId: appId
+          appId
         },
 
-        socialLoginConfig:
-
-          deviceToken: deviceToken,
-
-          deviceEncryptionKey: deviceEncryptionKey,
+        loginConfigs: {
+          deviceToken,
+          deviceEncryptionKey,
 
           google: {
-
             clientId: googleClientId,
-
             redirectUri: window.location.origin,
-
             selectAccountPrompt: true
-
           }
-
         }
-
       },
 
       onLoginComplete
-
     );
 
-
-    console.log("✅ Circle Google login configured");
-
-
-    // ------------------------------------------
-    // Connect Google button
-    // ------------------------------------------
+    console.log(
+      "✅ Circle Google login configured"
+    );
 
     const googleButton =
-      document.getElementById("googleLoginBtn");
-
+      document.getElementById(
+        "googleLoginBtn"
+      );
 
     if (!googleButton) {
-
       console.error(
         "❌ googleLoginBtn not found in index.html"
       );
 
       return;
-
     }
-
 
     googleButton.disabled = false;
 
-
     googleButton.addEventListener(
-  "click",
-  async (event) => {
+      "click",
+      async (event) => {
 
-    event.preventDefault();
-    event.stopPropagation();
+        event.preventDefault();
+        event.stopPropagation();
 
-    console.log("🔵 GOOGLE BUTTON CLICKED");
+        console.log(
+          "🔵 GOOGLE BUTTON CLICKED"
+        );
 
-    try {
-      console.log("🔵 Starting Google login...");
+        console.log(
+          "🔵 Device token exists:",
+          !!deviceToken
+        );
 
-      await circleSdk.performLogin(
-        SocialLoginProvider.GOOGLE
-      );
+        console.log(
+          "🔵 Device encryption key exists:",
+          !!deviceEncryptionKey
+        );
 
-      console.log("🟢 Google login flow started");
+        try {
 
-    } catch (error) {
+          console.log(
+            "🔵 Starting Google login..."
+          );
 
-      console.error(
-        "❌ Google performLogin failed:",
-        error
-      );
+          const result =
+            await circleSdk.performLogin(
+              SocialLoginProvider.GOOGLE
+            );
 
-    }
-  },
-  true
-);
+          console.log(
+            "🟢 performLogin returned:",
+            result
+          );
 
+        } catch (error) {
+
+          console.error(
+            "🔴 performLogin ERROR:",
+            error
+          );
+        }
+
+      },
+      true
+    );
 
     console.log(
       "🎉 Continue with Google button connected"
     );
-
 
   } catch (error) {
 
@@ -282,70 +272,68 @@ localStorage.setItem(
       "❌ Circle initialization failed:",
       error
     );
-
   }
 }
 
 
-
-// ==========================================
+// ============================================================
 // INITIALIZE CIRCLE USER
-// ==========================================
+// ============================================================
 
 async function initializeCircleUser() {
 
   try {
 
-    if (!loginResult?.userToken) {
+    const userToken =
+      loginResult?.userToken ||
+      localStorage.getItem(
+        "circleUserToken"
+      );
+
+    const encryptionKey =
+      loginResult?.encryptionKey ||
+      localStorage.getItem(
+        "circleEncryptionKey"
+      );
+
+    if (!userToken) {
 
       console.error(
         "❌ Circle userToken missing"
       );
 
       return;
-
     }
 
-
     console.log(
-      "🔵 Initializing Circle user on Arc Testnet..."
+      "🔵 Initializing Circle user..."
     );
 
+    const response =
+      await fetch(
+        "/api/circle",
+        {
+          method: "POST",
 
-    const response = await fetch(
-      "/api/circle",
-      {
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
 
-        method: "POST",
+          body: JSON.stringify({
+            action: "initializeUser",
+            userToken
+          })
+        }
+      );
 
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-
-          action: "initializeUser",
-
-          userToken: loginResult.userToken
-
-        })
-
-      }
-    );
-
-
-    const data = await response.json();
-
+    const data =
+      await response.json();
 
     console.log(
       "🔵 Initialize user response:",
       data
     );
-
-
-    // ------------------------------------------
-    // User already initialized
-    // ------------------------------------------
 
     if (!response.ok) {
 
@@ -355,37 +343,33 @@ async function initializeCircleUser() {
           "✅ Circle user already initialized"
         );
 
+        circleSdk.setAuthentication({
+          userToken,
+          encryptionKey
+        });
+
         await loadCircleWallets();
 
         return;
-
       }
 
-
       throw new Error(
-
         data.error ||
         data.message ||
         "Circle user initialization failed"
-
       );
-
     }
-
 
     const challengeId =
       data.challengeId ||
       data.data?.challengeId;
-
 
     if (!challengeId) {
 
       throw new Error(
         "Circle did not return a challenge ID"
       );
-
     }
-
 
     console.log(
       "✅ Circle user initialized"
@@ -396,35 +380,13 @@ async function initializeCircleUser() {
       challengeId
     );
 
-
-    // ------------------------------------------
-    // Authenticate SDK
-    // ------------------------------------------
-
     circleSdk.setAuthentication({
-
-      userToken:
-        loginResult.userToken,
-
-      encryptionKey:
-        loginResult.encryptionKey
-
+      userToken,
+      encryptionKey
     });
 
-
-    console.log(
-      "✅ Circle SDK authenticated"
-    );
-
-
-    // ------------------------------------------
-    // Execute wallet creation challenge
-    // ------------------------------------------
-
     circleSdk.execute(
-
       challengeId,
-
       async (error, result) => {
 
         if (error) {
@@ -435,22 +397,16 @@ async function initializeCircleUser() {
           );
 
           return;
-
         }
 
-
         console.log(
-          "🎉 Circle wallet challenge completed!",
+          "🎉 Circle wallet challenge completed:",
           result
         );
 
-
         await loadCircleWallets();
-
       }
-
     );
-
 
   } catch (error) {
 
@@ -458,157 +414,108 @@ async function initializeCircleUser() {
       "❌ Circle user initialization failed:",
       error
     );
-
   }
-
 }
 
 
-
-// ==========================================
+// ============================================================
 // LOAD CIRCLE WALLETS
-// ==========================================
+// ============================================================
 
 async function loadCircleWallets() {
 
   try {
 
-    if (!loginResult?.userToken) {
+    const userToken =
+      loginResult?.userToken ||
+      localStorage.getItem(
+        "circleUserToken"
+      );
+
+    if (!userToken) {
 
       console.error(
-        "❌ Circle userToken missing"
+        "❌ Cannot load wallets: userToken missing"
       );
 
       return;
-
     }
 
+    const response =
+      await fetch(
+        "/api/circle",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            action: "getWallets",
+            userToken
+          })
+        }
+      );
+
+    const data =
+      await response.json();
 
     console.log(
-      "🔵 Loading Circle wallet..."
-    );
-
-
-    const response = await fetch(
-      "/api/circle",
-      {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-
-          action: "listWallets",
-
-          userToken:
-            loginResult.userToken
-
-        })
-
-      }
-    );
-
-
-    const data = await response.json();
-
-
-    console.log(
-      "🔵 Wallet response:",
+      "🔵 Circle wallets response:",
       data
     );
 
-
     if (!response.ok) {
 
-      console.error(
-        "❌ Failed to load Circle wallet:",
-        data
+      throw new Error(
+        data.error ||
+        data.message ||
+        "Failed to load Circle wallets"
       );
-
-      return;
-
     }
-
 
     const wallets =
       data.wallets ||
       data.data?.wallets ||
       [];
 
-
-    if (wallets.length === 0) {
-
-      console.log(
-        "⚠️ No Circle wallet found yet"
-      );
-
-      return;
-
-    }
-
-
-    const wallet = wallets[0];
-
-
     console.log(
-      "🎉 Circle Wallet Address:",
-      wallet.address
+      "💰 Circle wallets loaded:",
+      wallets
     );
 
-
-    console.log(
-      "🌐 Blockchain:",
-      wallet.blockchain
-    );
-
-
-    // Make Circle wallet available
-    // to the rest of LifeLink
-
-    window.circleWallet = wallet;
-
-
-    // ------------------------------------------
-    // Update LifeLink UI
-    // ------------------------------------------
-
-    const walletAddress =
-      document.getElementById(
-        "walletAddress"
-      );
-
-
-    if (walletAddress) {
-
-      walletAddress.innerText =
-        "Circle Wallet: " +
-        wallet.address.substring(0, 6) +
-        "..." +
-        wallet.address.substring(
-          wallet.address.length - 4
-        );
-
-    }
-
+    window.circleWallets =
+      wallets;
 
   } catch (error) {
 
     console.error(
-      "❌ Error loading Circle wallet:",
+      "❌ Failed to load Circle wallets:",
       error
     );
-
   }
-
 }
 
 
-
-// ==========================================
+// ============================================================
 // START
-// ==========================================
+// ============================================================
 
-initializeCircle();
+if (
+  document.readyState ===
+  "loading"
+) {
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    initializeCircle,
+    { once: true }
+  );
+
+} else {
+
+  initializeCircle();
+
+}  
