@@ -73,7 +73,7 @@ async function initializeCircle() {
           appId: appId
         },
 
-        socialLoginConfig: {
+        loginConfigs: {
           google: {
             clientId: googleClientId,
             redirectUri: window.location.origin,
@@ -176,7 +176,7 @@ async function initializeCircle() {
           appId: appId
         },
 
-        socialLoginConfig: {
+        loginConfigs: {
 
           deviceToken: deviceToken,
 
