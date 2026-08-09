@@ -1,4 +1,5 @@
-import { W3SSdk, SocialLoginProvider } from "@circle-fin/w3s-pw-web-sdk";
+import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
+import { SocialLoginProvider } from "@circle-fin/w3s-pw-web-sdk/dist/src/types";
 
 const appId = import.meta.env.VITE_CIRCLE_APP_ID;
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
