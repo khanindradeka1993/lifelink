@@ -240,17 +240,16 @@ await initializeCircleUser();
     event.preventDefault();
     event.stopPropagation();
 
-    console.log("🔵 GOOGLE BUTTON CLICKED!");
+    console.log("🔵 GOOGLE BUTTON CLICKED");
 
     try {
-
       console.log("🔵 Starting Google login...");
 
-      const result = await circleSdk.performLogin(
+      await circleSdk.performLogin(
         SocialLoginProvider.GOOGLE
       );
 
-      console.log("🔵 performLogin returned:", result);
+      console.log("🟢 Google login flow started");
 
     } catch (error) {
 
@@ -260,7 +259,6 @@ await initializeCircleUser();
       );
 
     }
-
   },
   true
 );
