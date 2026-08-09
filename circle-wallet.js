@@ -80,7 +80,7 @@ await initializeCircleUser();
           appId: appId
         },
 
-        loginConfigs: {
+        socialLoginConfig: {
           google: {
             clientId: googleClientId,
             redirectUri: window.location.origin,
