@@ -1,4 +1,4 @@
-import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
+import { W3SSdk, SocialLoginProvider } from "@circle-fin/w3s-pw-web-sdk";
 
 const appId = import.meta.env.VITE_CIRCLE_APP_ID;
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -231,7 +231,7 @@ async function initializeCircle() {
 
         console.log("🔵 Starting Google login...");
 
-        circleSdk.performLogin("GOOGLE");
+        circleSdk.performLogin(SocialLoginProvider.GOOGLE);
 
       }
     );
