@@ -326,26 +326,23 @@ async function initializeCircle() {
            * before Google login.
            */
           circleSdk.updateConfigs(
-    {
-        appSettings: {
-            appId,
-        },
-
-        loginConfigs: {
-            deviceToken,
-            deviceEncryptionKey,
-
-            google: {
-                clientId: googleClientId,
-                redirectUri:
-                    window.location.origin,
-
-                selectAccountPrompt:
-                    true,
-            },
-        },
+  {
+    appSettings: {
+      appId,
     },
-    onLoginComplete
+
+    loginConfigs: {
+      deviceToken,
+      deviceEncryptionKey,
+
+      google: {
+        clientId: googleClientId,
+        redirectUri: window.location.origin,
+        selectAccountPrompt: true,
+      },
+    },
+  },
+  onLoginComplete
 );
 
           console.log("🔎 GOOGLE PROVIDER VALUE:", SocialLoginProvider.GOOGLE);
