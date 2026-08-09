@@ -7,9 +7,9 @@ export default defineConfig({
       globals: {
         Buffer: true,
         global: true,
-        process: true
+        process: true,
       },
-      protocolImports: true
-    })
-  ]
+      protocolImports: true,
+    }),
+  ],
 });
