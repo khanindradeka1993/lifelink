@@ -58,7 +58,14 @@ async function initializeCircle() {
 
       console.log("✅ Circle credentials received");
 
-      await initializeCircleUser();
+circleSdk.setAuthentication({
+  userToken: result.userToken,
+  encryptionKey: result.encryptionKey
+});
+
+console.log("✅ Circle SDK authenticated");
+
+await initializeCircleUser();
     };
 
 
