@@ -81,20 +81,15 @@ await initializeCircleUser();
       appId: appId
     },
 
-    loginConfigs: {
-      deviceToken: deviceToken,
-      deviceEncryptionKey: deviceEncryptionKey,
-
-      google: {
+    socialLoginConfig: {
+    google: {
         clientId: googleClientId,
         redirectUri: window.location.origin,
         selectAccountPrompt: true
-      }
     }
-  },
+},
 
-  onLoginComplete
-);
+socialLoginCompleteCallback: onLoginComplete
 
 
     window.circleSdk = circleSdk;
@@ -195,7 +190,7 @@ localStorage.setItem(
           appId: appId
         },
 
-        loginConfigs: {
+        socialLoginConfig:
 
           deviceToken: deviceToken,
 
