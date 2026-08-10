@@ -395,7 +395,6 @@ return;
           },
         },
       },
-      onLoginComplete
     );
 
     log(
