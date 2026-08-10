@@ -7,17 +7,51 @@ const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 let circleSdk = null;
 let loginResult = null;
 
-let deviceToken = localStorage.getItem("circleDeviceToken") || "";
-let deviceEncryptionKey =
-  localStorage.getItem("circleDeviceEncryptionKey") || "";
+function getCookie(name) {
+  const prefix = `${name}=`;
+  const item = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(prefix));
 
-let userToken = localStorage.getItem("circleUserToken") || "";
-let encryptionKey = localStorage.getItem("circleEncryptionKey") || "";
-let refreshToken = localStorage.getItem("circleRefreshToken") || "";
+  return item ? decodeURIComponent(item.slice(prefix.length)) : "";
+}
+
+function setCookie(name, value, maxAge = 86400) {
+  if (!value) return;
+
+  const secure =
+    window.location.protocol === "https:" ? "; Secure" : "";
+
+  document.cookie =
+    `${name}=${encodeURIComponent(value)}; Max-Age=${maxAge}; Path=/; SameSite=Lax${secure}`;
+}
+
+let deviceToken =
+  localStorage.getItem("circleDeviceToken") ||
+  getCookie("deviceToken") ||
+  "";
+
+let deviceEncryptionKey =
+  localStorage.getItem("circleDeviceEncryptionKey") ||
+  getCookie("deviceEncryptionKey") ||
+  "";
+
+let userToken =
+  localStorage.getItem("circleUserToken") || "";
+
+let encryptionKey =
+  localStorage.getItem("circleEncryptionKey") || "";
+
+let refreshToken =
+  localStorage.getItem("circleRefreshToken") || "";
 
 function log(...args) {
   console.log(...args);
 }
+
+/* =====================================================
+   INITIALIZE CIRCLE
+   ===================================================== */
 
 async function initializeCircle() {
   try {
@@ -37,8 +71,9 @@ async function initializeCircle() {
     log("✅ Google Client ID found");
 
     /*
-     * IMPORTANT:
-     * Google login completion callback.
+     * Circle social-login completion callback.
+     * This callback must be available on the SDK instance
+     * when the page is restored after Google's redirect.
      */
     const onLoginComplete = async (error, result) => {
       log("🔔 Circle social-login callback fired");
@@ -103,9 +138,33 @@ async function initializeCircle() {
       }
     };
 
+    /*
+     * Restore the values that must survive the full-page
+     * Google OAuth redirect.
+     *
+     * Circle's official Google social-login quickstart
+     * persists these configuration values in cookies.
+     */
+    const restoredAppId =
+      getCookie("circleAppId") || appId;
+
+    const restoredGoogleClientId =
+      getCookie("circleGoogleClientId") ||
+      googleClientId;
+
+    deviceToken =
+      deviceToken ||
+      getCookie("deviceToken") ||
+      "";
+
+    deviceEncryptionKey =
+      deviceEncryptionKey ||
+      getCookie("deviceEncryptionKey") ||
+      "";
+
     const initialConfig = {
       appSettings: {
-        appId,
+        appId: restoredAppId,
       },
 
       loginConfigs: {
@@ -113,7 +172,7 @@ async function initializeCircle() {
         deviceEncryptionKey,
 
         google: {
-          clientId: googleClientId,
+          clientId: restoredGoogleClientId,
           redirectUri: window.location.origin,
           selectAccountPrompt: true,
         },
@@ -121,13 +180,13 @@ async function initializeCircle() {
     };
 
     /*
-     * IMPORTANT FIX:
-     * The social-login callback is supplied here.
+     * Use the constructor callback form used by Circle's
+     * official social-login wallet quickstart.
      */
-    circleSdk = new W3SSdk({
-  configs: initialConfig,
-  socialLoginCompleteCallback: onLoginComplete
-});
+    circleSdk = new W3SSdk(
+      initialConfig,
+      onLoginComplete
+    );
 
     window.circleSdk = circleSdk;
 
@@ -139,7 +198,7 @@ async function initializeCircle() {
     log(
       "🆔 Circle Device ID:",
       deviceId
-    );
+          );
 
     if (!deviceToken || !deviceEncryptionKey) {
       log(
@@ -210,22 +269,79 @@ async function initializeCircle() {
         deviceEncryptionKey
       );
 
+      /*
+       * Persist the same values in cookies so they are
+       * available after Google sends the browser back
+       * to the app.
+       */
+      setCookie(
+        "circleAppId",
+        appId
+      );
+
+      setCookie(
+        "circleGoogleClientId",
+        googleClientId
+      );
+
+      setCookie(
+        "deviceToken",
+        deviceToken
+      );
+
+      setCookie(
+        "deviceEncryptionKey",
+        deviceEncryptionKey
+      );
+
       log(
         "💾 Circle device login state saved"
+      );
+      
+  log(
+        "🍪 Circle OAuth configuration saved in cookies"
       );
 
       log(
         "✅ Circle device token received"
       );
     } else {
+      /*
+       * Make sure restored localStorage values are also
+       * available to the SDK after a future OAuth redirect.
+       */
+      setCookie(
+        "circleAppId",
+        appId
+      );
+
+      setCookie(
+        "circleGoogleClientId",
+        googleClientId
+      );
+
+      setCookie(
+        "deviceToken",
+        deviceToken
+      );
+
+      setCookie(
+        "deviceEncryptionKey",
+        deviceEncryptionKey
+      );
+
       log(
         "♻️ Restored Circle device login state"
+      );
+
+      log(
+        "🍪 Circle OAuth configuration restored/saved"
       );
     }
 
     /*
-     * Re-apply configuration after
-     * device token is available.
+     * Re-apply configuration after the device token is
+     * available.
      */
     circleSdk.updateConfigs(
       {
@@ -282,8 +398,8 @@ async function initializeCircle() {
 
       return;
     }
-
-    googleButton.dataset
+    
+googleButton.dataset
       .circleListenerAttached =
       "true";
 
@@ -317,37 +433,73 @@ async function initializeCircle() {
             );
           }
 
+          /*
+           * Persist all OAuth configuration immediately
+           * before leaving the page for Google.
+           */
+          setCookie(
+            "circleAppId",
+            appId
+          );
+
+          setCookie(
+            "circleGoogleClientId",
+            googleClientId
+          );
+
+          setCookie(
+            "deviceToken",
+            deviceToken
+          );
+
+          setCookie(
+            "deviceEncryptionKey",
+            deviceEncryptionKey
+          );
+
+          log(
+            "🍪 OAuth configuration persisted before Google redirect"
+          );
+
           log(
             "🔵 Starting Google login..."
           );
 
-          /*
-           * Re-apply configuration immediately
-           * before Google login.
-           */
           circleSdk.updateConfigs(
-  {
-    appSettings: {
-      appId,
-    },
+            {
+              appSettings: {
+                appId,
+              },
 
-    loginConfigs: {
-      deviceToken,
-      deviceEncryptionKey,
+              loginConfigs: {
+                deviceToken,
+                deviceEncryptionKey,
 
-      google: {
-        clientId: googleClientId,
-        redirectUri: window.location.origin,
-        selectAccountPrompt: true,
-      },
-    },
-  },
-  onLoginComplete
-);
+                google: {
+                  clientId:
+                    googleClientId,
+                  redirectUri:
+                    window.location.origin,
+                  selectAccountPrompt:
+                    true,
+                },
+              },
+            },
 
-          console.log("🔎 GOOGLE PROVIDER VALUE:", SocialLoginProvider.GOOGLE);
-console.log("🔎 GOOGLE CONFIG:", googleClientId);
-          await circleSdk.performLogin(
+            onLoginComplete
+          );
+
+          console.log(
+            "🔎 GOOGLE PROVIDER VALUE:",
+            SocialLoginProvider.GOOGLE
+          );
+
+          console.log(
+            "🔎 GOOGLE CONFIG:",
+            googleClientId
+          );
+
+        await circleSdk.performLogin(
             SocialLoginProvider.GOOGLE
           );
 
@@ -379,11 +531,12 @@ console.log("🔎 GOOGLE CONFIG:", googleClientId);
       currentUrl
     );
 
-    if (
+    const hasOAuthParams =
       currentUrl.includes("code=") ||
       currentUrl.includes("state=") ||
-      currentUrl.includes("error=")
-    ) {
+      currentUrl.includes("error=");
+
+    if (hasOAuthParams) {
       log(
         "🔎 OAuth callback parameters detected in URL"
       );
@@ -408,7 +561,6 @@ console.log("🔎 GOOGLE CONFIG:", googleClientId);
 
 async function initializeCircleUser() {
   try {
-
     const token =
       userToken ||
       loginResult?.userToken ||
@@ -446,7 +598,7 @@ async function initializeCircleUser() {
       await fetch(
         "/api/circle",
         {
-          method: "POST",
+         method: "POST",
 
           headers: {
             "Content-Type":
@@ -472,9 +624,7 @@ async function initializeCircleUser() {
     );
 
     if (!response.ok) {
-
       if (data.code === 155106) {
-
         log(
           "✅ Circle user already initialized"
         );
@@ -527,9 +677,7 @@ async function initializeCircleUser() {
         error,
         result
       ) => {
-
         if (error) {
-
           console.error(
             "❌ Circle wallet creation failed:",
             error
@@ -548,7 +696,6 @@ async function initializeCircleUser() {
     );
 
   } catch (error) {
-
     console.error(
       "❌ Circle user initialization failed:",
       error
@@ -562,9 +709,7 @@ async function initializeCircleUser() {
    ===================================================== */
 
 async function loadCircleWallets() {
-
   try {
-
     const token =
       userToken ||
       loginResult?.userToken ||
@@ -573,7 +718,6 @@ async function loadCircleWallets() {
       );
 
     if (!token) {
-
       console.error(
         "❌ Cannot load wallets: userToken missing"
       );
@@ -611,7 +755,6 @@ async function loadCircleWallets() {
     );
 
     if (!response.ok) {
-
       throw new Error(
         data.error ||
         data.message ||
@@ -635,7 +778,6 @@ async function loadCircleWallets() {
     return wallets;
 
   } catch (error) {
-
     console.error(
       "❌ Failed to load Circle wallets:",
       error
@@ -656,7 +798,7 @@ window.getCircleUserToken =
   () =>
     userToken ||
     localStorage.getItem(
-      "circleUserToken"
+        "circleUserToken"
     ) ||
     "";
 
@@ -677,7 +819,6 @@ if (
   document.readyState ===
   "loading"
 ) {
-
   document.addEventListener(
     "DOMContentLoaded",
     initializeCircle,
@@ -685,9 +826,6 @@ if (
       once: true,
     }
   );
-
 } else {
-
   initializeCircle();
-
 }
