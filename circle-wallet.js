@@ -535,9 +535,14 @@ return;
             googleClientId
           );
 
-            await circleSdk.performLogin(
-            SocialLoginProvider.GOOGLE
-          );
+            const oauth = circleSdk.generateOauthUrlWithParams(
+  "Google",
+  googleClientId,
+  window.location.origin,
+  true
+);
+
+window.location.href = oauth.url;
 
           log(
             "🟢 performLogin() returned"
