@@ -531,20 +531,7 @@ await circleSdk.performLogin(
   SocialLoginProvider.GOOGLE
 );
 
-       
-            console.log(
-            "🔎 GOOGLE PROVIDER VALUE:",
-            SocialLoginProvider.GOOGLE
-          );
-
-          console.log(
-            "🔎 GOOGLE CONFIG:",
-            googleClientId
-          );
-
-            await circleSdk.performLogin(
-  SocialLoginProvider.GOOGLE
-);
+      
 
           log(
             "🟢 performLogin() returned"
