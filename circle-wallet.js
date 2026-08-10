@@ -206,15 +206,40 @@ console.log(
 
     log("✅ Circle SDK initialized");
 
-    const deviceId =
-      await circleSdk.getDeviceId();
+    const isOAuthReturn =
+  window.location.hash.includes("state=") &&
+  localStorage.getItem("socialLoginProvider") ===
+    SocialLoginProvider.GOOGLE;
+
+let deviceId = "";
+
+if (!isOAuthReturn) {
+  deviceId = await circleSdk.getDeviceId();
+
+  log(
+    "🆔 Circle Device ID:",
+    deviceId
+  );
+} else {
+  log(
+    "⏭️ OAuth return detected — skipping getDeviceId until Google login completes"
+  );
+}
 
     log(
       "🆔 Circle Device ID:",
       deviceId
     );
 
-    if (!deviceToken || !deviceEncryptionKey) {
+    if (
+  !deviceToken ||
+  !deviceEncryptionKey
+) {
+  if (isOAuthReturn) {
+    throw new Error(
+      "OAuth return detected but Circle device credentials are missing"
+    );
+  }
       log(
         "🔵 Requesting Circle device token..."
       );
