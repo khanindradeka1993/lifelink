@@ -98,7 +98,7 @@ console.log(
         return;
       }
 
-      if (!result) {
+            if (!result) {
         console.error("❌ Google login returned no result");
         return;
       }
@@ -194,15 +194,11 @@ console.log(
       },
     };
 
-    const isOAuthReturn =
-  window.location.hash.includes("state=") &&
-  localStorage.getItem("socialLoginProvider") ===
-    SocialLoginProvider.GOOGLE;
     /*
      * Use the constructor callback form used by Circle's
      * official social-login wallet quickstart.
      */
-    circleSdk = new W3SSdk(
+      circleSdk = new W3SSdk(
   initialConfig,
   onLoginComplete
 );
@@ -235,14 +231,9 @@ return;
     );
 
     if (
-  !deviceToken ||
-  !deviceEncryptionKey
-) {
-  if (isOAuthReturn) {
-    throw new Error(
-      "OAuth return detected but Circle device credentials are missing"
-    );
-  }
+      !deviceToken ||
+      !deviceEncryptionKey
+    ) {
       log(
         "🔵 Requesting Circle device token..."
       );
@@ -307,7 +298,7 @@ return;
       );
 
       localStorage.setItem(
-        "circleDeviceEncryptionKey",
+                "circleDeviceEncryptionKey",
         deviceEncryptionKey
       );
 
@@ -385,33 +376,29 @@ return;
      * Re-apply configuration after the device token is
      * available.
      */
-    circleSdk.updateConfigs(
-      {
-        appSettings: {
-          appId,
-        },
-
-        loginConfigs: {
-          deviceToken,
-          deviceEncryptionKey,
-
-          google: {
-            clientId: googleClientId,
-            redirectUri:
-              window.location.origin,
-            selectAccountPrompt: true,
-          },
-        },
+    circleSdk.updateConfigs({
+      appSettings: {
+        appId,
       },
 
-      onLoginComplete
-    );
+      loginConfigs: {
+        deviceToken,
+        deviceEncryptionKey,
+
+        google: {
+          clientId: googleClientId,
+          redirectUri:
+            window.location.origin,
+          selectAccountPrompt: true,
+        },
+      },
+    });
 
     log(
       "✅ Circle Google login configured"
     );
 
-    const googleButton =
+      const googleButton =
       document.getElementById(
         "googleLoginBtn"
       );
@@ -513,7 +500,7 @@ return;
                 appId,
               },
 
-              loginConfigs: {
+                       loginConfigs: {
                 deviceToken,
                 deviceEncryptionKey,
 
@@ -611,7 +598,7 @@ async function initializeCircleUser() {
       );
 
     const key =
-      encryptionKey ||
+            encryptionKey ||
       loginResult?.encryptionKey ||
       localStorage.getItem(
         "circleEncryptionKey"
@@ -713,7 +700,7 @@ async function initializeCircleUser() {
       encryptionKey: key,
     });
 
-    circleSdk.execute(
+      circleSdk.execute(
       challengeId,
       async (
         error,
@@ -778,8 +765,9 @@ async function loadCircleWallets() {
               "application/json",
           },
 
-          action:
-  "listWallets",
+          body: JSON.stringify({
+            action:
+              "listWallets",
 
             userToken:
               token,
