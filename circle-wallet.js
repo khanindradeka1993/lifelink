@@ -199,24 +199,17 @@ console.log(
      * Use the constructor callback form used by Circle's
      * official social-login wallet quickstart.
      */
-        circleSdk = new W3SSdk(
-  initialConfig,
-  onLoginComplete
-);
+        circleSdk = new W3SSdk({
+  configs: initialConfig,
+  socialLoginCompleteCallback: onLoginComplete,
+});
     window.circleSdk = circleSdk;
 
     log("✅ Circle SDK initialized");
 
 
-let deviceId = "";
-
-const isOAuthReturn =
-  window.location.search.includes("state=") ||
-  window.location.hash.includes("access_token");
-  if (isOAuthReturn) {
-  console.log("🔄 Google OAuth return detected — waiting for Circle callback");
-  return;
-  }
+let deviceId = ""
+    
     try {
     deviceId = await circleSdk.getDeviceId();
 
@@ -505,25 +498,38 @@ return;
           );
 
           circleSdk.updateConfigs(
-            {
-              appSettings: {
-                appId,
-              },
+  {
+    appSettings: {
+      appId,
+    },
 
-                                     loginConfigs: {
-                deviceToken,
-                deviceEncryptionKey,
+    loginConfigs: {
+      deviceToken,
+      deviceEncryptionKey,
 
-                google: {
-                  clientId:
-                    googleClientId,
-                  redirectUri:
-                    window.location.origin,
-                  selectAccountPrompt:
-                    true,
-                },
-              },
-            },
+      google: {
+        clientId: googleClientId,
+        redirectUri: window.location.origin,
+        selectAccountPrompt: true,
+      },
+    },
+  },
+  onLoginComplete
+);
+
+console.log(
+  "🔎 GOOGLE PROVIDER VALUE:",
+  SocialLoginProvider.GOOGLE
+);
+
+console.log(
+  "🔎 GOOGLE CONFIG:",
+  googleClientId
+);
+
+await circleSdk.performLogin(
+  SocialLoginProvider.GOOGLE
+);
 
        
             console.log(
