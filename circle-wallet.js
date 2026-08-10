@@ -213,6 +213,10 @@ let deviceId = "";
 const isOAuthReturn =
   window.location.search.includes("state=") ||
   window.location.hash.includes("access_token");
+  if (isOAuthReturn) {
+  console.log("🔄 Google OAuth return detected — waiting for Circle callback");
+  return;
+  }
     try {
     deviceId = await circleSdk.getDeviceId();
 
