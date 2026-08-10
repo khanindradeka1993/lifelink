@@ -91,6 +91,7 @@ console.log(
      * when the page is restored after Google's redirect.
      */
     const onLoginComplete = async (error, result) => {
+    console.log("🔥 CALLBACK FUNCTION CREATED");  
       log("🔔 Circle social-login callback fired");
 
       if (error) {
@@ -518,10 +519,8 @@ return;
               },
             },
 
-            onLoginComplete
-          );
-
-          console.log(
+       
+            console.log(
             "🔎 GOOGLE PROVIDER VALUE:",
             SocialLoginProvider.GOOGLE
           );
