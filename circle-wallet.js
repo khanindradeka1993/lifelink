@@ -778,9 +778,8 @@ async function loadCircleWallets() {
               "application/json",
           },
 
-          body: JSON.stringify({
-            action:
-              "getWallets",
+          action:
+  "listWallets",
 
             userToken:
               token,
