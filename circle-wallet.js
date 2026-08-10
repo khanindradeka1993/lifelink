@@ -194,6 +194,10 @@ console.log(
       },
     };
 
+    const isOAuthReturn =
+  window.location.hash.includes("state=") &&
+  localStorage.getItem("socialLoginProvider") ===
+    SocialLoginProvider.GOOGLE;
     /*
      * Use the constructor callback form used by Circle's
      * official social-login wallet quickstart.
@@ -206,10 +210,6 @@ console.log(
 
     log("✅ Circle SDK initialized");
 
-    const isOAuthReturn =
-  window.location.hash.includes("state=") &&
-  localStorage.getItem("socialLoginProvider") ===
-    SocialLoginProvider.GOOGLE;
 
 let deviceId = "";
 
