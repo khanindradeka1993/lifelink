@@ -98,7 +98,7 @@ async function initializeCircle() {
 
         localStorage.setItem(
           "circleUserToken",
-          userToken
+              userToken
         );
       }
 
@@ -146,10 +146,10 @@ async function initializeCircle() {
      * persists these configuration values in cookies.
      */
     const restoredAppId =
-      getCookie("circleAppId") || appId;
+      getCookie("appId") || appId;
 
     const restoredGoogleClientId =
-      getCookie("circleGoogleClientId") ||
+      getCookie("google.clientId") ||
       googleClientId;
 
     deviceToken =
@@ -198,7 +198,7 @@ async function initializeCircle() {
     log(
       "🆔 Circle Device ID:",
       deviceId
-          );
+    );
 
     if (!deviceToken || !deviceEncryptionKey) {
       log(
@@ -275,12 +275,12 @@ async function initializeCircle() {
        * to the app.
        */
       setCookie(
-        "circleAppId",
+        "appId",
         appId
       );
 
       setCookie(
-        "circleGoogleClientId",
+        "google.clientId",
         googleClientId
       );
 
@@ -297,8 +297,8 @@ async function initializeCircle() {
       log(
         "💾 Circle device login state saved"
       );
-      
-  log(
+
+      log(
         "🍪 Circle OAuth configuration saved in cookies"
       );
 
@@ -311,12 +311,12 @@ async function initializeCircle() {
        * available to the SDK after a future OAuth redirect.
        */
       setCookie(
-        "circleAppId",
+        "appId",
         appId
       );
 
       setCookie(
-        "circleGoogleClientId",
+        "google.clientId",
         googleClientId
       );
 
@@ -398,8 +398,8 @@ async function initializeCircle() {
 
       return;
     }
-    
-googleButton.dataset
+
+      googleButton.dataset
       .circleListenerAttached =
       "true";
 
@@ -438,12 +438,12 @@ googleButton.dataset
            * before leaving the page for Google.
            */
           setCookie(
-            "circleAppId",
+            "appId",
             appId
           );
 
           setCookie(
-            "circleGoogleClientId",
+            "google.clientId",
             googleClientId
           );
 
@@ -499,7 +499,7 @@ googleButton.dataset
             googleClientId
           );
 
-        await circleSdk.performLogin(
+            await circleSdk.performLogin(
             SocialLoginProvider.GOOGLE
           );
 
@@ -598,7 +598,7 @@ async function initializeCircleUser() {
       await fetch(
         "/api/circle",
         {
-         method: "POST",
+            method: "POST",
 
           headers: {
             "Content-Type":
@@ -798,7 +798,7 @@ window.getCircleUserToken =
   () =>
     userToken ||
     localStorage.getItem(
-        "circleUserToken"
+      "circleUserToken"
     ) ||
     "";
 
