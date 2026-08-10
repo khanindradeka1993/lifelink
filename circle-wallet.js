@@ -183,11 +183,10 @@ async function initializeCircle() {
      * Use the constructor callback form used by Circle's
      * official social-login wallet quickstart.
      */
-    circleSdk = new W3SSdk({
-  configs: initialConfig,
-  socialLoginCompleteCallback: onLoginComplete,
-});
-
+    circleSdk = new W3SSdk(
+  initialConfig,
+  onLoginComplete
+);
     window.circleSdk = circleSdk;
 
     log("✅ Circle SDK initialized");
