@@ -213,17 +213,20 @@ console.log(
 
 let deviceId = "";
 
-if (!isOAuthReturn) {
-  deviceId = await circleSdk.getDeviceId();
+try {
+    deviceId = await circleSdk.getDeviceId();
 
-  log(
-    "🆔 Circle Device ID:",
-    deviceId
-  );
-} else {
-  log(
-    "⏭️ OAuth return detected — skipping getDeviceId until Google login completes"
-  );
+    log(
+        "📱 Circle Device ID:",
+        deviceId
+    );
+
+    if (!deviceId) {
+        throw new Error("Circle Device ID is empty");
+    }
+} catch (error) {
+    console.error("❌ Failed to get Circle Device ID:", error);
+return;
 }
 
     log(
