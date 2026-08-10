@@ -54,6 +54,21 @@ function log(...args) {
    ===================================================== */
 
 async function initializeCircle() {
+ console.log("🔎 OAUTH RETURN DEBUG");
+console.log("🔎 URL:", window.location.href);
+console.log("🔎 HASH:", window.location.hash);
+console.log(
+  "🔎 socialLoginProvider:",
+  localStorage.getItem("socialLoginProvider")
+);
+console.log(
+  "🔎 state exists:",
+  !!localStorage.getItem("state")
+);
+console.log(
+  "🔎 nonce exists:",
+  !!localStorage.getItem("nonce")
+); 
   try {
     log("🔵 Starting Circle initialization...");
 
