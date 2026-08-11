@@ -574,8 +574,8 @@ console.log("🔎 RAW CALLBACK:", {
           );
 
           await circleSdk.performLogin(
-            SocialLoginProvider.Google
-          );
+  "Google"
+);
 
           log(
             "🟢 performLogin() returned"
