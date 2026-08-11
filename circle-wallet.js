@@ -293,7 +293,14 @@ async function initializeCircle() {
       log(
         "🔔 Circle social-login callback fired"
       );
-
+console.log("🔎 RAW CALLBACK:", {
+  error,
+  result,
+  userToken: result?.userToken,
+  encryptionKey: result?.encryptionKey,
+  refreshToken: result?.refreshToken,
+  oAuthInfo: result?.oAuthInfo
+});
       if (error) {
         console.error(
           "❌ Google login failed:",
