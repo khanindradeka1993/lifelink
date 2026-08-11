@@ -1,29 +1,38 @@
 import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
 import { SocialLoginProvider } from "@circle-fin/w3s-pw-web-sdk/dist/src/types";
 
-const appId = import.meta.env.VITE_CIRCLE_APP_ID;
-const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const appId =
+  import.meta.env.VITE_CIRCLE_APP_ID;
+
+const googleClientId =
+  import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 let circleSdk = null;
-let loginResult = null;
-
-let deviceToken =
-  localStorage.getItem("circleDeviceToken") || "";
-
-let deviceEncryptionKey =
-  localStorage.getItem("circleDeviceEncryptionKey") || "";
 
 let userToken =
-  localStorage.getItem("circleUserToken") || "";
+  localStorage.getItem(
+    "circleUserToken"
+  ) || "";
 
 let encryptionKey =
-  localStorage.getItem("circleEncryptionKey") || "";
+  localStorage.getItem(
+    "circleEncryptionKey"
+  ) || "";
 
-let refreshToken =
-  localStorage.getItem("circleRefreshToken") || "";
+let deviceToken =
+  localStorage.getItem(
+    "circleDeviceToken"
+  ) || "";
+
+let deviceEncryptionKey =
+  localStorage.getItem(
+    "circleDeviceEncryptionKey"
+  ) || "";
 
 window.circleSdk = null;
 window.circleWallets = [];
+window.circleWallet = null;
+window.circleWalletAddress = "";
 
 
 /* =========================================================
@@ -31,7 +40,7 @@ window.circleWallets = [];
    ========================================================= */
 
 function log(...args) {
-  console.log(...args);
+  console.log("[LifeLink/Circle]", ...args);
 }
 
 
@@ -44,14 +53,16 @@ function getCookie(name) {
 
   const item = document.cookie
     .split("; ")
-    .find((row) => row.startsWith(prefix));
+    .find((row) =>
+      row.startsWith(prefix)
+    );
 
   if (!item) {
     return "";
   }
 
   return decodeURIComponent(
-    item.slice(prefix.length)
+    item.substring(prefix.length)
   );
 }
 
@@ -66,7 +77,8 @@ function setCookie(
   }
 
   const secure =
-    window.location.protocol === "https:"
+    window.location.protocol ===
+    "https:"
       ? "; Secure"
       : "";
 
@@ -79,27 +91,8 @@ function setCookie(
 }
 
 
-function persistOAuthConfig() {
-  setCookie("appId", appId);
-  setCookie(
-    "google.clientId",
-    googleClientId
-  );
-
-  setCookie(
-    "deviceToken",
-    deviceToken
-  );
-
-  setCookie(
-    "deviceEncryptionKey",
-    deviceEncryptionKey
-  );
-}
-
-
 /* =========================================================
-   CIRCLE BACKEND API
+   BACKEND API
    ========================================================= */
 
 async function callCircleApi(body) {
@@ -117,29 +110,32 @@ async function callCircleApi(body) {
     }
   );
 
-  let data;
+  let data = {};
 
   try {
     data = await response.json();
   } catch {
     data = {
       error:
-        "Circle API returned invalid JSON",
+        "Invalid JSON returned by server",
     };
   }
 
   if (!response.ok) {
-    const error =
-      new Error(
-        data.error ||
-          data.message ||
-          `Circle API failed (${response.status})`
-      );
+    const error = new Error(
+      data.error ||
+        data.message ||
+        `Circle API failed: ${response.status}`
+    );
 
     error.status =
       response.status;
 
-    error.data = data;
+    error.code =
+      data.code;
+
+    error.data =
+      data;
 
     throw error;
   }
@@ -149,21 +145,65 @@ async function callCircleApi(body) {
 
 
 /* =========================================================
+   SAVE AUTHENTICATION
+   ========================================================= */
+
+function saveAuthentication(
+  result
+) {
+  if (!result) {
+    throw new Error(
+      "Circle login returned no result"
+    );
+  }
+
+  userToken =
+    result.userToken || "";
+
+  encryptionKey =
+    result.encryptionKey || "";
+
+  if (!userToken) {
+    throw new Error(
+      "Circle userToken is missing"
+    );
+  }
+
+  if (!encryptionKey) {
+    throw new Error(
+      "Circle encryptionKey is missing"
+    );
+  }
+
+  localStorage.setItem(
+    "circleUserToken",
+    userToken
+  );
+
+  localStorage.setItem(
+    "circleEncryptionKey",
+    encryptionKey
+  );
+
+  circleSdk.setAuthentication({
+    userToken,
+    encryptionKey,
+  });
+
+  log(
+    "✅ Circle authentication saved"
+  );
+}
+
+
+/* =========================================================
    LOAD WALLETS
    ========================================================= */
 
 async function loadCircleWallets() {
-  const token =
-    userToken ||
-    loginResult?.userToken ||
-    localStorage.getItem(
-      "circleUserToken"
-    ) ||
-    "";
-
-  if (!token) {
-    console.error(
-      "❌ Cannot load wallets: userToken missing"
+  if (!userToken) {
+    log(
+      "⚠️ Cannot load wallets: userToken missing"
     );
 
     return [];
@@ -177,7 +217,7 @@ async function loadCircleWallets() {
     const data =
       await callCircleApi({
         action: "listWallets",
-        userToken: token,
+        userToken,
       });
 
     const wallets =
@@ -189,14 +229,10 @@ async function loadCircleWallets() {
       wallets;
 
     log(
-      "💰 Circle wallets loaded:",
+      "💰 Wallets:",
       wallets
     );
 
-    /*
-     * Try to expose the first wallet
-     * for the rest of the application.
-     */
     if (wallets.length > 0) {
       const wallet =
         wallets[0];
@@ -204,29 +240,27 @@ async function loadCircleWallets() {
       window.circleWallet =
         wallet;
 
-      log(
-        "💰 Circle wallet:",
-        wallet
-      );
-
-      /*
-       * Try common address fields.
-       */
       const address =
         wallet.address ||
         wallet.walletAddress ||
         wallet.blockchainAddress ||
         "";
 
-      if (address) {
-        window.circleWalletAddress =
-          address;
+      window.circleWalletAddress =
+        address;
 
-        log(
-          "📍 Circle wallet address:",
-          address
-        );
-      }
+      log(
+        "🎉 Circle wallet address:",
+        address
+      );
+
+      updateWalletAddressUI(
+        address
+      );
+    } else {
+      log(
+        "ℹ️ No Circle wallets found"
+      );
     }
 
     return wallets;
@@ -243,43 +277,96 @@ async function loadCircleWallets() {
 
 
 /* =========================================================
-   EXECUTE CIRCLE CHALLENGE
+   UPDATE PAGE UI
    ========================================================= */
 
-async function executeWalletChallenge(
+function updateWalletAddressUI(
+  address
+) {
+  const element =
+    document.getElementById(
+      "walletAddress"
+    );
+
+  if (!element) {
+    return;
+  }
+
+  if (!address) {
+    element.textContent =
+      "Wallet not connected";
+
+    return;
+  }
+
+  element.textContent =
+    `Circle Wallet: ${address}`;
+}
+
+
+/* =========================================================
+   EXECUTE WALLET CHALLENGE
+   ========================================================= */
+
+function executeWalletChallenge(
   challengeId
 ) {
-  if (!challengeId) {
-    throw new Error(
-      "Circle did not return a challenge ID"
-    );
-  }
-
-  if (
-    !circleSdk ||
-    !userToken ||
-    !encryptionKey
-  ) {
-    throw new Error(
-      "Circle SDK authentication is unavailable"
-    );
-  }
-
-  circleSdk.setAuthentication({
-    userToken,
-    encryptionKey,
-  });
-
-  log(
-    "🆔 Circle Challenge ID:",
-    challengeId
-  );
-
   return new Promise(
     (resolve, reject) => {
 
+      if (!circleSdk) {
+        reject(
+          new Error(
+            "Circle SDK is not initialized"
+          )
+        );
+
+        return;
+      }
+
+      if (!userToken) {
+        reject(
+          new Error(
+            "Circle userToken is missing"
+          )
+        );
+
+        return;
+      }
+
+      if (!encryptionKey) {
+        reject(
+          new Error(
+            "Circle encryptionKey is missing"
+          )
+        );
+
+        return;
+      }
+
+      if (!challengeId) {
+        reject(
+          new Error(
+            "Circle challengeId is missing"
+          )
+        );
+
+        return;
+      }
+
+      circleSdk.setAuthentication({
+        userToken,
+        encryptionKey,
+      });
+
+      log(
+        "🔐 Executing Circle challenge:",
+        challengeId
+      );
+
       circleSdk.execute(
         challengeId,
+
         async (
           error,
           result
@@ -287,24 +374,24 @@ async function executeWalletChallenge(
 
           if (error) {
             console.error(
-              "❌ Circle wallet challenge failed:",
+              "❌ Circle challenge failed:",
               error
             );
 
             reject(error);
+
             return;
           }
 
           log(
-            "🎉 Circle wallet challenge completed:",
+            "🎉 Circle challenge completed:",
             result
           );
 
           /*
-           * Give Circle a short amount
-           * of time to make the wallet
-           * visible through the wallet
-           * listing endpoint.
+           * Wait briefly for Circle to
+           * make the newly created wallet
+           * available through listWallets.
            */
           await new Promise(
             (resolveDelay) =>
@@ -314,7 +401,16 @@ async function executeWalletChallenge(
               )
           );
 
-          await loadCircleWallets();
+          const wallets =
+            await loadCircleWallets();
+
+          if (
+            wallets.length === 0
+          ) {
+            console.warn(
+              "⚠️ Challenge completed but wallet is not visible yet."
+            );
+          }
 
           resolve(result);
         }
@@ -325,28 +421,20 @@ async function executeWalletChallenge(
 
 
 /* =========================================================
-   INITIALIZE OR CREATE WALLET
+   INITIALIZE USER + CREATE WALLET
    ========================================================= */
 
-async function initializeOrCreateWallet() {
-
-  if (
-    !userToken ||
-    !encryptionKey
-  ) {
-    console.error(
-      "❌ Circle authentication is incomplete"
+async function initializeUserAndCreateWallet() {
+  if (!userToken) {
+    throw new Error(
+      "Missing Circle userToken"
     );
-
-    return;
   }
 
-  if (!circleSdk) {
-    console.error(
-      "❌ Circle SDK is not initialized"
+  if (!encryptionKey) {
+    throw new Error(
+      "Missing Circle encryptionKey"
     );
-
-    return;
   }
 
   circleSdk.setAuthentication({
@@ -354,209 +442,200 @@ async function initializeOrCreateWallet() {
     encryptionKey,
   });
 
+  log(
+    "🔵 Initializing Circle user..."
+  );
+
   try {
 
-    log(
-      "🔵 Initializing Circle user..."
-    );
-
-    const initData =
+    const data =
       await callCircleApi({
         action:
           "initializeUser",
-
         userToken,
       });
 
     log(
       "🔐 initializeUser response:",
-      initData
-    );
-
-    const initChallengeId =
-      initData.challengeId ||
-      initData.data?.challengeId;
-
-    /*
-     * New Circle user.
-     *
-     * Circle gives us a challenge.
-     */
-    if (initChallengeId) {
-
-      log(
-        "🟢 Circle user initialized"
-      );
-
-      await executeWalletChallenge(
-        initChallengeId
-      );
-
-      return;
-    }
-
-    /*
-     * If no challenge came back,
-     * check whether a wallet already
-     * exists.
-     */
-    const existingWallets =
-      await loadCircleWallets();
-
-    if (
-      existingWallets.length > 0
-    ) {
-      log(
-        "✅ Existing Circle wallet found"
-      );
-
-      return;
-    }
-
-    /*
-     * No wallet found, so ask Circle
-     * to create one.
-     */
-    log(
-      "🔵 No Circle wallet found; requesting wallet creation..."
-    );
-
-    const walletData =
-      await callCircleApi({
-        action:
-          "createWallet",
-
-        userToken,
-      });
-
-    log(
-      "🔐 createWallet response:",
-      walletData
+      data
     );
 
     const challengeId =
-      walletData.challengeId ||
-      walletData.data?.challengeId;
+      data.challengeId ||
+      data.data?.challengeId;
 
-    if (challengeId) {
-
-      await executeWalletChallenge(
-        challengeId
+    if (!challengeId) {
+      console.warn(
+        "⚠️ Circle initialization returned no challengeId"
       );
 
-      return;
+      const existingWallets =
+        await loadCircleWallets();
+
+      if (
+        existingWallets.length > 0
+      ) {
+        log(
+          "✅ Existing wallet found"
+        );
+
+        return existingWallets;
+      }
+
+      console.warn(
+        "⚠️ No wallet found"
+      );
+
+      return [];
     }
 
-    /*
-     * Some Circle responses can
-     * indicate that the wallet already
-     * exists without returning a
-     * challenge.
-     */
-    await loadCircleWallets();
+    log(
+      "🆔 Wallet creation challenge:",
+      challengeId
+    );
+
+    await executeWalletChallenge(
+      challengeId
+    );
+
+    return window.circleWallets;
 
   } catch (error) {
 
-    console.error(
-      "❌ Circle initialization failed:",
-      error
-    );
-
     const code =
-      error?.data?.code ||
-      error?.code ||
-      error?.status;
+      error?.data?.code ??
+      error?.code;
 
     /*
-     * 155106 is commonly returned
-     * when the user is already
-     * initialized.
+     * Circle error 155106 means
+     * the user is already initialized.
      *
-     * In that case, create the
-     * wallet instead.
+     * In that case we DO NOT create
+     * another wallet. We simply load
+     * the existing wallet.
      */
     if (
-      code === 155106
+      Number(code) === 155106
     ) {
 
       log(
-        "ℹ️ Circle user already initialized."
+        "ℹ️ User already initialized. Loading existing wallet..."
       );
 
-      try {
-
-        const walletData =
-          await callCircleApi({
-            action:
-              "createWallet",
-
-            userToken,
-          });
-
-        log(
-          "🔐 Existing-user wallet response:",
-          walletData
-        );
-
-        const challengeId =
-          walletData.challengeId ||
-          walletData.data?.challengeId;
-
-        if (challengeId) {
-
-          await executeWalletChallenge(
-            challengeId
-          );
-
-          return;
-        }
-
+      const wallets =
         await loadCircleWallets();
 
-      } catch (walletError) {
-
-        console.error(
-          "❌ Circle wallet creation request failed:",
-          walletError
-        );
-
-        /*
-         * If Circle says it already
-         * exists, simply load it.
-         */
-        const walletCode =
-          walletError?.data?.code ||
-          walletError?.code ||
-          walletError?.status;
-
-        if (
-          walletCode === 155106
-        ) {
-          await loadCircleWallets();
-        }
+      if (
+        wallets.length > 0
+      ) {
+        return wallets;
       }
 
-      return;
+      console.warn(
+        "⚠️ User is initialized but no wallet was returned."
+      );
+
+      return [];
     }
 
-    /*
-     * Always attempt one wallet
-     * listing after an initialization
-     * failure. This helps when the
-     * wallet was actually created
-     * but the response was unusual.
-     */
-    await loadCircleWallets();
+    throw error;
   }
 }
 
 
 /* =========================================================
-   MAIN CIRCLE INITIALIZATION
+   GOOGLE LOGIN CALLBACK
+   ========================================================= */
+
+async function onGoogleLoginComplete(
+  error,
+  result
+) {
+  log(
+    "🔔 Circle social-login callback fired"
+  );
+
+  console.log(
+    "🔎 Circle login callback:",
+    {
+      error,
+      result,
+    }
+  );
+
+  if (error) {
+    console.error(
+      "❌ Google/Circle login failed:",
+      error
+    );
+
+    return;
+  }
+
+  if (!result) {
+    console.error(
+      "❌ Google login returned no result"
+    );
+
+    return;
+  }
+
+  try {
+
+    log(
+      "✅ Google authentication successful"
+    );
+
+    log(
+      "🔐 Circle credentials received"
+    );
+
+    saveAuthentication(
+      result
+    );
+
+    log(
+      "🔵 Starting automatic wallet initialization..."
+    );
+
+    const wallets =
+      await initializeUserAndCreateWallet();
+
+    if (
+      wallets.length > 0
+    ) {
+
+      log(
+        "🎉 GOOGLE LOGIN + WALLET CREATION COMPLETE"
+      );
+
+      log(
+        "💰 Wallet:",
+        wallets[0]
+      );
+
+    } else {
+
+      console.warn(
+        "⚠️ Google login succeeded, but no wallet was returned."
+      );
+    }
+
+  } catch (walletError) {
+
+    console.error(
+      "❌ Wallet creation flow failed:",
+      walletError
+    );
+  }
+}
+
+
+/* =========================================================
+   INITIALIZE CIRCLE
    ========================================================= */
 
 async function initializeCircle() {
-
   try {
 
     log(
@@ -564,19 +643,15 @@ async function initializeCircle() {
     );
 
     if (!appId) {
-      console.error(
-        "❌ VITE_CIRCLE_APP_ID is missing"
+      throw new Error(
+        "VITE_CIRCLE_APP_ID is missing"
       );
-
-      return;
     }
 
     if (!googleClientId) {
-      console.error(
-        "❌ VITE_GOOGLE_CLIENT_ID is missing"
+      throw new Error(
+        "VITE_GOOGLE_CLIENT_ID is missing"
       );
-
-      return;
     }
 
     log(
@@ -588,159 +663,9 @@ async function initializeCircle() {
     );
 
 
-    /* =====================================================
-       GOOGLE LOGIN CALLBACK
-       ===================================================== */
-
-    const onLoginComplete =
-      async (
-        error,
-        result
-      ) => {
-
-        log(
-          "🔔 Circle social-login callback fired"
-        );
-
-        console.log(
-          "🔎 RAW CIRCLE CALLBACK:",
-          {
-            error,
-            result,
-            userToken:
-              result?.userToken,
-            encryptionKey:
-              result?.encryptionKey,
-            refreshToken:
-              result?.refreshToken,
-            oAuthInfo:
-              result?.oAuthInfo,
-          }
-        );
-
-
-        if (error) {
-
-          console.error(
-            "❌ Google login failed:",
-            error
-          );
-
-          return;
-        }
-
-
-        if (!result) {
-
-          console.error(
-            "❌ Google login returned no result"
-          );
-
-          return;
-        }
-
-
-        log(
-          "🟢 Google login successful"
-        );
-
-        log(
-          "🔐 Circle login result:",
-          result
-        );
-
-
-        loginResult =
-          result;
-
-
-        userToken =
-          result.userToken ||
-          "";
-
-        encryptionKey =
-          result.encryptionKey ||
-          "";
-
-        refreshToken =
-          result.refreshToken ||
-          "";
-
-
-        if (
-          !userToken ||
-          !encryptionKey
-        ) {
-
-          console.error(
-            "❌ Google login result is missing Circle credentials",
-            result
-          );
-
-          return;
-        }
-
-
-        /*
-         * Save Circle authentication
-         * locally.
-         */
-        localStorage.setItem(
-          "circleUserToken",
-          userToken
-        );
-
-        localStorage.setItem(
-          "circleEncryptionKey",
-          encryptionKey
-        );
-
-
-        if (refreshToken) {
-
-          localStorage.setItem(
-            "circleRefreshToken",
-            refreshToken
-          );
-        }
-
-
-        /*
-         * Authenticate SDK.
-         */
-        circleSdk.setAuthentication({
-          userToken,
-          encryptionKey,
-        });
-
-
-        log(
-          "✅ Circle SDK authenticated after Google login"
-        );
-
-
-        /*
-         * Now create/find the
-         * Circle wallet.
-         */
-        await initializeOrCreateWallet();
-      };
-
-
-    /* =====================================================
-       RESTORE CONFIG
-       ===================================================== */
-
-    const restoredAppId =
-      getCookie("appId") ||
-      appId;
-
-    const restoredGoogleClientId =
-      getCookie(
-        "google.clientId"
-      ) ||
-      googleClientId;
-
+    /* -----------------------------------------------------
+       RESTORE DEVICE TOKENS
+       ----------------------------------------------------- */
 
     deviceToken =
       localStorage.getItem(
@@ -750,7 +675,6 @@ async function initializeCircle() {
         "deviceToken"
       ) ||
       "";
-
 
     deviceEncryptionKey =
       localStorage.getItem(
@@ -762,27 +686,22 @@ async function initializeCircle() {
       "";
 
 
-    /* =====================================================
-       CIRCLE CONFIG
-       ===================================================== */
+    /* -----------------------------------------------------
+       INITIAL SDK CONFIG
+       ----------------------------------------------------- */
 
     const initialConfig = {
-
       appSettings: {
-        appId:
-          restoredAppId,
+        appId,
       },
 
       loginConfigs: {
-
         deviceToken,
-
         deviceEncryptionKey,
 
         google: {
-
           clientId:
-            restoredGoogleClientId,
+            googleClientId,
 
           redirectUri:
             window.location.origin,
@@ -794,42 +713,30 @@ async function initializeCircle() {
     };
 
 
-    /* =====================================================
+    /* -----------------------------------------------------
        CREATE SDK
-       ===================================================== */
+       ----------------------------------------------------- */
 
-    /*
-     * IMPORTANT:
-     *
-     * Keep the callback attached to
-     * the SDK constructor.
-     */
     circleSdk =
-      new W3SSdk({
-        configs:
-          initialConfig,
-
-        socialLoginCompleteCallback:
-          onLoginComplete,
-      });
-
+      new W3SSdk(
+        initialConfig,
+        onGoogleLoginComplete
+      );
 
     window.circleSdk =
       circleSdk;
-
 
     log(
       "✅ Circle SDK initialized"
     );
 
 
-    /* =====================================================
+    /* -----------------------------------------------------
        GET DEVICE ID
-       ===================================================== */
+       ----------------------------------------------------- */
 
     const deviceId =
       await circleSdk.getDeviceId();
-
 
     log(
       "🆔 Circle Device ID:",
@@ -837,9 +744,9 @@ async function initializeCircle() {
     );
 
 
-    /* =====================================================
-       DEVICE TOKEN
-       ===================================================== */
+    /* -----------------------------------------------------
+       CREATE DEVICE TOKEN IF NEEDED
+       ----------------------------------------------------- */
 
     if (
       !deviceToken ||
@@ -847,9 +754,8 @@ async function initializeCircle() {
     ) {
 
       log(
-        "🔵 Requesting Circle device token..."
+        "🔵 Creating Circle device token..."
       );
-
 
       const data =
         await callCircleApi({
@@ -859,29 +765,24 @@ async function initializeCircle() {
           deviceId,
         });
 
-
       deviceToken =
         data.deviceToken ||
         data.data?.deviceToken ||
         "";
-
 
       deviceEncryptionKey =
         data.deviceEncryptionKey ||
         data.data?.deviceEncryptionKey ||
         "";
 
-
       if (
         !deviceToken ||
         !deviceEncryptionKey
       ) {
-
         throw new Error(
           "Circle device token response is incomplete"
         );
       }
-
 
       localStorage.setItem(
         "circleDeviceToken",
@@ -893,17 +794,21 @@ async function initializeCircle() {
         deviceEncryptionKey
       );
 
+      setCookie(
+        "deviceToken",
+        deviceToken
+      );
 
-      persistOAuthConfig();
-
+      setCookie(
+        "deviceEncryptionKey",
+        deviceEncryptionKey
+      );
 
       log(
-        "✅ Circle device token received"
+        "✅ Circle device token created"
       );
 
     } else {
-
-      persistOAuthConfig();
 
       log(
         "♻️ Restored Circle device login state"
@@ -911,36 +816,22 @@ async function initializeCircle() {
     }
 
 
-    /* =====================================================
-       UPDATE GOOGLE CONFIG
-       ===================================================== */
+    /* -----------------------------------------------------
+       UPDATE SDK WITH DEVICE TOKEN
+       ----------------------------------------------------- */
 
-    /*
-     * IMPORTANT:
-     *
-     * Do NOT pass onLoginComplete
-     * to updateConfigs().
-     *
-     * The callback is already attached
-     * when W3SSdk was created.
-     */
     circleSdk.updateConfigs({
-
       appSettings: {
-        appId:
-          restoredAppId,
+        appId,
       },
 
       loginConfigs: {
-
         deviceToken,
-
         deviceEncryptionKey,
 
         google: {
-
           clientId:
-            restoredGoogleClientId,
+            googleClientId,
 
           redirectUri:
             window.location.origin,
@@ -952,70 +843,80 @@ async function initializeCircle() {
     });
 
 
-    log(
-      "✅ Circle Google login configured"
-    );
+    /* -----------------------------------------------------
+       RESTORE AUTHENTICATION IF AVAILABLE
+       ----------------------------------------------------- */
+
+    if (
+      userToken &&
+      encryptionKey
+    ) {
+
+      try {
+
+        circleSdk.setAuthentication({
+          userToken,
+          encryptionKey,
+        });
+
+        log(
+          "♻️ Restored Circle authentication"
+        );
+
+        await loadCircleWallets();
+
+      } catch (error) {
+
+        console.warn(
+          "⚠️ Could not restore Circle authentication:",
+          error
+        );
+      }
+    }
 
 
-    /* =====================================================
+    /* -----------------------------------------------------
        GOOGLE BUTTON
-       ===================================================== */
+       ----------------------------------------------------- */
 
     const googleButton =
       document.getElementById(
         "googleLoginBtn"
       );
 
-
     if (!googleButton) {
-
-      console.error(
-        "❌ #googleLoginBtn not found in index.html"
+      throw new Error(
+        "googleLoginBtn not found"
       );
-
-      return;
     }
-
-
-    googleButton.disabled =
-      false;
-
 
     if (
       googleButton.dataset
         .circleListenerAttached ===
       "true"
     ) {
-
-      log(
-        "ℹ️ Google listener already attached"
-      );
-
       return;
     }
-
 
     googleButton.dataset
       .circleListenerAttached =
       "true";
 
+    googleButton.disabled =
+      false;
+
 
     googleButton.addEventListener(
       "click",
 
-      async (
-        event
-      ) => {
+      async (event) => {
 
         event.preventDefault();
-
         event.stopPropagation();
-
 
         log(
           "🔵 GOOGLE BUTTON CLICKED"
         );
-
 
         try {
 
@@ -1023,38 +924,67 @@ async function initializeCircle() {
             !deviceToken ||
             !deviceEncryptionKey
           ) {
-
             throw new Error(
-              "Circle device token or encryption key is missing"
+              "Circle device token is missing"
             );
           }
 
+          setCookie(
+            "appId",
+            appId
+          );
 
-          persistOAuthConfig();
+          setCookie(
+            "google.clientId",
+            googleClientId
+          );
+
+          setCookie(
+            "deviceToken",
+            deviceToken
+          );
+
+          setCookie(
+            "deviceEncryptionKey",
+            deviceEncryptionKey
+          );
+
+
+          circleSdk.updateConfigs({
+            appSettings: {
+              appId,
+            },
+
+            loginConfigs: {
+              deviceToken,
+              deviceEncryptionKey,
+
+              google: {
+                clientId:
+                  googleClientId,
+
+                redirectUri:
+                  window.location.origin,
+
+                selectAccountPrompt:
+                  true,
+              },
+            },
+          });
 
 
           log(
             "🔵 Starting Google login..."
           );
 
-
-          /*
-           * Use the SDK enum instead of
-           * the string "Google".
-           */
-          await circleSdk.performLogin(
+          circleSdk.performLogin(
             SocialLoginProvider.GOOGLE
-          );
-
-
-          log(
-            "🟢 performLogin() returned"
           );
 
         } catch (error) {
 
           console.error(
-            "❌ performLogin ERROR:",
+            "❌ Google login error:",
             error
           );
         }
@@ -1067,7 +997,6 @@ async function initializeCircle() {
     log(
       "🎉 Continue with Google button connected"
     );
-
 
   } catch (error) {
 
@@ -1084,33 +1013,45 @@ async function initializeCircle() {
    ========================================================= */
 
 window.getCircleUserToken =
-  () =>
-    userToken ||
-    localStorage.getItem(
-      "circleUserToken"
-    ) ||
-    "";
+  function () {
+    return (
+      userToken ||
+      localStorage.getItem(
+        "circleUserToken"
+      ) ||
+      ""
+    );
+  };
 
 
 window.getCircleEncryptionKey =
-  () =>
-    encryptionKey ||
-    localStorage.getItem(
-      "circleEncryptionKey"
-    ) ||
-    "";
+  function () {
+    return (
+      encryptionKey ||
+      localStorage.getItem(
+        "circleEncryptionKey"
+      ) ||
+      ""
+    );
+  };
 
 
 window.getCircleWallets =
-  () =>
-    window.circleWallets ||
-    [];
+  function () {
+    return (
+      window.circleWallets ||
+      []
+    );
+  };
 
 
 window.getCircleWalletAddress =
-  () =>
-    window.circleWalletAddress ||
-    "";
+  function () {
+    return (
+      window.circleWalletAddress ||
+      ""
+    );
+  };
 
 
 /* =========================================================
