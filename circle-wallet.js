@@ -1,10 +1,12 @@
 import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
 
+const appId = import.meta.env.VITE_CIRCLE_APP_ID;
+
 let circleSdk = null;
 
-export function initCircleSdk(appId) {
+export function initializeCircle() {
   if (!appId) {
-    throw new Error("Circle App ID is missing");
+    throw new Error("VITE_CIRCLE_APP_ID is missing");
   }
 
   circleSdk = new W3SSdk({
@@ -13,7 +15,7 @@ export function initCircleSdk(appId) {
     },
   });
 
-  console.log("[Circle] SDK initialized");
+  console.log("✅ Circle SDK initialized");
 
   return circleSdk;
 }
