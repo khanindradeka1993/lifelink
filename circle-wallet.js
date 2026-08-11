@@ -568,28 +568,6 @@ console.log("🔎 RAW CALLBACK:", {
 
           persistOAuthConfig();
 
-          circleSdk.updateConfigs(
-            {
-              appSettings: {
-                appId,
-              },
-
-              loginConfigs: {
-                deviceToken,
-                deviceEncryptionKey,
-
-                google: {
-                  clientId:
-                    googleClientId,
-                  redirectUri:
-                    window.location.origin,
-                  selectAccountPrompt:
-                    true,
-                },
-              },
-            },
-            onLoginComplete
-          );
 
           log(
             "🔵 Starting Google login..."
