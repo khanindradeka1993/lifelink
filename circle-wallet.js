@@ -755,6 +755,7 @@ async function loadCircleWallets() {
       return;
     }
 
+    try {
     const response =
       await fetch(
         "/api/circle",
