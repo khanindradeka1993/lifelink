@@ -484,24 +484,27 @@ async function initializeCircle() {
      * Keep the callback on the SDK instance created
      * above. updateConfigs only updates login settings.
      */
-    circleSdk.updateConfigs({
-      appSettings: {
-        appId,
-      },
+    circleSdk.updateConfigs(
+      {
+        appSettings: {
+          appId,
+        },
 
-      loginConfigs: {
-        deviceToken,
-        deviceEncryptionKey,
+        loginConfigs: {
+          deviceToken,
+          deviceEncryptionKey,
 
-        google: {
-          clientId:
-            googleClientId,
-          redirectUri:
-            window.location.origin,
-          selectAccountPrompt: true,
+          google: {
+            clientId:
+              googleClientId,
+            redirectUri:
+              window.location.origin,
+            selectAccountPrompt: true,
+          },
         },
       },
-    });
+      onLoginComplete
+    );
 
     log(
       "✅ Circle Google login configured"
@@ -558,25 +561,28 @@ async function initializeCircle() {
 
           persistOAuthConfig();
 
-          circleSdk.updateConfigs({
-            appSettings: {
-              appId,
-            },
+          circleSdk.updateConfigs(
+            {
+              appSettings: {
+                appId,
+              },
 
-            loginConfigs: {
-              deviceToken,
-              deviceEncryptionKey,
+              loginConfigs: {
+                deviceToken,
+                deviceEncryptionKey,
 
-              google: {
-                clientId:
-                  googleClientId,
-                redirectUri:
-                  window.location.origin,
-                selectAccountPrompt:
-                  true,
+                google: {
+                  clientId:
+                    googleClientId,
+                  redirectUri:
+                    window.location.origin,
+                  selectAccountPrompt:
+                    true,
+                },
               },
             },
-          });
+            onLoginComplete
+          );
 
           log(
             "🔵 Starting Google login..."
@@ -640,3 +646,4 @@ if (
   initializeCircle();
       }
 
+      
