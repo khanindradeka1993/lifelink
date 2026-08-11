@@ -25,15 +25,16 @@ export default async function handler(req, res) {
       });
     }
 
-    const circleRequest = async (
+    async function circleRequest(
       path,
       method,
-      userToken,
-      body
-    ) => {
+      userToken = null,
+      body = undefined
+    ) {
       const headers = {
         Authorization: `Bearer ${CIRCLE_API_KEY}`,
         "Content-Type": "application/json",
+        Accept: "application/json",
       };
 
       if (userToken) {
@@ -45,7 +46,7 @@ export default async function handler(req, res) {
         {
           method,
           headers,
-          ...(body
+          ...(body !== undefined
             ? {
                 body: JSON.stringify(body),
               }
@@ -53,181 +54,177 @@ export default async function handler(req, res) {
         }
       );
 
-      const data = await response.json();
+      let data = {};
+
+      try {
+        data = await response.json();
+      } catch {
+        data = {
+          error: "Circle returned invalid JSON",
+        };
+      }
 
       return {
         response,
         data,
       };
-    };
-
-    switch (action) {
-      /* =================================================
-         CREATE DEVICE TOKEN
-         ================================================= */
-      case "createDeviceToken": {
-        const { deviceId } = params;
-
-        if (!deviceId) {
-          return res.status(400).json({
-            error: "Missing deviceId",
-          });
-        }
-
-        const { response, data } =
-          await circleRequest(
-            "/v1/w3s/users/social/token",
-            "POST",
-            null,
-            {
-              idempotencyKey: crypto.randomUUID(),
-              deviceId,
-            }
-          );
-
-        if (!response.ok) {
-          return res.status(response.status).json(data);
-        }
-
-        return res.status(200).json(
-          data.data || data
-        );
-      }
-
-      /* =================================================
-         INITIALIZE USER
-         ================================================= */
-          case "initializeUser": {
-        const { userToken } = params;
-
-        if (!userToken) {
-          return res.status(400).json({
-            error: "Missing userToken",
-          });
-        }
-
-        const { response, data } =
-          await circleRequest(
-            "/v1/w3s/user/initialize",
-            "POST",
-            userToken,
-            {
-              idempotencyKey: crypto.randomUUID(),
-              accountType: "SCA",
-              blockchains: ["ARC-TESTNET"],
-            }
-          );
-
-        if (!response.ok) {
-          return res.status(response.status).json(data);
-        }
-
-        return res.status(200).json(
-          data.data || data
-        );
-      }
-
-      /* =================================================
-         CREATE WALLET
-         Used when the Circle user already exists.
-         ================================================= */
-      case "createWallet": {
-        const { userToken } = params;
-
-        if (!userToken) {
-          return res.status(400).json({
-            error: "Missing userToken",
-          });
-        }
-
-        const { response, data } =
-          await circleRequest(
-            "/v1/w3s/user/wallets",
-            "POST",
-            userToken,
-            {
-              {
-  idempotencyKey: crypto.randomUUID(),
-  accountType: "SCA",
-  blockchains: ["ARC-TESTNET"],
-}
-
-        if (!response.ok) {
-          return res.status(response.status).json(data);
-        }
-
-        return res.status(200).json(
-          data.data || data
-        );
-      }
-
-      /* =================================================
-         LIST WALLETS
-         ================================================= */
-      case "listWallets": {
-        const { userToken } = params;
-
-        if (!userToken) {
-          return res.status(400).json({
-            error: "Missing userToken",
-          });
-        }
-
-        const { response, data } =
-          await circleRequest(
-            "/v1/w3s/wallets",
-            "GET",
-            userToken
-          );
-
-        if (!response.ok) {
-          return res.status(response.status).json(data);
-        }
-
-        return res.status(200).json(
-          data.data || data
-        );
-      }
-
-      /* =================================================
-         GET TOKEN BALANCE
-         ================================================= */
-      case "getTokenBalance": {
-        const {
-          userToken,
-          walletId,
-        } = params;
-
-        if (!userToken || !walletId) {
-                    return res.status(400).json({
-            error:
-              "Missing userToken or walletId",
-          });
-        }
-
-        const { response, data } =
-          await circleRequest(
-            `/v1/w3s/wallets/${encodeURIComponent(
-              walletId
-            )}/balances`,
-            "GET",
-            userToken
-          );
-
-        if (!response.ok) {
-          return res.status(response.status).json(data);
-        }
-
-        return res.status(200).json(
-          data.data || data
-        );
-      }
-
-      default:
-        return res.status(400).json({
-          error: `Unknown action: ${action}`,
-        });
     }
+
+    /* =====================================================
+       CREATE DEVICE TOKEN
+       ===================================================== */
+
+    if (action === "createDeviceToken") {
+      const { deviceId } = params;
+
+      if (!deviceId) {
+        return res.status(400).json({
+          error: "Missing deviceId",
+        });
+      }
+
+      const { response, data } =
+        await circleRequest(
+          "/v1/w3s/users/social/token",
+          "POST",
+          null,
+          {
+            idempotencyKey:
+              crypto.randomUUID(),
+            deviceId,
+          }
+        );
+
+      if (!response.ok) {
+        return res
+          .status(response.status)
+          .json(data);
+      }
+
+      return res.status(200).json(
+        data.data || data
+      );
+    }
+
+    /* =====================================================
+       INITIALIZE USER
+       This returns the challengeId required to create
+       the user's wallet.
+       ===================================================== */
+
+    if (action === "initializeUser") {
+      const { userToken } = params;
+
+      if (!userToken) {
+        return res.status(400).json({
+          error: "Missing userToken",
+        });
+      }
+
+      const { response, data } =
+        await circleRequest(
+          "/v1/w3s/user/initialize",
+          "POST",
+          userToken,
+          {
+            idempotencyKey:
+              crypto.randomUUID(),
+
+            accountType: "SCA",
+
+            blockchains: [
+              "ARC-TESTNET",
+            ],
+          }
+        );
+
+      if (!response.ok) {
+        return res
+          .status(response.status)
+          .json(data);
+      }
+
+      return res.status(200).json(
+        data.data || data
+      );
+    }
+
+    /* =====================================================
+       LIST WALLETS
+       ===================================================== */
+
+    if (action === "listWallets") {
+      const { userToken } = params;
+
+      if (!userToken) {
+        return res.status(400).json({
+          error: "Missing userToken",
+        });
+      }
+
+      const { response, data } =
+        await circleRequest(
+          "/v1/w3s/wallets",
+          "GET",
+          userToken
+        );
+
+      if (!response.ok) {
+        return res
+          .status(response.status)
+          .json(data);
+      }
+
+      return res.status(200).json(
+        data.data || data
+      );
+    }
+
+    /* =====================================================
+       GET TOKEN BALANCE
+       ===================================================== */
+
+    if (action === "getTokenBalance") {
+      const {
+        userToken,
+        walletId,
+      } = params;
+
+      if (!userToken || !walletId) {
+        return res.status(400).json({
+          error:
+            "Missing userToken or walletId",
+        });
+      }
+
+      const { response, data } =
+        await circleRequest(
+          `/v1/w3s/wallets/${encodeURIComponent(
+            walletId
+          )}/balances`,
+          "GET",
+          userToken
+        );
+
+      if (!response.ok) {
+        return res
+          .status(response.status)
+          .json(data);
+      }
+
+      return res.status(200).json(
+        data.data || data
+      );
+    }
+
+    /* =====================================================
+       UNKNOWN ACTION
+       ===================================================== */
+
+    return res.status(400).json({
+      error: `Unknown action: ${action}`,
+    });
+
   } catch (error) {
     console.error(
       "❌ Circle API error:",
