@@ -146,10 +146,11 @@ export default async function handler(req, res) {
             "POST",
             userToken,
             {
-              idempotencyKey: crypto.randomUUID(),
-              blockchains: ["ARC-TESTNET"],
-            }
-          );
+              {
+  idempotencyKey: crypto.randomUUID(),
+  accountType: "SCA",
+  blockchains: ["ARC-TESTNET"],
+}
 
         if (!response.ok) {
           return res.status(response.status).json(data);
