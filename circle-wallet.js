@@ -1004,14 +1004,12 @@ async function initializeCircle() {
     /*
      * Create Circle SDK.
      */
-    circleSdk =
-      new W3SSdk({
-        configs:
-          initialConfig,
-
-        socialLoginCompleteCallback:
-          handleGoogleLoginComplete,
-      });
+    circleSdk.updateConfigs(
+  {
+    ...
+  },
+  onLoginComplete
+);
 
     window.circleSdk =
       circleSdk;
@@ -1099,30 +1097,22 @@ async function initializeCircle() {
     /*
      * Update login configuration.
      */
-    circleSdk.updateConfigs(
-      {
-        appSettings: {
-          appId,
-        },
+    circleSdk.updateConfigs({
+  appSettings: {
+    appId,
+  },
 
-        loginConfigs: {
-          deviceToken,
-          deviceEncryptionKey,
+  loginConfigs: {
+    deviceToken,
+    deviceEncryptionKey,
 
-          google: {
-            clientId:
-              googleClientId,
-
-            redirectUri:
-              window.location.origin,
-
-            selectAccountPrompt:
-              true,
-          },
-        },
-      },
-      handleGoogleLoginComplete
-    );
+    google: {
+      clientId: googleClientId,
+      redirectUri: window.location.origin,
+      selectAccountPrompt: true,
+    },
+  },
+});
 
     log(
       "✅ Circle Google login configured"
