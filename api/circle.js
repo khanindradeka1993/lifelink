@@ -1,111 +1,242 @@
+const CIRCLE_BASE_URL =
+  process.env.CIRCLE_BASE_URL || "https://api.circle.com";
+
+const CIRCLE_API_KEY = process.env.CIRCLE_API_KEY;
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed",
+    });
+  }
+
+  if (!CIRCLE_API_KEY) {
+    return res.status(500).json({
+      error: "CIRCLE_API_KEY is missing",
+    });
   }
 
   try {
-    const { action, deviceId, userToken } = req.body || {};
+    const { action, ...params } = req.body || {};
 
-    const apiKey = process.env.CIRCLE_API_KEY;
-
-    if (!apiKey) {
-      return res.status(500).json({
-        error: "CIRCLE_API_KEY is not configured"
+    if (!action) {
+      return res.status(400).json({
+        error: "Missing action",
       });
     }
 
-    const baseUrl = "https://api.circle.com/v1/w3s";
+    const circleRequest = async (
+      path,
+      method,
+      userToken,
+      body
+    ) => {
+      const headers = {
+        Authorization: `Bearer ${CIRCLE_API_KEY}`,
+        "Content-Type": "application/json",
+      };
 
-    // Step 1: Get device token for Google social login
-    if (action === "createDeviceToken") {
-      if (!deviceId) {
-        return res.status(400).json({
-          error: "Missing deviceId"
-        });
+      if (userToken) {
+        headers["X-User-Token"] = userToken;
       }
 
       const response = await fetch(
-        `${baseUrl}/users/social/token`,
+        `${CIRCLE_BASE_URL}${path}`,
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`
-          },
-          body: JSON.stringify({
-            idempotencyKey: crypto.randomUUID(),
-            deviceId
-          })
+          method,
+          headers,
+          ...(body
+            ? {
+                body: JSON.stringify(body),
+              }
+            : {}),
         }
       );
 
       const data = await response.json();
 
-      return res.status(response.status).json(data);
-    }
+      return {
+        response,
+        data,
+      };
+    };
 
-    // Step 2: Initialize the Circle user
-    if (action === "initializeUser") {
-      if (!userToken) {
-        return res.status(400).json({
-          error: "Missing userToken"
-        });
-      }
+    switch (action) {
+      /* =================================================
+         CREATE DEVICE TOKEN
+         ================================================= */
+      case "createDeviceToken": {
+        const { deviceId } = params;
 
-      const response = await fetch(
-        `${baseUrl}/user/initialize`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-            "X-User-Token": userToken
-          },
-          body: JSON.stringify({
-            idempotencyKey: crypto.randomUUID(),
-            accountType: "SCA",
-            blockchains: ["ARC-TESTNET"]
-          })
+        if (!deviceId) {
+          return res.status(400).json({
+            error: "Missing deviceId",
+          });
         }
-      );
 
-      const data = await response.json();
+        const { response, data } =
+          await circleRequest(
+            "/v1/w3s/users/social/token",
+            "POST",
+            null,
+            {
+              idempotencyKey: crypto.randomUUID(),
+              deviceId,
+            }
+          );
 
-      return res.status(response.status).json(data);
-    }
+        if (!response.ok) {
+          return res.status(response.status).json(data);
+        }
 
-    // Step 3: List Circle wallets
-if (action === "listWallets") {
-  if (!userToken) {
-    return res.status(400).json({
-      error: "Missing userToken"
-    });
-  }
-
-  const response = await fetch(
-    `${baseUrl}/wallets`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "X-User-Token": userToken
+        return res.status(200).json(
+          data.data || data
+        );
       }
+
+      /* =================================================
+         INITIALIZE USER
+         ================================================= */
+          case "initializeUser": {
+        const { userToken } = params;
+
+        if (!userToken) {
+          return res.status(400).json({
+            error: "Missing userToken",
+          });
+        }
+
+        const { response, data } =
+          await circleRequest(
+            "/v1/w3s/user/initialize",
+            "POST",
+            userToken,
+            {
+              idempotencyKey: crypto.randomUUID(),
+              accountType: "SCA",
+              blockchains: ["ARC-TESTNET"],
+            }
+          );
+
+        if (!response.ok) {
+          return res.status(response.status).json(data);
+        }
+
+        return res.status(200).json(
+          data.data || data
+        );
+      }
+
+      /* =================================================
+         CREATE WALLET
+         Used when the Circle user already exists.
+         ================================================= */
+      case "createWallet": {
+        const { userToken } = params;
+
+        if (!userToken) {
+          return res.status(400).json({
+            error: "Missing userToken",
+          });
+        }
+
+        const { response, data } =
+          await circleRequest(
+            "/v1/w3s/user/wallets",
+            "POST",
+            userToken,
+            {
+              idempotencyKey: crypto.randomUUID(),
+              blockchains: ["ARC-TESTNET"],
+            }
+          );
+
+        if (!response.ok) {
+          return res.status(response.status).json(data);
+        }
+
+        return res.status(200).json(
+          data.data || data
+        );
+      }
+
+      /* =================================================
+         LIST WALLETS
+         ================================================= */
+      case "listWallets": {
+        const { userToken } = params;
+
+        if (!userToken) {
+          return res.status(400).json({
+            error: "Missing userToken",
+          });
+        }
+
+        const { response, data } =
+          await circleRequest(
+            "/v1/w3s/wallets",
+            "GET",
+            userToken
+          );
+
+        if (!response.ok) {
+          return res.status(response.status).json(data);
+        }
+
+        return res.status(200).json(
+          data.data || data
+        );
+      }
+
+      /* =================================================
+         GET TOKEN BALANCE
+         ================================================= */
+      case "getTokenBalance": {
+        const {
+          userToken,
+          walletId,
+        } = params;
+
+        if (!userToken || !walletId) {
+                    return res.status(400).json({
+            error:
+              "Missing userToken or walletId",
+          });
+        }
+
+        const { response, data } =
+          await circleRequest(
+            `/v1/w3s/wallets/${encodeURIComponent(
+              walletId
+            )}/balances`,
+            "GET",
+            userToken
+          );
+
+        if (!response.ok) {
+          return res.status(response.status).json(data);
+        }
+
+        return res.status(200).json(
+          data.data || data
+        );
+      }
+
+      default:
+        return res.status(400).json({
+          error: `Unknown action: ${action}`,
+        });
     }
-  );
-
-  const data = await response.json();
-
-  return res.status(response.status).json(data);
-}
-    return res.status(400).json({
-      error: "Unknown action"
-    });
-
   } catch (error) {
-    console.error("Circle API error:", error);
+    console.error(
+      "❌ Circle API error:",
+      error
+    );
 
     return res.status(500).json({
-      error: "Internal server error"
+      error:
+        error?.message ||
+        "Internal server error",
     });
   }
 }
