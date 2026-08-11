@@ -404,10 +404,10 @@ async function initializeCircle() {
       },
     };
 
-    circleSdk = new W3SSdk(
-      initialConfig,
-      onLoginComplete
-    );
+    circleSdk = new W3SSdk({
+  configs: initialConfig,
+  socialLoginCompleteCallback: onLoginComplete,
+});
 
     window.circleSdk = circleSdk;
 
