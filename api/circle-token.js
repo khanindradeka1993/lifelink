@@ -1,76 +1,52 @@
-import crypto from 'node:crypto';
+import { initiateUserControlledWalletsClient } from "@circle-fin/user-controlled-wallets";
+
+// Initialize Circle SDK Client
+const circleClient = initiateUserControlledWalletsClient({
+  apiKey: process.env.CIRCLE_API_KEY
+});
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const apiKey = process.env.CIRCLE_API_KEY;
-    if (!apiKey) {
-      return res.status(500).json({ error: 'CIRCLE_API_KEY missing in Vercel settings' });
+    const { userId } = req.body;
+    const userIdentifier = userId || `google_user_${Date.now()}`;
+
+    // 1. Create or get Circle User Session Token & Encryption Key
+    const tokenResponse = await circleClient.createUserToken({
+      userId: userIdentifier
+    });
+
+    const userToken = tokenResponse.data?.userToken;
+    const encryptionKey = tokenResponse.data?.encryptionKey;
+
+    // 2. Query Circle API to fetch created wallet addresses for this user
+    let walletAddress = null;
+    try {
+      const walletsResponse = await circleClient.listWallets({
+        userId: userIdentifier
+      });
+
+      if (walletsResponse.data?.wallets?.length > 0) {
+        // Pick the primary EVM / Arc Testnet compatible address
+        walletAddress = walletsResponse.data.wallets[0].address;
+      }
+    } catch (wErr) {
+      console.log("No existing wallet found for user, initializing new session...");
     }
 
-    const userId = req.body?.userId || `user_${crypto.randomBytes(6).toString('hex')}`;
-
-    // 1. Create or register User in Circle
-    await fetch('https://api.circle.com/v1/w3s/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({ userId }),
-    });
-
-    // 2. Fetch User Token and Encryption Key
-    const tokenRes = await fetch('https://api.circle.com/v1/w3s/users/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({ userId }),
-    });
-
-    const tokenData = await tokenRes.json();
-    if (!tokenRes.ok) {
-      return res.status(tokenRes.status).json({ error: tokenData.message || 'Token generation failed' });
-    }
-
-    const { userToken, encryptionKey } = tokenData.data;
-
-    // 3. Initialize Wallet Creation Challenge
-    const walletRes = await fetch('https://api.circle.com/v1/w3s/user/initialize', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'X-User-Token': userToken,
-      },
-      body: JSON.stringify({
-        idempotencyKey: crypto.randomUUID(),
-        blockchains: ['ETH-SEPOLIA'],
-      }),
-    });
-
-    const walletData = await walletRes.json();
-
+    // 3. Return token, encryption key, user ID, and wallet address to frontend
     return res.status(200).json({
-      userToken,
-      encryptionKey,
-      challengeId: walletData.data?.challengeId || null,
-      userId,
+      userToken: userToken,
+      encryptionKey: encryptionKey,
+      userId: userIdentifier,
+      walletAddress: walletAddress // Returns 0x... address if already generated
     });
-  } catch (err) {
-    return res.status(500).json({ error: 'Server Error', message: err.message });
+
+  } catch (error) {
+    console.error("Circle Token API Error:", error);
+    return res.status(500).json({ error: error.message || "Failed to generate Circle token" });
   }
 }
