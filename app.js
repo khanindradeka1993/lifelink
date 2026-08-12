@@ -925,7 +925,6 @@ async function handleCircleGoogleLogin() {
       walletAddress.style.color = "#FBBF24";
     }
 
-    // Call backend API to retrieve user token, encryption key, and blockchain address
     const response = await fetch("/api/circle-token", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -937,7 +936,6 @@ async function handleCircleGoogleLogin() {
       throw new Error(data.error || "Failed to generate Circle session");
     }
 
-    // Trigger Circle Web SDK prompt if a challenge is present
     if (data.challengeId && window.CircleWebSdk) {
       const sdk = new window.CircleWebSdk();
       
@@ -955,10 +953,8 @@ async function handleCircleGoogleLogin() {
       });
     }
 
-    // Use returned 0x... address if available, otherwise fallback to userId
     const displayAddress = data.walletAddress || data.userId;
 
-    // Store Circle active session info
     sessionStorage.setItem("active_wallet_type", "CIRCLE");
     sessionStorage.setItem("circle_user_token", data.userToken);
     sessionStorage.setItem("circle_user_id", data.userId);
@@ -986,6 +982,8 @@ async function handleCircleGoogleLogin() {
     }
   }
 }
+
+
 
 
 if (circleGoogleBtn) {
