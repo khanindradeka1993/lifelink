@@ -1,4 +1,4 @@
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -6,13 +6,12 @@ module.exports = async function handler(req, res) {
   try {
     const apiKey = process.env.CIRCLE_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: "CIRCLE_API_KEY environment variable is missing." });
+      return res.status(500).json({ error: "CIRCLE_API_KEY is not configured." });
     }
 
     const { userId } = req.body || {};
     const userIdentifier = userId || `google_user_${Date.now()}`;
 
-    // 1. Create/Get User Token & Encryption Key from Circle REST API
     const tokenResponse = await fetch("https://api.circle.com/v1/w3s/users/token", {
       method: "POST",
       headers: {
@@ -33,7 +32,6 @@ module.exports = async function handler(req, res) {
     const userToken = tokenData.data?.userToken;
     const encryptionKey = tokenData.data?.encryptionKey;
 
-    // 2. Query Circle REST API for existing user wallets
     let walletAddress = null;
     try {
       const walletResponse = await fetch(`https://api.circle.com/v1/w3s/wallets?userId=${userIdentifier}`, {
@@ -52,7 +50,6 @@ module.exports = async function handler(req, res) {
       console.log("No wallet address returned yet:", wErr);
     }
 
-    // 3. Return JSON response to app.js
     return res.status(200).json({
       userToken: userToken,
       encryptionKey: encryptionKey,
@@ -64,4 +61,4 @@ module.exports = async function handler(req, res) {
     console.error("Circle Token API Error:", error);
     return res.status(500).json({ error: error.message || "Internal server error" });
   }
-};
+}
