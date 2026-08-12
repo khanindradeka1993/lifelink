@@ -2,16 +2,14 @@ import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
 
 let circleSdk = null;
 
-export function initializeCircle() {
-  console.log("🟣 Circle module loaded");
-
-  circleSdk = new W3SSdk();
-
-  console.log("✅ Circle SDK object created");
+export function initializeCircleSDK() {
+  if (!circleSdk) {
+    circleSdk = new W3SSdk();
+  }
 
   return circleSdk;
 }
 
-export function getCircleSdk() {
+export function getCircleSDK() {
   return circleSdk;
 }
