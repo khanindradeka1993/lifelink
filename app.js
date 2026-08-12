@@ -983,6 +983,35 @@ if (circleGoogleBtn) {
   circleGoogleBtn.addEventListener("click", handleCircleGoogleLogin);
 }
 
+// ===============================
+// Universal Active Wallet Resolver
+// ===============================
+function getActiveWallet() {
+  // Check MetaMask connection
+  if (currentAccount) {
+    return {
+      type: "METAMASK",
+      account: currentAccount,
+      signer: signer
+    };
+  }
+
+  // Check Circle Google connection
+  const activeType = sessionStorage.getItem("active_wallet_type");
+  const circleUserId = sessionStorage.getItem("circle_user_id");
+  const circleUserToken = sessionStorage.getItem("circle_user_token");
+
+  if (activeType === "CIRCLE" && circleUserId) {
+    return {
+      type: "CIRCLE",
+      userId: circleUserId,
+      userToken: circleUserToken
+    };
+  }
+
+  return null;
+}
+
 // Wallet Connect
 connectBtn.addEventListener("click", async () => {
 
