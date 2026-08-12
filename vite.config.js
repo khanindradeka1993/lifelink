@@ -1,17 +1,14 @@
-// vite.config.js
-import { defineConfig } from 'vite';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import { defineConfig } from "vite";
+import { Buffer } from "buffer";
 
 export default defineConfig({
-  plugins: [
-    nodePolyfills({
-      // Includes polyfills for Buffer and Global objects needed by Circle SDK
-      globals: {
-        Buffer: true,
-        global: true,
-        process: true,
-      },
-    }),
-  ],
+  define: {
+    "process.env": {},
+    global: "window",
+  },
+  resolve: {
+    alias: {
+      buffer: "buffer/",
+    },
+  },
 });
-
