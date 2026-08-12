@@ -1,8 +1,11 @@
+import { Buffer } from "buffer";
 import util from "util";
 
-// Define legacy inherits prototype globally before Circle SDK loads
+// Define global polyfills required by Circle SDK internals
 if (typeof window !== "undefined") {
   window.global = window;
+  window.Buffer = Buffer;
+  window.util = window.util || util;
   if (!window.inherits) {
     window.inherits = util.inherits;
   }
