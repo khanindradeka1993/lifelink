@@ -1,5 +1,6 @@
+const crypto = require('crypto');
+
 module.exports = async (req, res) => {
-  // Allow CORS preflight requests
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -12,13 +13,15 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const apiKey = process.env.CIRCLE_API_KEY;
-
-  if (!apiKey) {
-    return res.status(500).json({ error: 'CIRCLE_API_KEY environment variable is missing on Vercel' });
-  }
-
   try {
+    const apiKey = process.env.CIRCLE_API_KEY;
+
+    if (!apiKey) {
+      return res.status(500).json({ error: 'CIRCLE_API_KEY environment variable is missing on Vercel' });
+    }
+
+    const idempotencyKey = crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString('hex');
+
     const response = await fetch('https://api.circle.com/v1/w3s/deviceTokens', {
       method: 'POST',
       headers: {
@@ -26,7 +29,7 @@ module.exports = async (req, res) => {
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        idempotencyKey: crypto.randomUUID(),
+        idempotencyKey: idempotencyKey,
       }),
     });
 
@@ -41,6 +44,6 @@ module.exports = async (req, res) => {
       deviceEncryptionKey: data.data.deviceEncryptionKey,
     });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message || 'Server execution error' });
   }
 };
