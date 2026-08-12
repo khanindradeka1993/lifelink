@@ -912,6 +912,77 @@ const viewAddress = document.getElementById("viewAddress");
 let currentAccount = "";
 const EXPLORER = "https://testnet.arcscan.app";
 
+// ===============================
+// Circle Google Login Handler
+// ===============================
+const circleGoogleBtn = document.getElementById("circleGoogleBtn");
+const circleWalletStatus = document.getElementById("circleWalletStatus");
+
+async function handleCircleGoogleLogin() {
+  try {
+    if (walletAddress) {
+      walletAddress.innerText = "Initializing Circle Wallet...";
+      walletAddress.style.color = "#FBBF24";
+    }
+
+    // Call backend API to retrieve user token and encryption key
+    const response = await fetch("/api/circle-token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: "google_user_" + Date.now() })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to generate Circle session");
+    }
+
+    // Trigger Circle Web SDK prompt if a challenge is present
+    if (data.challengeId && window.CircleWebSdk) {
+      const sdk = new window.CircleWebSdk();
+      
+      sdk.setAuthentication({ 
+        userToken: data.userToken, 
+        encryptionKey: data.encryptionKey 
+      });
+
+      sdk.execute(data.challengeId, (error, result) => {
+        if (error) {
+          console.error("Circle SDK Challenge Error:", error);
+          return;
+        }
+        console.log("Circle Challenge Executed:", result);
+      });
+    }
+
+    // Persist Circle active session info
+    sessionStorage.setItem("active_wallet_type", "CIRCLE");
+    sessionStorage.setItem("circle_user_token", data.userToken);
+    sessionStorage.setItem("circle_user_id", data.userId);
+
+    if (walletAddress) {
+      walletAddress.innerText = `Connected via Circle (${data.userId.slice(0, 12)}...)`;
+      walletAddress.style.color = "#10B981";
+    }
+
+    if (circleWalletStatus) {
+      circleWalletStatus.style.display = "block";
+      circleWalletStatus.innerText = "Circle Wallet Active";
+    }
+
+  } catch (err) {
+    console.error("Circle Wallet Connection Error:", err);
+    if (walletAddress) {
+      walletAddress.innerText = "Circle Connection Failed";
+      walletAddress.style.color = "#EF4444";
+    }
+  }
+}
+
+if (circleGoogleBtn) {
+  circleGoogleBtn.addEventListener("click", handleCircleGoogleLogin);
+}
+
 // Wallet Connect
 connectBtn.addEventListener("click", async () => {
 
