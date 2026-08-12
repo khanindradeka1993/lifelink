@@ -15,15 +15,13 @@ export default async function handler(req, res) {
 
   try {
     const apiKey = process.env.CIRCLE_API_KEY;
-
     if (!apiKey) {
-      return res.status(500).json({ error: 'CIRCLE_API_KEY environment variable is missing on Vercel' });
+      return res.status(500).json({ error: 'CIRCLE_API_KEY missing in Vercel settings' });
     }
 
-    // Generate a unique userId or use the one provided by client
     const userId = req.body?.userId || `user_${crypto.randomBytes(6).toString('hex')}`;
 
-    // Step 1: Create the User in Circle
+    // 1. Create or register User in Circle
     await fetch('https://api.circle.com/v1/w3s/users', {
       method: 'POST',
       headers: {
@@ -33,8 +31,8 @@ export default async function handler(req, res) {
       body: JSON.stringify({ userId }),
     });
 
-    // Step 2: Acquire User Token & Encryption Key for the created user
-    const tokenResponse = await fetch('https://api.circle.com/v1/w3s/users/token', {
+    // 2. Fetch User Token and Encryption Key
+    const tokenRes = await fetch('https://api.circle.com/v1/w3s/users/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -43,20 +41,36 @@ export default async function handler(req, res) {
       body: JSON.stringify({ userId }),
     });
 
-    const tokenData = await tokenResponse.json();
-
-    if (!tokenResponse.ok) {
-      return res.status(tokenResponse.status).json({
-        error: tokenData.message || 'Failed to acquire Circle user token',
-        details: tokenData,
-      });
+    const tokenData = await tokenRes.json();
+    if (!tokenRes.ok) {
+      return res.status(tokenRes.status).json({ error: tokenData.message || 'Token generation failed' });
     }
 
-    return res.status(200).json(tokenData.data);
-  } catch (err) {
-    return res.status(500).json({
-      error: 'Runtime execution error',
-      message: err.message,
+    const { userToken, encryptionKey } = tokenData.data;
+
+    // 3. Initialize Wallet Creation Challenge
+    const walletRes = await fetch('https://api.circle.com/v1/w3s/user/initialize', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'X-User-Token': userToken,
+      },
+      body: JSON.stringify({
+        idempotencyKey: crypto.randomUUID(),
+        blockchains: ['ETH-SEPOLIA'],
+      }),
     });
+
+    const walletData = await walletRes.json();
+
+    return res.status(200).json({
+      userToken,
+      encryptionKey,
+      challengeId: walletData.data?.challengeId || null,
+      userId,
+    });
+  } catch (err) {
+    return res.status(500).json({ error: 'Server Error', message: err.message });
   }
 }
