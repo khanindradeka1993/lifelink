@@ -1,13 +1,45 @@
 let circleSdkInstance = null;
 
-export async function loginWithCircleGoogle() {
-  try {
-    if (!window.W3SSdk) {
-      throw new Error("Circle SDK script not loaded yet. Please refresh the page.");
+/**
+ * Dynamically load Circle Web SDK script if not already on window
+ */
+function ensureCircleScriptLoaded() {
+  return new Promise((resolve, reject) => {
+    // Check if SDK already attached to window
+    const ExistingSdk = window.W3SSdk || (window.Circle && window.Circle.W3SSdk);
+    if (ExistingSdk) {
+      resolve(ExistingSdk);
+      return;
     }
 
+    // Load standalone SDK script
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/@circle-fin/w3s-pw-web-sdk@1.1.3/dist/w3s-pw-web-sdk.standalone.js";
+    script.async = true;
+    
+    script.onload = () => {
+      const SdkClass = window.W3SSdk || (window.Circle && window.Circle.W3SSdk);
+      if (SdkClass) {
+        resolve(SdkClass);
+      } else {
+        reject(new Error("Circle SDK loaded but window.W3SSdk was not found."));
+      }
+    };
+
+    script.onerror = () => {
+      reject(new Error("Failed to load Circle SDK script from CDN. Check your network/adblocker."));
+    };
+
+    document.head.appendChild(script);
+  });
+}
+
+export async function loginWithCircleGoogle() {
+  try {
+    const W3SSdkClass = await ensureCircleScriptLoaded();
+
     if (!circleSdkInstance) {
-      circleSdkInstance = new window.W3SSdk({
+      circleSdkInstance = new W3SSdkClass({
         appSettings: {
           appId: import.meta.env.VITE_CIRCLE_APP_ID || "",
         },
