@@ -925,7 +925,7 @@ async function handleCircleGoogleLogin() {
       walletAddress.style.color = "#FBBF24";
     }
 
-    // Call backend API to retrieve user token and encryption key
+    // Call backend API to retrieve user token, encryption key, and blockchain address
     const response = await fetch("/api/circle-token", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -955,13 +955,21 @@ async function handleCircleGoogleLogin() {
       });
     }
 
-    // Persist Circle active session info
+    // Use returned 0x... address if available, otherwise fallback to userId
+    const displayAddress = data.walletAddress || data.userId;
+
+    // Store Circle active session info
     sessionStorage.setItem("active_wallet_type", "CIRCLE");
     sessionStorage.setItem("circle_user_token", data.userToken);
     sessionStorage.setItem("circle_user_id", data.userId);
+    if (data.walletAddress) {
+      sessionStorage.setItem("circle_wallet_address", data.walletAddress);
+    }
 
     if (walletAddress) {
-      walletAddress.innerText = `Connected via Circle (${data.userId.slice(0, 12)}...)`;
+      walletAddress.innerText = displayAddress.startsWith("0x")
+        ? `Connected: ${displayAddress.slice(0, 6)}...${displayAddress.slice(-4)}`
+        : `Connected via Circle (${displayAddress.slice(0, 12)}...)`;
       walletAddress.style.color = "#10B981";
     }
 
@@ -978,6 +986,7 @@ async function handleCircleGoogleLogin() {
     }
   }
 }
+
 
 if (circleGoogleBtn) {
   circleGoogleBtn.addEventListener("click", handleCircleGoogleLogin);
