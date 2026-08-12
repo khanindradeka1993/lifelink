@@ -1,4 +1,9 @@
 export default async function handler(req, res) {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -6,7 +11,7 @@ export default async function handler(req, res) {
   const apiKey = process.env.CIRCLE_API_KEY;
 
   if (!apiKey) {
-    return res.status(500).json({ error: 'CIRCLE_API_KEY environment variable is missing' });
+    return res.status(500).json({ error: 'CIRCLE_API_KEY environment variable is missing on Vercel' });
   }
 
   try {
