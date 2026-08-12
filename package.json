@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@circle-fin/w3s-pw-web-sdk": "^1.1.3",
+    "buffer": "^6.0.3",
     "ethers": "^5.7.2",
     "util": "^0.12.5"
   },
