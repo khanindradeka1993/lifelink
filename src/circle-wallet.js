@@ -1,24 +1,37 @@
-import { Buffer } from "buffer";
-import util from "util";
+let circleSdkInstance = null;
 
-// Polyfill global Buffer and util for Circle SDK
-if (typeof window !== "undefined") {
-  window.Buffer = window.Buffer || Buffer;
-  window.util = window.util || util;
-  if (!window.inherits) {
-    window.inherits = util.inherits;
-  }
+/**
+ * Dynamically load Circle Web SDK script
+ */
+function loadCircleScript() {
+  return new Promise((resolve, reject) => {
+    if (window.W3SSdk) {
+      resolve(window.W3SSdk);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/@circle-fin/w3s-pw-web-sdk@1.1.3/dist/w3s-pw-web-sdk.standalone.js";
+    script.async = true;
+    script.onload = () => resolve(window.W3SSdk);
+    script.onerror = () => reject(new Error("Failed to load Circle Web SDK from CDN"));
+    document.head.appendChild(script);
+  });
 }
 
+/**
+ * Handle Google Login via Circle
+ */
 export async function loginWithCircleGoogle() {
   try {
-    const { W3SSdk } = await import("@circle-fin/w3s-pw-web-sdk");
-    
-    const circleSdk = new W3SSdk({
-      appSettings: {
-        appId: import.meta.env.VITE_CIRCLE_APP_ID || "",
-      },
-    });
+    const W3SSdkClass = await loadCircleScript();
+
+    if (!circleSdkInstance) {
+      circleSdkInstance = new W3SSdkClass({
+        appSettings: {
+          appId: import.meta.env.VITE_CIRCLE_APP_ID || "",
+        },
+      });
+    }
 
     const response = await fetch("/api/circle-token", {
       method: "POST",
@@ -26,12 +39,12 @@ export async function loginWithCircleGoogle() {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch Circle device token");
+      throw new Error("Failed to fetch Circle device token from server");
     }
 
     const { deviceToken, deviceEncryptionKey } = await response.json();
 
-    circleSdk.performLogin(
+    circleSdkInstance.performLogin(
       {
         provider: "google",
         clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
