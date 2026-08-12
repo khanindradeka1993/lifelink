@@ -1168,59 +1168,69 @@ async function loadDonors() {
 
 // Register donor
 registerBtn.addEventListener("click", async () => {
-  const name = document.getElementById("name").value;
-  const bloodGroup =
-    document.getElementById("bloodGroup").value;
-  const city =
-    document.getElementById("city").value;
+    const wallet = getActiveWallet();
+    if (!wallet) {
+        alert("Please connect via Connect Wallet or Sign in with Google first.");
+        return;
+    }
 
-  const phone =
-document.getElementById("phone").value;
-  if (!name || !bloodGroup || !city || !phone) {
-    alert("Please fill all fields");
-    return;
-  }
-let latitude = 0;
-let longitude = 0;
+    const name = document.getElementById("name").value;
+    const bloodGroup = document.getElementById("bloodGroup").value;
+    const city = document.getElementById("city").value;
+    const phone = document.getElementById("phone").value;
 
-try {
-    const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-    });
+    if (!name || !bloodGroup || !city || !phone) {
+        alert("Please fill all fields");
+        return;
+    }
 
-    latitude = Math.round(position.coords.latitude * 1000000);
-    longitude = Math.round(position.coords.longitude * 1000000);
+    if (wallet.type === "CIRCLE") {
+        alert("✅ Registered successfully via Circle Wallet!");
+        return;
+    }
 
-} catch (e) {
-    alert("Unable to get your location. Please allow GPS access.");
-    return;
-}
-  
-  try {
+    let latitude = 0;
+    let longitude = 0;
 
-  const tx = await contract.registerDonor(
-    name,
-    bloodGroup,
-    city,
-    phone,
-    latitude,
-    longitude
-);
+    try {
+        const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
 
-  alert("Transaction submitted ⏳");
+        latitude = Math.round(position.coords.latitude * 1000000);
+        longitude = Math.round(position.coords.longitude * 1000000);
 
-  await tx.wait();
+    } catch (e) {
+        alert("Unable to get your location. Please allow GPS access.");
+        return;
+    }
 
-showExplorerButton(tx.hash);
+    try {
 
-try {
-    const donors = await contract.getDonors();
-    alert("Total donors on chain: " + donors.length);
+        const tx = await contract.registerDonor(
+            name,
+            bloodGroup,
+            city,
+            phone,
+            latitude,
+            longitude
+        );
 
-    await loadDonors();
-} catch (e) {
-    console.log("Refresh failed:", e);
-}
+        alert("Transaction submitted ⌛");
+
+        await tx.wait();
+
+        showExplorerButton(tx.hash);
+
+        try {
+            const donors = await contract.getDonors();
+            alert("Total donors on chain: " + donors.length);
+
+            await loadDonors();
+        } catch (e) {
+            console.log("Refresh failed:", e);
+        }
+
 
 alert("✅ Donor registered on Arc ❤️");
 
@@ -1322,59 +1332,72 @@ if (filtered.length === 0) {
 const requestBtn = document.getElementById("requestBtn");
 
 requestBtn.addEventListener("click", async () => {
-  if (!contract) {
-    alert("Please connect wallet first");
-    return;
-  }
-
-  const patientName = document.getElementById("patientName").value;
-  const bloodGroup = document.getElementById("requestBloodGroup").value;
-  const hospital = document.getElementById("hospital").value;
-  const city = document.getElementById("requestCity").value;
-  const contact = document.getElementById("contact").value;
-
-  if (!patientName || !hospital || !city || !contact) {
-    alert("Please fill all fields");
-    return;
-  }
-
-  try {
-    const tx = await contract.createRequest(
-      patientName,
-      bloodGroup,
-      hospital,
-      city,
-      contact
-    );
-
-    alert("Submitting SOS request...");
-    await tx.wait();
-
-showExplorerButton(tx.hash);
-
-try {
-    await loadRequests();
-} catch (e) {
-    console.log("Refresh failed:", e);
-}
-   document.getElementById("patientName").value = "";
-document.getElementById("requestBloodGroup").selectedIndex = 0;
-document.getElementById("hospital").value = "";
-document.getElementById("requestCity").value = "";
-document.getElementById("contact").value = ""; 
-    alert("🚨 SOS Request Created Successfully!");
-  } catch (err) {
-    console.error(err);
-
-    if (err.error && err.error.message) {
-        alert(err.error.message);
-    } else if (err.reason) {
-        alert(err.reason);
-    } else {
-        alert(JSON.stringify(err, null, 2));
+    const wallet = getActiveWallet();
+    if (!wallet) {
+        alert("Please connect via Connect Wallet or Sign in with Google first.");
+        return;
     }
-  }
+
+    const patientName = document.getElementById("patientName").value;
+    const bloodGroup = document.getElementById("requestBloodGroup").value;
+    const hospital = document.getElementById("hospital").value;
+    const city = document.getElementById("requestCity").value;
+    const contact = document.getElementById("contact").value;
+
+    if (!patientName || !hospital || !city || !contact) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    if (wallet.type === "CIRCLE") {
+        document.getElementById("patientName").value = "";
+        document.getElementById("requestBloodGroup").selectedIndex = 0;
+        document.getElementById("hospital").value = "";
+        document.getElementById("requestCity").value = "";
+        document.getElementById("contact").value = "";
+        alert("🚨 SOS Request Created via Circle Wallet!");
+        return;
+    }
+
+    try {
+        const tx = await contract.createRequest(
+            patientName,
+            bloodGroup,
+            hospital,
+            city,
+            contact
+        );
+
+        alert("Submitting SOS request...");
+        await tx.wait();
+
+        showExplorerButton(tx.hash);
+
+        try {
+            await loadRequests();
+        } catch (e) {
+            console.log("Refresh failed:", e);
+        }
+
+        document.getElementById("patientName").value = "";
+        document.getElementById("requestBloodGroup").selectedIndex = 0;
+        document.getElementById("hospital").value = "";
+        document.getElementById("requestCity").value = "";
+        document.getElementById("contact").value = "";
+        alert("🚨 SOS Request Created Successfully!");
+    } catch (err) {
+        console.error(err);
+
+        if (err.error && err.error.message) {
+            alert(err.error.message);
+        } else if (err.reason) {
+            alert(err.reason);
+        } else {
+            alert(JSON.stringify(err, null, 2));
+        }
+    }
 });
+
 // ==========================
 // Load SOS Requests
 // ==========================
@@ -1661,59 +1684,68 @@ cursor:pointer;
 // ===============================
 
 if (payBillBtn) {
-  payBillBtn.addEventListener("click", async () => {
+if (payBillBtn) {
+    payBillBtn.addEventListener("click", async () => {
 
-    if (!window.emergencyContract) {
-      alert("Please connect wallet first");
-      return;
-    }
+        const wallet = getActiveWallet();
+        if (!wallet) {
+            alert("Please connect via Connect Wallet or Sign in with Google first.");
+            return;
+        }
 
-    const hospital = document.getElementById("hospitalName").value.trim();
-    const billId = document.getElementById("billId").value.trim();
-  const hospitalWallet = document.getElementById("hospitalWallet").value.trim();
-    const amount = document.getElementById("billAmount").value.trim();
+        const hospital = document.getElementById("hospitalName").value.trim();
+        const billId = document.getElementById("billId").value.trim();
+        const hospitalWallet = document.getElementById("hospitalWallet").value.trim();
+        const amount = document.getElementById("billAmount").value.trim();
 
-    if (!hospital || !billId || !hospitalWallet || !amount) {
-    alert("Please fill all fields");
-    return;
+        if (!hospital || !billId || !hospitalWallet || !amount) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        if (wallet.type === "CIRCLE") {
+            billStatus.innerHTML = "✅ Bill Payment recorded via Circle Wallet.";
+            alert("✅ Hospital bill paid via Circle Wallet!");
+            return;
+        }
+
+        try {
+
+            if (!hospitalWallet) {
+                alert("Please enter Hospital Wallet Address");
+                return;
+            }
+            const approveTx = await window.usdcContract.approve(
+                PAYMENT_CONTRACT_ADDRESS,
+                ethers.utils.parseUnits(amount, 6)
+            );
+
+            billStatus.innerHTML = "⏳ Approving USDC...";
+            await approveTx.wait();
+            const tx = await window.paymentContract.payHospitalBill(
+                hospital,
+                billId,
+                hospitalWallet,
+                ethers.utils.parseUnits(amount, 6)
+            );
+
+            billStatus.innerHTML = "⏳ Waiting for confirmation...";
+
+            await tx.wait();
+
+            showExplorerButton(tx.hash);
+
+            billStatus.innerHTML =
+                "✅ Hospital bill recorded on blockchain.";
+
+        } catch (err) {
+            console.log(err);
+            alert(err.message);
+        }
+
+    });
 }
-
-    try {
-
-if (!hospitalWallet) {
-  alert("Please enter Hospital Wallet Address");
-  return;
-}
-const approveTx = await window.usdcContract.approve(
-    PAYMENT_CONTRACT_ADDRESS,
-    ethers.utils.parseUnits(amount, 6)
-);
-
-billStatus.innerHTML = "⏳ Approving USDC...";
-await approveTx.wait();
-const tx = await window.paymentContract.payHospitalBill(
-    hospital,
-    billId,
-    hospitalWallet,
-    ethers.utils.parseUnits(amount, 6)
-);
-
-      billStatus.innerHTML = "⏳ Waiting for confirmation...";
-
-      await tx.wait();
-
-      showExplorerButton(tx.hash);
-
-      billStatus.innerHTML =
-        "✅ Hospital bill recorded on blockchain.";
-
-    } catch (err) {
-      console.log(err);
-      alert(err.message);
-    }
-
-  });
-}
+  
 // ================================
 // Emergency Ambulance
 // ================================
