@@ -1,7 +1,6 @@
 import crypto from 'node:crypto';
 
 export default async function handler(req, res) {
-  // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -21,31 +20,42 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'CIRCLE_API_KEY environment variable is missing on Vercel' });
     }
 
-    // Call Circle's official User Token creation endpoint
-    const response = await fetch('https://api.circle.com/v1/w3s/users/token', {
+    // Generate a unique userId or use the one provided by client
+    const userId = req.body?.userId || `user_${crypto.randomBytes(6).toString('hex')}`;
+
+    // Step 1: Create the User in Circle
+    await fetch('https://api.circle.com/v1/w3s/users', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
       },
-      body: JSON.stringify({
-        userId: 'user_' + crypto.randomBytes(4).toString('hex'),
-      }),
+      body: JSON.stringify({ userId }),
     });
 
-    const data = await response.json();
+    // Step 2: Acquire User Token & Encryption Key for the created user
+    const tokenResponse = await fetch('https://api.circle.com/v1/w3s/users/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({ userId }),
+    });
 
-    if (!response.ok) {
-      return res.status(response.status).json({
-        error: data.message || 'Circle API returned an error',
-        details: data,
+    const tokenData = await tokenResponse.json();
+
+    if (!tokenResponse.ok) {
+      return res.status(tokenResponse.status).json({
+        error: tokenData.message || 'Failed to acquire Circle user token',
+        details: tokenData,
       });
     }
 
-    return res.status(200).json(data);
+    return res.status(200).json(tokenData.data);
   } catch (err) {
     return res.status(500).json({
-      error: 'Runtime error',
+      error: 'Runtime execution error',
       message: err.message,
     });
   }
