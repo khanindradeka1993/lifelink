@@ -33,7 +33,46 @@
     </div>
 
     <button id="connectBtn">Connect Wallet</button>
+<!-- Independent Circle Google Wallet Button -->
+<button 
+  id="circleGoogleBtn" 
+  type="button" 
+  style="
+    margin-top: 10px;
+    width: 100%;
+    padding: 12px;
+    background: #ffffff;
+    color: #1e293b;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  "
+>
+  <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20" height="20" alt="Google" />
+  Sign in with Google
+</button>
 
+<!-- Circle Wallet Status -->
+<div 
+  id="circleWalletStatus" 
+  style="
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    background: #065f46;
+    border-radius: 10px;
+    font-weight: bold;
+    color: #ffffff;
+    text-align: center;
+  "
+></div>
+    
     <p id="walletAddress" style="
       margin-top:15px;
       padding:10px;
