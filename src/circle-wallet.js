@@ -1,3 +1,15 @@
+import { Buffer } from "buffer";
+import util from "util";
+
+// Polyfill global Buffer and util for Circle SDK
+if (typeof window !== "undefined") {
+  window.Buffer = window.Buffer || Buffer;
+  window.util = window.util || util;
+  if (!window.inherits) {
+    window.inherits = util.inherits;
+  }
+}
+
 export async function loginWithCircleGoogle() {
   try {
     const { W3SSdk } = await import("@circle-fin/w3s-pw-web-sdk");
