@@ -1,25 +1,18 @@
-import { Buffer } from "buffer";
-import util from "util";
-
-// Define global polyfills required by Circle SDK internals
-if (typeof window !== "undefined") {
-  window.global = window;
-  window.Buffer = Buffer;
-  window.util = window.util || util;
-  if (!window.inherits) {
-    window.inherits = util.inherits;
-  }
-}
+let circleSdkInstance = null;
 
 export async function loginWithCircleGoogle() {
   try {
-    const { W3SSdk } = await import("@circle-fin/w3s-pw-web-sdk");
+    if (!window.W3SSdk) {
+      throw new Error("Circle SDK script not loaded yet. Please refresh the page.");
+    }
 
-    const circleSdk = new W3SSdk({
-      appSettings: {
-        appId: import.meta.env.VITE_CIRCLE_APP_ID || "",
-      },
-    });
+    if (!circleSdkInstance) {
+      circleSdkInstance = new window.W3SSdk({
+        appSettings: {
+          appId: import.meta.env.VITE_CIRCLE_APP_ID || "",
+        },
+      });
+    }
 
     const response = await fetch("/api/circle-token", {
       method: "POST",
@@ -32,7 +25,7 @@ export async function loginWithCircleGoogle() {
 
     const { deviceToken, deviceEncryptionKey } = await response.json();
 
-    circleSdk.performLogin(
+    circleSdkInstance.performLogin(
       {
         provider: "google",
         clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
