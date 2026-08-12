@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 
 export default async function handler(req, res) {
-  // CORS Preflight
+  // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -21,16 +21,15 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'CIRCLE_API_KEY environment variable is missing on Vercel' });
     }
 
-    const idempotencyKey = crypto.randomUUID();
-
-    const response = await fetch('https://api.circle.com/v1/w3s/deviceTokens', {
+    // Call Circle's official User Token creation endpoint
+    const response = await fetch('https://api.circle.com/v1/w3s/users/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        idempotencyKey: idempotencyKey,
+        userId: 'user_' + crypto.randomBytes(4).toString('hex'),
       }),
     });
 
@@ -38,18 +37,15 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       return res.status(response.status).json({
-        error: data.message || 'Circle API request failed',
+        error: data.message || 'Circle API returned an error',
         details: data,
       });
     }
 
-    return res.status(200).json({
-      deviceToken: data.data.deviceToken,
-      deviceEncryptionKey: data.data.deviceEncryptionKey,
-    });
+    return res.status(200).json(data);
   } catch (err) {
     return res.status(500).json({
-      error: 'Runtime execution error',
+      error: 'Runtime error',
       message: err.message,
     });
   }
