@@ -962,12 +962,13 @@ async function handleCircleGoogleLogin() {
       sessionStorage.setItem("circle_wallet_address", data.walletAddress);
     }
 
-    if (walletAddress) {
+        if (walletAddress) {
       walletAddress.innerText = displayAddress.startsWith("0x")
         ? `Connected: ${displayAddress.slice(0, 6)}...${displayAddress.slice(-4)}`
         : `Connected via Circle (${displayAddress.slice(0, 12)}...)`;
       walletAddress.style.color = "#10B981";
-    }
+        }
+    
 
     if (circleWalletStatus) {
       circleWalletStatus.style.display = "block";
