@@ -1,0 +1,17 @@
+{
+  "name": "lifelink",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite",
+    "preview": "vite"
+  },
+  "dependencies": {
+    "@circle-fin/w3s-pw-web-sdk": "1.1.11"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}
