@@ -1,14 +1,13 @@
-import { defineConfig } from "vite";
-import { Buffer } from "buffer";
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   define: {
-    "process.env": {},
-    global: "window",
+    'process.env': {},
+    global: 'window',
   },
   resolve: {
     alias: {
-      buffer: "buffer/",
+      util: 'util',
     },
   },
 });
