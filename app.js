@@ -1751,48 +1751,56 @@ if (payBillBtn) {
 // ================================
 
 if (ambulanceBtn) {
-  ambulanceBtn.addEventListener("click", async () => {
+    ambulanceBtn.addEventListener("click", async () => {
 
-    if (!window.emergencyContract) {
-      alert("Please connect wallet first");
-      return;
-    }
+        const wallet = getActiveWallet();
+        if (!wallet) {
+            alert("Please connect via Connect Wallet or Sign in with Google first.");
+            return;
+        }
 
-    const patient = document.getElementById("ambulancePatient").value.trim();
-    const pickup = document.getElementById("pickupLocation").value.trim();
-    const hospital = document.getElementById("ambulanceHospital").value.trim();
-    const contact = document.getElementById("ambulanceContact").value.trim();
-    const level = document.getElementById("emergencyLevel").value;
+        const patient = document.getElementById("ambPatientName").value.trim();
+        const pickup = document.getElementById("pickupLocation").value.trim();
+        const hospital = document.getElementById("ambulanceHospital").value.trim();
+        const contact = document.getElementById("ambulanceContact").value.trim();
+        const level = document.getElementById("emergencyLevel").value;
 
-    if (!patient || !pickup || !hospital || !contact) {
-      alert("Please fill all fields");
-      return;
-    }
+        if (!patient || !pickup || !hospital || !contact) {
+            alert("Please fill all fields");
+            return;
+        }
 
-    try {
-      ambulanceStatus.innerHTML = "🚑 Sending ambulance request...";
+        if (wallet.type === "CIRCLE") {
+            ambulanceStatus.innerHTML = "✅ Ambulance requested via Circle Wallet.";
+            alert("🚑 Ambulance requested via Circle Wallet!");
+            return;
+        }
 
-      const tx = await window.emergencyContract.requestAmbulance(
-        patient,
-        pickup,
-        hospital,
-        contact,
-        level
-      );
+        try {
+            ambulanceStatus.innerHTML = "🚑 Sending ambulance request...";
 
-      await tx.wait();
+            const tx = await window.emergencyContract.requestAmbulance(
+                patient,
+                pickup,
+                hospital,
+                contact,
+                level
+            );
 
-      ambulanceStatus.innerHTML = "✅ Ambulance request recorded on blockchain.";
+            await tx.wait();
 
-      loadAmbulanceRequests();
+            ambulanceStatus.innerHTML = "✅ Ambulance request recorded on blockchain.";
 
-    } catch (err) {
-      console.log(err);
-      alert(err.message);
-    }
+            loadAmbulanceRequests();
 
-  });
+        } catch (err) {
+            console.log(err);
+            alert(err.message);
+        }
+
+    });
 }
+  
 
 async function loadAmbulanceRequests() {
 
