@@ -1689,7 +1689,6 @@ cursor:pointer;
 // ===============================
 
 if (payBillBtn) {
-if (payBillBtn) {
     payBillBtn.addEventListener("click", async () => {
 
         const wallet = getActiveWallet();
