@@ -601,9 +601,12 @@ if (connectBtn) {
 
 async function loadDonors() {
     try {
-      const activeContract = contract || readOnlyContract;
-      const donors = await activeContract.getDonors();
+       const wallet = getActiveWallet();
+  if (!wallet) return; // 🔒 Stop execution if wallet is not connected
 
+  const activeContract = contract || readOnlyContract;
+  const donors = await activeContract.getDonors();
+      
       if (totalDonors) totalDonors.innerText = donors.length;
       if (dashboardDonors) dashboardDonors.innerText = donors.length;
 
@@ -852,9 +855,8 @@ const requestList = document.getElementById("requestList");
 
 async function loadRequests() {
     try {
-      const activeContract = contract || readOnlyContract;
-      const requests = await activeContract.getRequests();
-      const active = requests.filter(r => !r.fulfilled);
+        const wallet = getActiveWallet();
+  if (!wallet) return; // 🔒 Stop execution if wallet is not connected
 
       if (totalRequests) totalRequests.innerText = active.length;
       if (dashboardRequests) dashboardRequests.innerText = active.length;
@@ -1157,8 +1159,9 @@ if (ambulanceBtn) {
 
 async function loadAmbulanceRequests() {
   try {
-    const activeEmergency = window.emergencyContract || readOnlyEmergency;
-    const requests = await activeEmergency.getAmbulanceRequests();
+      const wallet = getActiveWallet();
+  if (!wallet) return; // 🔒 Stop execution if wallet is not connected
+    
 
     if (!ambulanceList) return;
     ambulanceList.innerHTML = "";
