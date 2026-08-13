@@ -463,17 +463,29 @@ if (circleGoogleBtn) {
 
 function enableWalletCopy(address) {
   const copyBtn = document.getElementById("copyWalletBtn");
-  if (!copyBtn || !address) return;
+  if (!copyBtn) return;
+
+  const addrToCopy = address || sessionStorage.getItem("circle_wallet_address") || currentAccount;
+  if (!addrToCopy) return;
 
   copyBtn.style.display = "inline-block";
   copyBtn.onclick = () => {
-    navigator.clipboard.writeText(address);
+    navigator.clipboard.writeText(addrToCopy);
     copyBtn.innerText = "✅ Copied!";
     setTimeout(() => {
       copyBtn.innerText = "📋 Copy";
     }, 2000);
   };
 }
+
+// Auto-check for active Circle Wallet or MetaMask on load
+window.addEventListener("load", () => {
+  const savedCircle = sessionStorage.getItem("circle_wallet_address");
+  if (savedCircle) {
+    enableWalletCopy(savedCircle);
+  }
+});
+
 
 function getActiveWallet() {
   if (currentAccount) {
