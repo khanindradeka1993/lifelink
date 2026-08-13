@@ -613,16 +613,17 @@ async function loadDonors() {
         donorList.innerHTML = "";
         donors.forEach((donor) => {
             donorList.innerHTML += `
-            <div style="
-                border:1px solid #ddd;
-                padding:10px;
-                margin-top:10px;
-                border-radius:10px;
-            ">
-                <strong>${donor.bloodGroup}</strong><br>
-                City: ${donor.city}
-            </div>
-            `;
+    <div style="
+        border:1px solid #ddd;
+        padding:10px;
+        margin-top:10px;
+        border-radius:10px;
+    ">
+        <strong>${donor.bloodGroup}</strong><br>
+        City: ${donor.city}
+    </div>
+`;
+
         });
       }
 
