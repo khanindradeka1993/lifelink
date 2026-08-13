@@ -54,15 +54,12 @@
       style="display: none; margin-top: 10px; padding: 10px; background: #065f46; border-radius: 10px; font-weight: bold; color: #ffffff; text-align: center;"
     ></div>
 
-    <p id="walletAddress" style="
-      margin-top:15px;
-      padding:10px;
-      background:#1E293B;
-      border-radius:10px;
-      font-weight:bold;
-      color:#ffffff;
-      text-align:center;
-    ">Wallet not connected</p>
+    <div style="margin-top:15px; padding:10px; background:#1E293B; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:10px;">
+  <span id="walletAddress" style="font-weight:bold; color:#ffffff;">Wallet not connected</span>
+  <button id="copyWalletBtn" style="display:none; background:#334155; border:1px solid #475569; color:#ffffff; padding:5px 12px; border-radius:8px; cursor:pointer; font-size:12px; font-weight:bold; transition:all 0.2s;">
+    📋 Copy
+  </button>
+</div>
 
     <div id="txCard"></div>
 
