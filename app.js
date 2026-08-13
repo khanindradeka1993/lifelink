@@ -932,29 +932,14 @@ async function handleCircleGoogleLogin() {
     });
 
     const data = await response.json();
+
     if (!response.ok) {
       throw new Error(data.error || "Failed to generate Circle session");
     }
 
-    if (data.challengeId && window.CircleWebSdk) {
-      const sdk = new window.CircleWebSdk();
-
-      sdk.setAuthentication({
-        userToken: data.userToken,
-        encryptionKey: data.encryptionKey
-      });
-
-      sdk.execute(data.challengeId, (error, result) => {
-        if (error) {
-          console.error("Circle SDK Challenge Error:", error);
-          return;
-        }
-        console.log("Circle Challenge Executed:", result);
-      });
-    }
-
     const displayAddress = data.walletAddress || data.userId;
 
+    // Save session variables
     sessionStorage.setItem("active_wallet_type", "CIRCLE");
     sessionStorage.setItem("circle_user_token", data.userToken);
     sessionStorage.setItem("circle_user_id", data.userId);
@@ -962,18 +947,20 @@ async function handleCircleGoogleLogin() {
       sessionStorage.setItem("circle_wallet_address", data.walletAddress);
     }
 
-            if (walletAddress) {
+    // Display status in UI
+    if (walletAddress) {
       walletAddress.innerText = displayAddress.startsWith("0x")
         ? `Connected: ${displayAddress.slice(0, 6)}...${displayAddress.slice(-4)}`
         : `Connected via Circle (${displayAddress.slice(0, 12)}...)`;
       walletAddress.style.color = "#10B981";
     }
 
-    
     if (circleWalletStatus) {
       circleWalletStatus.style.display = "block";
       circleWalletStatus.innerText = "Circle Wallet Active";
     }
+
+    alert("✅ Circle Session Created Successfully!");
 
   } catch (err) {
     console.error("Circle Wallet Connection Error:", err);
@@ -981,8 +968,10 @@ async function handleCircleGoogleLogin() {
       walletAddress.innerText = "Circle Connection Failed";
       walletAddress.style.color = "#EF4444";
     }
+    alert(err.message);
   }
 }
+
 
 if (circleGoogleBtn) {
   circleGoogleBtn.addEventListener("click", handleCircleGoogleLogin);
