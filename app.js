@@ -589,13 +589,14 @@ connectBtn.addEventListener("click", async () => {
       connectBtn.style.background = "#16a34a";
       connectBtn.disabled = true;
 
-      await loadDonors();
-      await loadRequests();
-      await loadAmbulanceRequests();
-      
-    } catch (error) {
-        console.log(error);
-    }
+try {
+    await loadDonors();
+    await loadRequests();
+    await loadAmbulanceRequests();
+} catch (error) {
+    console.log(error);
+}
+
 });
 
 // Load donors
