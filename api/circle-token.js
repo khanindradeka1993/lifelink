@@ -12,21 +12,17 @@ export default async function handler(req, res) {
     const { userId } = req.body || {};
     const userIdentifier = userId || `google_user_${Date.now()}`;
 
-    // 1. Create user if not already existing
-    try {
-      await fetch("https://api.circle.com/v1/w3s/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({ userId: userIdentifier })
-      });
-    } catch (e) {
-      // User exists, move on
-    }
+    // Step 1: Create the user in Circle W3S first
+    await fetch("https://api.circle.com/v1/w3s/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({ userId: userIdentifier })
+    });
 
-    // 2. Obtain session token
+    // Step 2: Request the user session token
     const tokenResponse = await fetch("https://api.circle.com/v1/w3s/users/token", {
       method: "POST",
       headers: {
@@ -47,6 +43,7 @@ export default async function handler(req, res) {
     const userToken = tokenData.data?.userToken;
     const encryptionKey = tokenData.data?.encryptionKey;
 
+    // Step 3: Fetch existing wallet address (if available)
     let walletAddress = null;
     try {
       const walletResponse = await fetch(`https://api.circle.com/v1/w3s/wallets?userId=${userIdentifier}`, {
