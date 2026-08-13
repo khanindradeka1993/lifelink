@@ -603,9 +603,6 @@ async function loadDonors() {
     try {
        const wallet = getActiveWallet();
   if (!wallet) return; // 🔒 Stop execution if wallet is not connected
-
-  const activeContract = contract || readOnlyContract;
-  const donors = await activeContract.getDonors();
       
       if (totalDonors) totalDonors.innerText = donors.length;
       if (dashboardDonors) dashboardDonors.innerText = donors.length;
