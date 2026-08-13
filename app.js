@@ -461,6 +461,20 @@ if (circleGoogleBtn) {
   circleGoogleBtn.addEventListener("click", handleCircleGoogleLogin);
 }
 
+function enableWalletCopy(address) {
+  const copyBtn = document.getElementById("copyWalletBtn");
+  if (!copyBtn || !address) return;
+
+  copyBtn.style.display = "inline-block";
+  copyBtn.onclick = () => {
+    navigator.clipboard.writeText(address);
+    copyBtn.innerText = "✅ Copied!";
+    setTimeout(() => {
+      copyBtn.innerText = "📋 Copy";
+    }, 2000);
+  };
+}
+
 function getActiveWallet() {
   if (currentAccount) {
     return {
@@ -549,6 +563,7 @@ if (connectBtn) {
               "..." +
               currentAccount.substring(currentAccount.length - 4);
         walletAddress.style.color = "#10B981";
+              enableWalletCopy(currentAccount);      
         connectBtn.innerText = "✅ Wallet Connected";
         connectBtn.style.background = "#16a34a";
         connectBtn.disabled = true;
