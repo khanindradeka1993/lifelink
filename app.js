@@ -1219,8 +1219,7 @@ if (ambulanceBtn) {
         }
 
         // Branch for Circle Wallet
-        if (wallet.type === "CIR
-            CLE") {
+        if (wallet.type === "CIRCLE") {
             ambulanceStatus.innerHTML = "✅ Ambulance requested via Circle Wallet.";
             alert("🚑 Ambulance requested via Circle Wallet!");
             return;
