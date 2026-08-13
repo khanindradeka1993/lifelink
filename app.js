@@ -465,8 +465,13 @@ function enableWalletCopy(address) {
   const copyBtn = document.getElementById("copyWalletBtn");
   if (!copyBtn) return;
 
-  const addrToCopy = address || sessionStorage.getItem("circle_wallet_address") || currentAccount;
-  if (!addrToCopy) return;
+  const addrToCopy = address || sessionStorage.getItem("circle_wallet_address") || (typeof currentAccount !== "undefined" ? currentAccount : null);
+  
+  // Hide button if wallet is disconnected
+  if (!addrToCopy) {
+    copyBtn.style.display = "none";
+    return;
+  }
 
   copyBtn.style.display = "inline-block";
   copyBtn.onclick = () => {
