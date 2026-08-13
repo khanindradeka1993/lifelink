@@ -6,12 +6,27 @@ export default async function handler(req, res) {
   try {
     const apiKey = process.env.CIRCLE_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: "CIRCLE_API_KEY is not configured." });
+      return res.status(500).json({ error: "CIRCLE_API_KEY is missing in Vercel environment variables." });
     }
 
     const { userId } = req.body || {};
     const userIdentifier = userId || `google_user_${Date.now()}`;
 
+    // 1. Create user if not already existing
+    try {
+      await fetch("https://api.circle.com/v1/w3s/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({ userId: userIdentifier })
+      });
+    } catch (e) {
+      // User exists, move on
+    }
+
+    // 2. Obtain session token
     const tokenResponse = await fetch("https://api.circle.com/v1/w3s/users/token", {
       method: "POST",
       headers: {
