@@ -743,7 +743,8 @@ explicitWalletConnected = true;
       connectBtn.innerText = "✅ Wallet Connected";
       connectBtn.style.background = "#16a34a";
       connectBtn.disabled = true;
-
+disconnectBtn.style.display = "block";
+      
       await reloadAppData();
     } catch (error) {
       console.error("MetaMask connection failed:", error);
@@ -796,6 +797,7 @@ explicitWalletConnected = true;
       circleWalletStatus.innerText = "Circle Wallet Active";
     }
 
+    disconnectBtn.style.display = "block";
     enableWalletCopy(displayAddress);
     await reloadAppData();
     alert("✅ Circle Session Connected Successfully!");
