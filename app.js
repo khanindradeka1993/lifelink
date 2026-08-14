@@ -495,9 +495,9 @@ async function loadDonors() {
           .addTo(window.donorMap)
           .bindPopup(`<b>${donor.name}</b><br>${donor.bloodGroup}<br>${donor.city}`);
         }
-      });
-    }
-  } catch (e) {
+        });
+} } catch (e) {
+  
     console.error("Error loading donors:", e);
   }
 }
