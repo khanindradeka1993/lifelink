@@ -282,22 +282,19 @@ const circleGoogleBtn = document.getElementById("circleGoogleBtn");
 const circleWalletStatus = document.getElementById("circleWalletStatus");
 
 let currentAccount = "";
+let explicitWalletConnected = false;
 
 // ==========================================
 // 4. HELPER FUNCTIONS
 // ==========================================
 function isWalletConnected() {
-  const circleWallet = sessionStorage.getItem("circle_wallet_address");
-  const circleUserToken = sessionStorage.getItem("circle_user_token");
-  const isCircleActive = sessionStorage.getItem("active_wallet_type") === "CIRCLE";
-
-  // Require currentAccount to be explicitly set when user clicks 'Connect Wallet'
-  const isMetaMaskActive = !!currentAccount;
-
-  return (isCircleActive && !!circleWallet && !!circleUserToken) || isMetaMaskActive;
+  return explicitWalletConnected;
 }
 
 function getActiveWallet() {
+   if (!explicitWalletConnected) {
+    return null;
+   } 
   if (currentAccount) {
     return {
       type: "METAMASK",
@@ -645,15 +642,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener("load", () => {
-  const activeType = sessionStorage.getItem("active_wallet_type");
-  const savedCircle = sessionStorage.getItem("circle_wallet_address");
-
-  if (activeType === "CIRCLE" && savedCircle) {
-    enableWalletCopy(savedCircle);
-    reloadAppData();
-  } else {
-    resetDashboardLists();
-  }
+  resetDashboardLists();
 });
 
 // ==========================================
@@ -694,7 +683,9 @@ if (connectBtn) {
 
       const accounts = await ethereum.request({ method: "eth_requestAccounts" });
       currentAccount = accounts[0];
-
+currentAccount = accounts[0];
+explicitWalletConnected = true;
+      
       sessionStorage.removeItem("active_wallet_type");
 
       provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -747,7 +738,8 @@ async function handleCircleGoogleLogin() {
     if (data.walletAddress) {
       sessionStorage.setItem("circle_wallet_address", data.walletAddress);
     }
-
+explicitWalletConnected = true;
+    
     if (walletAddress) {
       walletAddress.innerText = displayAddress.startsWith("0x")
         ? `Connected: ${displayAddress.slice(0, 6)}...${displayAddress.slice(-4)}`
