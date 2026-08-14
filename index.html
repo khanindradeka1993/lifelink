@@ -9,10 +9,8 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://assets.circle.com/w3s/sdk-web.js"></script>
-  
+  <script src="https://assets.circle.com/w3s/sdk-web.js"></script>
 </head>
 
 <body>
@@ -35,28 +33,28 @@
       <div class="heroRight">🛡️</div>
     </div>
 
-          <!-- Wallet Action Card -->
-      <div class="wallet-section-card">
-        <div class="wallet-btn-group">
-          <button id="connectBtn" class="action-btn primary-btn">
-            Connect Wallet
-          </button>
+    <!-- Wallet Action Card -->
+    <div class="wallet-section-card">
+      <div class="wallet-btn-group">
+        <button id="connectBtn" class="action-btn primary-btn">
+          Connect Wallet
+        </button>
 
-          <button id="circleGoogleBtn" type="button" class="action-btn google-btn">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20" height="20" alt="Google">
-            Sign in with Google
-          </button>
-        </div>
+        <button id="circleGoogleBtn" type="button" class="action-btn google-btn">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20" height="20" alt="Google">
+          Sign in with Google
+        </button>
+      </div>
 
-        <div id="circleWalletStatus" class="status-badge" style="display: none;">
-          🟢 Circle Wallet Active
-        </div>
+      <div id="circleWalletStatus" class="status-badge" style="display: none;">
+        🟢 Circle Wallet Active
+      </div>
 
-        <div id="walletAddressContainer" class="address-box">
-          <span id="walletAddress">Not Connected</span>
-          <button id="copyWalletBtn" class="copy-btn" style="display: none;">📋 Copy</button>
-        </div>
-      </div>    
+      <div id="walletAddressContainer" class="address-box">
+        <span id="walletAddress">Not Connected</span>
+        <button id="copyWalletBtn" class="copy-btn" style="display: none;">📋 Copy</button>
+      </div>
+    </div>    
 
     <div id="txCard"></div>
 
@@ -123,6 +121,7 @@
           <input type="tel" id="phone" placeholder="Phone Number">
           <button id="registerBtn">🩸 Register as Donor</button>
           <h3>Registered Donors</h3>
+          <div id="registeredDonorsList"></div>
           <div id="donorList"></div>
         </div>
 
@@ -240,7 +239,7 @@
         <div id="ambulanceSection" class="card">
           <h2>🚑 Emergency Ambulance</h2>
           <p>Request an ambulance instantly for emergency transport.</p>
-          <input type="text" id="ambulancePatient" placeholder="Patient Name">
+          <input type="text" id="ambPatientName" placeholder="Patient Name">
           <input type="text" id="pickupLocation" placeholder="Pickup Location">
           <input type="text" id="ambulanceHospital" placeholder="Destination Hospital">
           <input type="text" id="ambulanceContact" placeholder="Contact Number">
