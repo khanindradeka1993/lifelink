@@ -402,8 +402,10 @@ function showExplorerButton(txHash) {
 
 function resetDashboardLists() {
   const registeredDonorsList = document.getElementById("registeredDonorsList");
-  if (registeredDonorsList) registeredDonorsList.innerHTML = "<p style='color:#94a3b8;padding:10px;'>🔒 Connect wallet to view donors.</p>";
-  if (donorList) donorList.innerHTML = "<p style='color:#94a3b8;padding:10px;'>🔒 Connect wallet to view donors.</p>";
+  const donorContainer = registeredDonorsList || donorList;
+if (donorContainer) {
+  donorContainer.innerHTML = "<p style='color:#94a3b8;padding:10px;'>🔒 Connect wallet to view donors.</p>";
+}
   
   const requestList = document.getElementById("requestList");
   if (requestList) requestList.innerHTML = "<p style='color:#94a3b8;padding:10px;'>🔒 Connect wallet to view active SOS requests.</p>";
