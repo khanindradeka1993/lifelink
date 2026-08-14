@@ -289,8 +289,12 @@ let currentAccount = "";
 function isWalletConnected() {
   const circleWallet = sessionStorage.getItem("circle_wallet_address");
   const circleUserToken = sessionStorage.getItem("circle_user_token");
-  const metaMaskWallet = currentAccount || window.ethereum?.selectedAddress;
-  return !!((circleWallet && circleUserToken) || metaMaskWallet);
+  const isCircleActive = sessionStorage.getItem("active_wallet_type") === "CIRCLE";
+
+  // Require currentAccount to be explicitly set when user clicks 'Connect Wallet'
+  const isMetaMaskActive = !!currentAccount;
+
+  return (isCircleActive && !!circleWallet && !!circleUserToken) || isMetaMaskActive;
 }
 
 function getActiveWallet() {
