@@ -743,3 +743,28 @@ footer{
     margin-bottom: 16px !important;
   }
 }
+
+@media (min-width: 900px) {
+  /* Turn layout into 2 flex columns */
+  .desktop-dashboard {
+    display: flex !important;
+    gap: 24px !important;
+    align-items: stretch !important;
+  }
+
+  /* Force left and right column wrappers to match each other's height */
+  .desktop-dashboard > .left-column,
+  .desktop-dashboard > .right-column {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    justify-content: space-between !important; /* Spreads cards evenly down to footer */
+    gap: 20px !important;
+  }
+
+  /* Let the map fill available space dynamically */
+  #map {
+    height: 100% !important;
+    min-height: 350px !important;
+  }
+}
