@@ -444,7 +444,7 @@ async function reloadAppData() {
   }
 
   try {
-    const activeContract = contract; 
+    const activeContract = contract;
     if (!activeContract) return;
 
     const donors = await activeContract.getDonors();
@@ -492,61 +492,34 @@ async function reloadAppData() {
   } catch (e) {
     console.error("Error loading donors:", e);
   }
- }
-
-  } catch (e) {
-    console.error("Error loading donors:", e);
-  }
-}
-
 }
 
 async function loadRequests() {
-  if (!isWalletConnected()) return;
+  if (!isWalletConnected()) {
+    resetDashboardLists();
+    return;
+  }
 
   try {
-    const activeContract = contract || readOnlyContract;
+    const activeContract = contract;
+    if (!activeContract) return;
+
     const requests = await activeContract.getRequests();
-    const active = requests.filter(r => !r.fulfilled);
+    const active = requests.filter((r) => !r.fulfilled);
 
-    const totalReq = document.getElementById("totalRequests");
-    if (totalReq) totalReq.innerText = active.length;
-    if (dashboardRequests) dashboardRequests.innerText = active.length;
-
-    const fulfilled = requests.filter(r => r.fulfilled);
-    if (dashboardFulfilled) dashboardFulfilled.innerText = fulfilled.length;
-    if (totalSOS) totalSOS.innerText = requests.length;
-
-    const bloodCount = {};
-    requests.forEach((r) => {
-      const group = String(r.bloodGroup);
-      bloodCount[group] = (bloodCount[group] || 0) + 1;
-    });
-
-    let topGroup = "-";
-    let max = 0;
-    for (const group in bloodCount) {
-      if (bloodCount[group] > max) {
-        max = bloodCount[group];
-        topGroup = group;
-      }
-    }
-    if (topBloodGroup) topBloodGroup.innerText = topGroup;
-
-    const cities = [...new Set(requests.map(r => String(r.city).toLowerCase()))];
-    if (totalCities) totalCities.innerText = cities.length;
+    if (typeof totalRequests !== "undefined" && totalRequests) totalRequests.innerText = active.length;
+    if (typeof dashboardRequests !== "undefined" && dashboardRequests) dashboardRequests.innerText = active.length;
 
     const requestList = document.getElementById("requestList");
     if (!requestList) return;
     requestList.innerHTML = "";
 
     const reversedRequests = [...requests].reverse();
-
     reversedRequests.forEach((req) => {
       if (req.fulfilled) return;
 
       requestList.innerHTML += `
-            <div style="border-left:6px solid #dc3545;background:#1E293B;color:#FFFFFF;border:1px solid #475569;border-radius:16px;padding:15px;margin-top:12px;box-shadow:0 8px 20px rgba(0,0,0,0.35);">
+      <div style="border-left:6px solid #dc3545;background:#1E293B;color:#FFFFFF;border:1px solid #475569;border-radius:16px;padding:15px;margin-top:12px;box-shadow:0 8px 20px rgba(0,0,0,0.35);">
         <h3 style="color:#ef4444;margin:0;">🚨 ${req.bloodGroup}</h3>
         <div style="color:#E2E8F0;">
           👤 <strong>${req.patientName}</strong><br>
@@ -568,11 +541,17 @@ async function loadRequests() {
 }
 
 async function loadAmbulanceRequests() {
-  if (!isWalletConnected()) return;
+  if (!isWalletConnected()) {
+    resetDashboardLists();
+    return;
+  }
 
   try {
-    const activeEmergency = window.emergencyContract || readOnlyEmergency;
+    const activeEmergency = window.emergencyContract;
+    if (!activeEmergency) return;
+
     const requests = await activeEmergency.getAmbulanceRequests();
+    const ambulanceList = document.getElementById("ambulanceList");
 
     if (!ambulanceList) return;
     ambulanceList.innerHTML = "";
@@ -599,6 +578,7 @@ async function loadAmbulanceRequests() {
     console.error("Error loading ambulance requests:", e);
   }
 }
+
 
 // Initial initialization check (will not load data if disconnected)
 window.addEventListener("DOMContentLoaded", () => {
