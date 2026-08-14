@@ -248,6 +248,7 @@ let signer;
 let contract = readOnlyContract;
 // DOM Elements
 const connectBtn = document.getElementById("connectBtn");
+const disconnectBtn = document.getElementById("disconnectBtn");
 const walletAddress = document.getElementById("walletAddress");
 const registerBtn = document.getElementById("registerBtn");
 const donorList = document.getElementById("donorList");
@@ -426,6 +427,41 @@ if (donorContainer) {
   if (totalSOS) totalSOS.innerText = "0";
   if (topBloodGroup) topBloodGroup.innerText = "-";
   if (totalCities) totalCities.innerText = "0";
+}
+
+async function disconnectWallet() {
+  currentAccount = "";
+  explicitWalletConnected = false;
+
+  provider = null;
+  signer = null;
+  contract = readOnlyContract;
+
+  sessionStorage.removeItem("active_wallet_type");
+  sessionStorage.removeItem("circle_user_token");
+  sessionStorage.removeItem("circle_user_id");
+  sessionStorage.removeItem("circle_wallet_address");
+
+  if (walletAddress) {
+    walletAddress.innerText = "Not Connected";
+    walletAddress.style.color = "";
+  }
+
+  if (disconnectBtn) {
+    disconnectBtn.style.display = "none";
+  }
+
+  if (connectBtn) {
+    connectBtn.innerText = "Connect Wallet";
+    connectBtn.disabled = false;
+    connectBtn.style.background = "";
+  }
+
+  if (circleWalletStatus) {
+    circleWalletStatus.style.display = "none";
+  }
+
+  resetDashboardLists();
 }
 
 // ==========================================
@@ -777,7 +813,10 @@ explicitWalletConnected = true;
 if (circleGoogleBtn) {
   circleGoogleBtn.addEventListener("click", handleCircleGoogleLogin);
 }
-  // ==========================================
+if (disconnectBtn) {
+  disconnectBtn.addEventListener("click", disconnectWallet);
+}
+// ==========================================
 // 7. REAL TRANSACTION ACTIONS
 // ==========================================
 
