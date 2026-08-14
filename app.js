@@ -1,8 +1,16 @@
+// ==========================================
+// 1. CONTRACT ADDRESSES & RPC CONFIGURATION
+// ==========================================
 const CONTRACT_ADDRESS = "0x3e4c9Ec9598A507707d08Fd847Fe9909F2bb91AB";
 const HEALTHCARE_CONTRACT_ADDRESS = "0xE32313e236784f57a7479a830E4a9c0ce22d0761";
 const EMERGENCY_CONTRACT_ADDRESS = "0x8d1183f802b5688e5244a493Ea965e856150c2Ef";
 const PAYMENT_CONTRACT_ADDRESS = "0x0CA164a6FE7FfEA47945761748D77cd0aa16Afb1";
+const EXPLORER = "https://testnet.arcscan.app";
+const ARC_RPC_URL = "https://rpc.quicknode.testnet.arc.network";
 
+// ==========================================
+// 2. ABIs
+// ==========================================
 const USDC_ABI = [
   "function approve(address spender, uint256 amount) external returns (bool)"
 ];
@@ -146,33 +154,6 @@ const HEALTHCARE_ABI = [
     "type": "function"
   },
   {
-    "anonymous": false,
-    "inputs": [{ "indexed": true, "internalType": "address", "name": "user", "type": "address" }],
-    "name": "ProfileCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [{ "indexed": true, "internalType": "address", "name": "user", "type": "address" }],
-    "name": "ProfileUpdated",
-    "type": "event"
-  },
-  {
-    "inputs": [
-      { "internalType": "string", "name": "_fullName", "type": "string" },
-      { "internalType": "string", "name": "_bloodGroup", "type": "string" },
-      { "internalType": "string", "name": "_dob", "type": "string" },
-      { "internalType": "string", "name": "_gender", "type": "string" },
-      { "internalType": "string", "name": "_emergencyContact", "type": "string" },
-      { "internalType": "string", "name": "_allergies", "type": "string" },
-      { "internalType": "string", "name": "_addressInfo", "type": "string" }
-    ],
-    "name": "updateProfile",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [{ "internalType": "address", "name": "_user", "type": "address" }],
     "name": "getProfile",
     "outputs": [
@@ -193,43 +174,8 @@ const HEALTHCARE_ABI = [
 
 const EMERGENCY_ABI = [
   {
-    "anonymous": false,
-    "inputs": [{ "indexed": true, "internalType": "uint256", "name": "id", "type": "uint256" }],
-    "name": "AmbulanceCompleted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": true, "internalType": "uint256", "name": "id", "type": "uint256" },
-      { "indexed": true, "internalType": "address", "name": "requester", "type": "address" }
-    ],
-    "name": "AmbulanceRequested",
-    "type": "event"
-  },
-  {
     "inputs": [{ "internalType": "uint256", "name": "_id", "type": "uint256" }],
     "name": "completeRequest",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": true, "internalType": "uint256", "name": "id", "type": "uint256" },
-      { "indexed": true, "internalType": "address", "name": "payer", "type": "address" }
-    ],
-    "name": "HospitalBillPaid",
-    "type": "event"
-  },
-  {
-    "inputs": [
-      { "internalType": "string", "name": "_hospitalName", "type": "string" },
-      { "internalType": "string", "name": "_billId", "type": "string" },
-      { "internalType": "uint256", "name": "_amount", "type": "uint256" }
-    ],
-    "name": "payHospitalBill",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -269,47 +215,10 @@ const EMERGENCY_ABI = [
     ],
     "stateMutability": "view",
     "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getPayments",
-    "outputs": [
-      {
-        "components": [
-          { "internalType": "uint256", "name": "id", "type": "uint256" },
-          { "internalType": "string", "name": "hospitalName", "type": "string" },
-          { "internalType": "string", "name": "billId", "type": "string" },
-          { "internalType": "uint256", "name": "amount", "type": "uint256" },
-          { "internalType": "address", "name": "payer", "type": "address" },
-          { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
-        ],
-        "internalType": "struct LifeLinkEmergency.HospitalPayment[]",
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
   }
 ];
 
 const PAYMENT_ABI = [
-  {
-    "inputs": [{ "internalType": "address", "name": "usdcAddress", "type": "address" }],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": true, "internalType": "address", "name": "payer", "type": "address" },
-      { "indexed": true, "internalType": "address", "name": "hospitalWallet", "type": "address" },
-      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" },
-      { "indexed": false, "internalType": "string", "name": "billId", "type": "string" }
-    ],
-    "name": "HospitalBillPaid",
-    "type": "event"
-  },
   {
     "inputs": [
       { "internalType": "string", "name": "hospitalName", "type": "string" },
@@ -321,48 +230,24 @@ const PAYMENT_ABI = [
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "index", "type": "uint256" }],
-    "name": "getPayment",
-    "outputs": [
-      {
-        "components": [
-          { "internalType": "string", "name": "hospitalName", "type": "string" },
-          { "internalType": "string", "name": "billId", "type": "string" },
-          { "internalType": "address", "name": "hospitalWallet", "type": "address" },
-          { "internalType": "uint256", "name": "amount", "type": "uint256" },
-          { "internalType": "address", "name": "payer", "type": "address" },
-          { "internalType": "uint256", "name": "timestamp", "type": "uint256" }
-        ],
-        "internalType": "struct LifeLinkPaymentV3.Payment",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "paymentCount",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "usdc",
-    "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
   }
 ];
 
+// ==========================================
+// 3. GLOBAL READ-ONLY PROVIDERS & CONTRACTS
+// ==========================================
+const defaultProvider = new ethers.providers.JsonRpcProvider(ARC_RPC_URL);
+
+const readOnlyContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, defaultProvider);
+const readOnlyEmergency = new ethers.Contract(EMERGENCY_CONTRACT_ADDRESS, EMERGENCY_ABI, defaultProvider);
+const readOnlyHealthcare = new ethers.Contract(HEALTHCARE_CONTRACT_ADDRESS, HEALTHCARE_ABI, defaultProvider);
+const readOnlyPayment = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, PAYMENT_ABI, defaultProvider);
+
 let provider;
 let signer;
-let contract;
+let contract = readOnlyContract;
 
+// DOM Elements
 const connectBtn = document.getElementById("connectBtn");
 const walletAddress = document.getElementById("walletAddress");
 const registerBtn = document.getElementById("registerBtn");
@@ -384,7 +269,6 @@ const ambulanceList = document.getElementById("ambulanceList");
 const searchPatientBtn = document.getElementById("searchPatientBtn");
 const doctorWallet = document.getElementById("doctorWallet");
 const doctorStatus = document.getElementById("doctorStatus");
-
 const patientProfileCard = document.getElementById("patientProfileCard");
 
 const viewName = document.getElementById("viewName");
@@ -395,15 +279,342 @@ const viewEmergency = document.getElementById("viewEmergency");
 const viewAllergies = document.getElementById("viewAllergies");
 const viewAddress = document.getElementById("viewAddress");
 
-let currentAccount = "";
-const EXPLORER = "https://testnet.arcscan.app";
-
-const defaultProvider = new ethers.providers.JsonRpcProvider("https://rpc.quicknode.testnet.arc.network");
-const readOnlyContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, defaultProvider);
-const readOnlyEmergency = new ethers.Contract(EMERGENCY_CONTRACT_ADDRESS, EMERGENCY_ABI, defaultProvider);
-
 const circleGoogleBtn = document.getElementById("circleGoogleBtn");
 const circleWalletStatus = document.getElementById("circleWalletStatus");
+
+let currentAccount = "";
+
+// ==========================================
+// 4. HELPER FUNCTIONS
+// ==========================================
+function getActiveWallet() {
+  if (currentAccount) {
+    return {
+      type: "METAMASK",
+      account: currentAccount,
+      signer: signer
+    };
+  }
+
+  const activeType = sessionStorage.getItem("active_wallet_type");
+  const circleUserId = sessionStorage.getItem("circle_user_id");
+  const circleUserToken = sessionStorage.getItem("circle_user_token");
+
+  if (activeType === "CIRCLE" && circleUserId) {
+    return {
+      type: "CIRCLE",
+      userId: circleUserId,
+      userToken: circleUserToken,
+      address: sessionStorage.getItem("circle_wallet_address") || circleUserId
+    };
+  }
+
+  return null;
+}
+
+function enableWalletCopy(address) {
+  const copyBtn = document.getElementById("copyWalletBtn");
+  if (!copyBtn) return;
+
+  const addrToCopy = address || sessionStorage.getItem("circle_wallet_address") || currentAccount;
+  
+  if (!addrToCopy) {
+    copyBtn.style.display = "none";
+    return;
+  }
+
+  copyBtn.style.display = "inline-block";
+  copyBtn.onclick = () => {
+    navigator.clipboard.writeText(addrToCopy);
+    copyBtn.innerText = "✅ Copied!";
+    setTimeout(() => {
+      copyBtn.innerText = "📋 Copy";
+    }, 2000);
+  };
+}
+
+// 🟢 REAL TRANSACTION DISPATCHER FOR CIRCLE WALLETS
+async function executeCircleTransaction(abiFunction, contractAddress, args) {
+  const userToken = sessionStorage.getItem("circle_user_token");
+  const walletAddress = sessionStorage.getItem("circle_wallet_address");
+
+  const response = await fetch("/api/circle-transaction", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userToken,
+      walletAddress,
+      contractAddress,
+      abiFunction,
+      args
+    })
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Circle Transaction Execution Failed");
+  }
+
+  return data.txHash;
+}
+
+function showExplorerButton(txHash) {
+  const explorer = `${EXPLORER}/tx/${txHash}`;
+  let card = document.getElementById("txCard");
+
+  if (!card) {
+    card = document.createElement("div");
+    card.id = "txCard";
+    card.style.margin = "15px 0";
+    if (walletAddress) {
+      walletAddress.insertAdjacentElement("afterend", card);
+    }
+  }
+
+  card.innerHTML = `
+  <div style="background:#1E293B;border:1px solid #334155;border-radius:16px;padding:18px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.25);">
+    <h3 style="color:#ffffff;margin:0 0 12px 0;">📦 Latest Blockchain Transaction</h3>
+    <p style="color:#94a3b8;font-size:13px;word-break:break-all;margin-bottom:16px;">${txHash}</p>
+    <a href="${explorer}" target="_blank">
+      <button style="width:100%;padding:14px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:white;border:none;border-radius:12px;font-size:17px;font-weight:bold;cursor:pointer;">
+        🔗 View on ArcScan
+      </button>
+    </a>
+  </div>
+  `;
+}
+
+// ==========================================
+// 5. DATA LOADERS (RUNS FOR ALL WALLET TYPES)
+// ==========================================
+async function reloadAppData() {
+  await Promise.all([
+    loadDonors(),
+    loadRequests(),
+    loadAmbulanceRequests()
+  ]);
+}
+
+async function loadDonors() {
+  try {
+    const activeContract = contract || readOnlyContract;
+    const donors = await activeContract.getDonors();
+
+    if (totalDonors) totalDonors.innerText = donors.length;
+    if (dashboardDonors) dashboardDonors.innerText = donors.length;
+
+    if (donorList) {
+      donorList.innerHTML = "";
+      donors.forEach((donor) => {
+        donorList.innerHTML += `
+        <div style="border:1px solid #ddd;padding:10px;margin-top:10px;border-radius:10px;">
+          <strong>🩸 ${donor.bloodGroup}</strong> - ${donor.name}<br>
+          📍 City: ${donor.city} | 📞 ${donor.phone}
+        </div>
+        `;
+      });
+    }
+
+    const mapDiv = document.getElementById("map");
+    if (mapDiv && window.L) {
+      mapDiv.innerHTML = "";
+
+      if (window.donorMap) {
+        window.donorMap.remove();
+      }
+
+      window.donorMap = L.map("map").setView([26.1445, 91.7362], 11);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors"
+      }).addTo(window.donorMap);
+
+      donors.forEach((donor) => {
+        if (Number(donor.latitude) !== 0 && Number(donor.longitude) !== 0) {
+          L.marker([
+            Number(donor.latitude) / 1000000,
+            Number(donor.longitude) / 1000000
+          ])
+          .addTo(window.donorMap)
+          .bindPopup(`<b>${donor.name}</b><br>${donor.bloodGroup}<br>${donor.city}`);
+        }
+      });
+    }
+  } catch (e) {
+    console.error("Error loading donors:", e);
+  }
+}
+
+async function loadRequests() {
+  try {
+    const activeContract = contract || readOnlyContract;
+    const requests = await activeContract.getRequests();
+    const active = requests.filter(r => !r.fulfilled);
+
+    const totalReq = document.getElementById("totalRequests");
+    if (totalReq) totalReq.innerText = active.length;
+    if (dashboardRequests) dashboardRequests.innerText = active.length;
+
+    const fulfilled = requests.filter(r => r.fulfilled);
+    if (dashboardFulfilled) dashboardFulfilled.innerText = fulfilled.length;
+    if (totalSOS) totalSOS.innerText = requests.length;
+
+    const bloodCount = {};
+    requests.forEach((r) => {
+      const group = String(r.bloodGroup);
+      bloodCount[group] = (bloodCount[group] || 0) + 1;
+    });
+
+    let topGroup = "-";
+    let max = 0;
+    for (const group in bloodCount) {
+      if (bloodCount[group] > max) {
+        max = bloodCount[group];
+        topGroup = group;
+      }
+    }
+    if (topBloodGroup) topBloodGroup.innerText = topGroup;
+
+    const cities = [...new Set(requests.map(r => String(r.city).toLowerCase()))];
+    if (totalCities) totalCities.innerText = cities.length;
+
+    const requestList = document.getElementById("requestList");
+    if (!requestList) return;
+    requestList.innerHTML = "";
+
+    const reversedRequests = [...requests].reverse();
+
+    reversedRequests.forEach((req) => {
+      if (req.fulfilled) return;
+
+      requestList.innerHTML += `
+      <div style="border-left:6px solid #dc3545;background:#1E293B;color:#FFFFFF;border:1px solid #475569;border-radius:16px;padding:15px;margin-top:12px;box-shadow:0 8px 20px rgba(0,0,0,0.35);">
+        <h3 style="color:#ef4444;margin:0;">🚨 ${req.bloodGroup}</h3>
+        <div style="color:#E2E8F0;">
+          👤 <strong>${req.patientName}</strong><br>
+          🏥 ${req.hospital}<br>
+          📍 ${req.city}<br>
+        </div>
+        <button onclick="window.location.href='tel:${req.contact}'" style="margin-top:10px;background:#dc3545;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;">
+          📞 Call Patient
+        </button>
+        <button onclick="fulfillRequest(${req.id})" style="margin-top:10px;margin-left:10px;background:#16a34a;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;">
+          ❤️ I'm Coming to Donate
+        </button>  
+      </div>
+      `;
+    });
+  } catch (e) {
+    console.error("Error loading requests:", e);
+  }
+}
+
+async function loadAmbulanceRequests() {
+  try {
+    const activeEmergency = window.emergencyContract || readOnlyEmergency;
+    const requests = await activeEmergency.getAmbulanceRequests();
+
+    if (!ambulanceList) return;
+    ambulanceList.innerHTML = "";
+
+    requests.forEach((r) => {
+      if (r.completed) return;
+      
+      ambulanceList.innerHTML += `
+      <div style="border:1px solid #334155;background:#1E293B;color:white;padding:15px;margin-top:10px;border-radius:12px;">
+        <b>👤 ${r.patientName}</b><br>
+        🚨 Level: ${r.emergencyLevel}<br>
+        📍 Location: ${r.pickupLocation}<br>
+        🏥 Hospital: ${r.hospital}<br><br>
+        <a href="tel:${r.contact}">
+           <a href="tel:${r.contact}">
+          <button style="background:#2563eb;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;">📞 Call Patient</button>
+        </a>
+        <button onclick="completeAmbulance(${r.id})" style="background:#16a34a;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;margin-left:8px;">
+          ✅ Complete Request
+        </button>
+      </div>
+      `;
+    });
+  } catch (e) {
+    console.error("Error loading ambulance requests:", e);
+  }
+}
+
+// Automatically load app data on script startup
+window.addEventListener("DOMContentLoaded", reloadAppData);
+window.addEventListener("load", () => {
+  const savedCircle = sessionStorage.getItem("circle_wallet_address");
+  if (savedCircle) {
+    enableWalletCopy(savedCircle);
+  }
+  reloadAppData();
+});
+
+// ==========================================
+// 6. WALLET CONNECTORS (METAMASK & CIRCLE)
+// ==========================================
+if (connectBtn) {
+  connectBtn.addEventListener("click", async () => {
+    if (!window.ethereum) {
+      alert("Please install MetaMask");
+      return;
+    }
+
+    try {
+      const ARC_CHAIN_ID = "0x4cef52"; 
+      const chainId = await window.ethereum.request({ method: "eth_chainId" });
+
+      if (chainId !== ARC_CHAIN_ID) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: ARC_CHAIN_ID }]
+          });
+        } catch (error) {
+          if (error.code === 4902) {
+            await window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [{
+                chainId: ARC_CHAIN_ID,
+                chainName: "Arc Network Testnet",
+                nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
+                rpcUrls: [ARC_RPC_URL],
+                blockExplorerUrls: [EXPLORER]
+              }]
+            });
+          }
+        }
+      }      
+
+      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+      currentAccount = accounts[0];
+
+      sessionStorage.removeItem("active_wallet_type");
+
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      signer = provider.getSigner();
+
+      contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+      window.healthcareContract = new ethers.Contract(HEALTHCARE_CONTRACT_ADDRESS, HEALTHCARE_ABI, signer);
+      window.emergencyContract = new ethers.Contract(EMERGENCY_CONTRACT_ADDRESS, EMERGENCY_ABI, signer);
+      window.paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, PAYMENT_ABI, signer);
+      window.usdcContract = new ethers.Contract("0x3600000000000000000000000000000000000000", USDC_ABI, signer);      
+  
+      walletAddress.innerText = `Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(currentAccount.length - 4)}`;
+      walletAddress.style.color = "#10B981";
+      enableWalletCopy(currentAccount);      
+      connectBtn.innerText = "✅ Wallet Connected";
+      connectBtn.style.background = "#16a34a";
+      connectBtn.disabled = true;
+
+      await reloadAppData();
+    } catch (error) {
+      console.error("MetaMask connection failed:", error);
+    }
+  });
+}
 
 async function handleCircleGoogleLogin() {
   try {
@@ -445,7 +656,9 @@ async function handleCircleGoogleLogin() {
       circleWalletStatus.innerText = "Circle Wallet Active";
     }
 
-    alert("✅ Circle Session Created Successfully!");
+    enableWalletCopy(displayAddress);
+    await reloadAppData();
+    alert("✅ Circle Session Connected Successfully!");
 
   } catch (err) {
     console.error("Circle Wallet Connection Error:", err);
@@ -461,514 +674,432 @@ if (circleGoogleBtn) {
   circleGoogleBtn.addEventListener("click", handleCircleGoogleLogin);
 }
 
-function enableWalletCopy(address) {
-  const copyBtn = document.getElementById("copyWalletBtn");
-  if (!copyBtn) return;
+// ==========================================
+// 7. REAL TRANSACTION ACTIONS (DONOR, SOS, AMBULANCE, BILLS)
+// ==========================================
 
-  const addrToCopy = address || sessionStorage.getItem("circle_wallet_address") || (typeof currentAccount !== "undefined" ? currentAccount : null);
+// --- REGISTER DONOR ---
+if (registerBtn) {
+  registerBtn.addEventListener("click", async () => {
+    const wallet = getActiveWallet();
+    if (!wallet) {
+      alert("Please connect via Connect Wallet or Sign in with Google first.");
+      return;
+    }
+
+    const name = document.getElementById("name").value;
+    const bloodGroup = document.getElementById("bloodGroup").value;
+    const city = document.getElementById("city").value;
+    const phone = document.getElementById("phone").value;
+
+    if (!name || !bloodGroup || !city || !phone) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    let latitude = 0;
+    let longitude = 0;
+
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+      latitude = Math.round(position.coords.latitude * 1000000);
+      longitude = Math.round(position.coords.longitude * 1000000);
+    } catch (e) {
+      alert("Unable to get GPS location. Using default location.");
+    }
+
+    // 🟢 CIRCLE WALLET TRANSACTION
+    if (wallet.type === "CIRCLE") {
+      try {
+        alert("⌛ Submitting transaction to Arc Testnet via Circle Wallet...");
+        const txHash = await executeCircleTransaction(
+          "registerDonor(string,string,string,string,int256,int256)",
+          CONTRACT_ADDRESS,
+          [name, bloodGroup, city, phone, latitude.toString(), longitude.toString()]
+        );
+
+        showExplorerButton(txHash);
+        alert("✅ Donor registered on Arc via Circle Wallet!");
+        
+        document.getElementById("name").value = "";
+        document.getElementById("city").value = "";
+        document.getElementById("phone").value = "";
+
+        await reloadAppData();
+      } catch (err) {
+        console.error("Circle Tx Error:", err);
+        alert("Circle Tx Failed: " + err.message);
+      }
+      return;
+    }
+
+    // 🟢 METAMASK TRANSACTION
+    try {
+      const tx = await contract.registerDonor(name, bloodGroup, city, phone, latitude, longitude);
+      alert("Transaction submitted ⌛");
+      await tx.wait();
+
+      showExplorerButton(tx.hash);
+      await reloadAppData();
+      alert("✅ Donor registered on Arc ❤️");
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  });
+}
+
+// --- SEARCH DONORS ---
+if (searchBtn) {
+  searchBtn.addEventListener("click", async () => {
+    const activeContract = contract || readOnlyContract;
+    const bloodGroup = document.getElementById("searchBloodGroup").value;
+    const city = document.getElementById("searchCity").value.toLowerCase();
+
+    const donors = await activeContract.getDonors();
+    if (totalDonors) totalDonors.innerText = donors.length;
   
-  // Hide button if wallet is disconnected
-  if (!addrToCopy) {
-    copyBtn.style.display = "none";
+    const filtered = donors.filter((donor) => {
+      return (
+        donor.bloodGroup === bloodGroup &&
+        donor.city.toLowerCase().includes(city)
+      );
+    });
+
+    searchResults.innerHTML = "";
+    if (filtered.length === 0) {
+      searchResults.innerHTML = "<p>❌ No nearby donors found in this city.</p>";
+      return;
+    }
+    
+    filtered.forEach((donor) => {
+      searchResults.innerHTML += `
+      <div style="border:1px solid #ddd;padding:10px;margin-top:10px;border-radius:10px;">
+        🩸 <strong>${donor.bloodGroup}</strong> - ${donor.name}<br>
+        📍 ${donor.city}<br>
+        <button onclick="window.location.href='tel:${donor.phone}'" style="margin-top:10px;background:#2563eb;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;">
+          📞 Call Donor
+        </button>
+      </div>
+      `;
+    });
+  });
+}
+
+// --- CREATE SOS REQUEST ---
+const requestBtn = document.getElementById("requestBtn");
+if (requestBtn) {
+  requestBtn.addEventListener("click", async () => {
+    const wallet = getActiveWallet();
+    if (!wallet) {
+      alert("Please connect via Connect Wallet or Sign in with Google first.");
+      return;
+    }
+
+    const patientName = document.getElementById("patientName").value;
+    const bloodGroup = document.getElementById("requestBloodGroup").value;
+    const hospital = document.getElementById("hospital").value;
+    const city = document.getElementById("requestCity").value;
+    const contact = document.getElementById("contact").value;
+
+    if (!patientName || !hospital || !city || !contact) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    // 🟢 CIRCLE WALLET TRANSACTION
+    if (wallet.type === "CIRCLE") {
+      try {
+        alert("⌛ Submitting SOS Request via Circle Wallet to Arc Testnet...");
+        const txHash = await executeCircleTransaction(
+          "createRequest(string,string,string,string,string)",
+          CONTRACT_ADDRESS,
+          [patientName, bloodGroup, hospital, city, contact]
+        );
+
+        showExplorerButton(txHash);
+
+        document.getElementById("patientName").value = "";
+        document.getElementById("hospital").value = "";
+        document.getElementById("requestCity").value = "";
+        document.getElementById("contact").value = "";
+
+        alert("🚨 SOS Request Created on Arc via Circle Wallet!");
+        await reloadAppData();
+      } catch (err) {
+        console.error("Circle SOS Tx Error:", err);
+        alert("Circle SOS Failed: " + err.message);
+      }
+      return;
+    }
+
+    // 🟢 METAMASK TRANSACTION
+    try {
+      const tx = await contract.createRequest(patientName, bloodGroup, hospital, city, contact);
+      alert("Submitting SOS request...");
+      await tx.wait();
+
+      showExplorerButton(tx.hash);
+      document.getElementById("patientName").value = "";
+      document.getElementById("hospital").value = "";
+      document.getElementById("requestCity").value = "";
+      document.getElementById("contact").value = "";
+      
+      alert("🚨 SOS Request Created Successfully!");
+      await reloadAppData();
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  });
+}
+
+// --- FULFILL SOS REQUEST ---
+async function fulfillRequest(id) {
+  const wallet = getActiveWallet();
+  if (!wallet) {
+    alert("Please connect your wallet first");
     return;
   }
 
-  copyBtn.style.display = "inline-block";
-  copyBtn.onclick = () => {
-    navigator.clipboard.writeText(addrToCopy);
-    copyBtn.innerText = "✅ Copied!";
-    setTimeout(() => {
-      copyBtn.innerText = "📋 Copy";
-    }, 2000);
-  };
-}
-
-// Auto-check for active Circle Wallet or MetaMask on load
-window.addEventListener("load", () => {
-  const savedCircle = sessionStorage.getItem("circle_wallet_address");
-  if (savedCircle) {
-    enableWalletCopy(savedCircle);
-  }
-});
-
-
-function getActiveWallet() {
-  if (currentAccount) {
-    return {
-      type: "METAMASK",
-      account: currentAccount,
-      signer: signer
-    };
-  }
-
-  const activeType = sessionStorage.getItem("active_wallet_type");
-  const circleUserId = sessionStorage.getItem("circle_user_id");
-  const circleUserToken = sessionStorage.getItem("circle_user_token");
-
-  if (activeType === "CIRCLE" && circleUserId) {
-    return {
-      type: "CIRCLE",
-      userId: circleUserId,
-      userToken: circleUserToken,
-      address: sessionStorage.getItem("circle_wallet_address") || circleUserId
-    };
-  }
-
-  return null;
-}
-
-if (connectBtn) {
-  connectBtn.addEventListener("click", async () => {
-      if (!window.ethereum) {
-          alert("Please install MetaMask");
-          return;
-      }
-
-      try {
-        const ARC_CHAIN_ID = "0x4cef52"; 
-
-        const chainId = await window.ethereum.request({
-          method: "eth_chainId"
-        });
-
-        if (chainId !== ARC_CHAIN_ID) {
-          try {
-            await window.ethereum.request({
-              method: "wallet_switchEthereumChain",
-              params: [{ chainId: ARC_CHAIN_ID }]
-            });
-          } catch (error) {
-            if (error.code === 4902) {
-              await window.ethereum.request({
-                method: "wallet_addEthereumChain",
-                params: [{
-                  chainId: ARC_CHAIN_ID,
-                  chainName: "Arc Network Testnet",
-                  nativeCurrency: {
-                    name: "USDC",
-                    symbol: "USDC",
-                    decimals: 18
-                  },
-                  rpcUrls: ["https://rpc.quicknode.testnet.arc.network"],
-                  blockExplorerUrls: ["https://testnet.arcscan.app"]
-                }]
-              });
-            }
-          }
-        }      
-
-        const accounts = await ethereum.request({
-            method: "eth_requestAccounts"
-        });
-
-        currentAccount = accounts[0];
-
-        sessionStorage.removeItem("active_wallet_type");
-
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        signer = provider.getSigner();
-
-        contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-        window.healthcareContract = new ethers.Contract(HEALTHCARE_CONTRACT_ADDRESS, HEALTHCARE_ABI, signer);
-        window.emergencyContract = new ethers.Contract(EMERGENCY_CONTRACT_ADDRESS, EMERGENCY_ABI, signer);
-        window.paymentContract = new ethers.Contract(PAYMENT_CONTRACT_ADDRESS, PAYMENT_ABI, signer);
-        window.usdcContract = new ethers.Contract("0x3600000000000000000000000000000000000000", USDC_ABI, signer);      
-    
-        walletAddress.innerText =
-              "Connected: " +
-              currentAccount.substring(0, 6) +
-              "..." +
-              currentAccount.substring(currentAccount.length - 4);
-        walletAddress.style.color = "#10B981";
-              enableWalletCopy(currentAccount);      
-        connectBtn.innerText = "✅ Wallet Connected";
-        connectBtn.style.background = "#16a34a";
-        connectBtn.disabled = true;
-
-        try {
-          await loadDonors();
-          await loadRequests();
-          await loadAmbulanceRequests();
-        } catch (err) {
-          console.log(err);
-        }
-        
-      } catch (error) {
-          console.log(error);
-      }
-  });
-}
-
-async function loadDonors() {
+  // 🟢 CIRCLE WALLET TRANSACTION
+  if (wallet.type === "CIRCLE") {
     try {
-       const wallet = getActiveWallet();
-  if (!wallet) return; // 🔒 Stop execution if wallet is not connected
-      
-      if (totalDonors) totalDonors.innerText = donors.length;
-      if (dashboardDonors) dashboardDonors.innerText = donors.length;
+      alert("⌛ Submitting request fulfillment via Circle Wallet...");
+      const txHash = await executeCircleTransaction(
+        "fulfillRequest(uint256)",
+        CONTRACT_ADDRESS,
+        [id.toString()]
+      );
 
-      if (donorList) {
-        donorList.innerHTML = "";
-        donors.forEach((donor) => {
-            donorList.innerHTML += `
-            <div style="border:1px solid #ddd;padding:10px;margin-top:10px;border-radius:10px;">
-                <strong>${donor.bloodGroup}</strong><br>
-                City: ${donor.city}
-            </div>
-            `;
-        });
-      }
-
-      const mapDiv = document.getElementById("map");
-      if (mapDiv && window.L) {
-          mapDiv.innerHTML = "";
-
-          if (window.donorMap) {
-              window.donorMap.remove();
-          }
-
-          window.donorMap = L.map("map").setView([26.1445, 91.7362], 11);
-
-          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-              attribution: "&copy; OpenStreetMap contributors"
-          }).addTo(window.donorMap);
-
-          donors.forEach((donor) => {
-              if (Number(donor.latitude) !== 0 && Number(donor.longitude) !== 0) {
-                  L.marker([
-                      Number(donor.latitude) / 1000000,
-                      Number(donor.longitude) / 1000000
-                  ])
-                  .addTo(window.donorMap)
-                  .bindPopup(
-                      `<b>${donor.name}</b><br>${donor.bloodGroup}<br>${donor.city}`
-                  );
-              }
-          });
-      }
-    } catch (e) {
-      console.log("Error loading donors:", e);
+      showExplorerButton(txHash);
+      alert("❤️ Request marked as fulfilled on Arc via Circle Wallet!");
+      await reloadAppData();
+    } catch (err) {
+      alert("Circle Tx Failed: " + err.message);
     }
+    return;
+  }
+
+  // 🟢 METAMASK TRANSACTION
+  try {
+    const tx = await contract.fulfillRequest(id);
+    alert("Updating request...");
+    await tx.wait();
+
+    showExplorerButton(tx.hash);
+    alert("✅ Request marked as fulfilled!");
+    await reloadAppData();
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
 }
 
-if (registerBtn) {
-  registerBtn.addEventListener("click", async () => {
-      const wallet = getActiveWallet();
-      if (!wallet) {
-          alert("Please connect via Connect Wallet or Sign in with Google first.");
-          return;
-      }
-
-      const name = document.getElementById("name").value;
-      const bloodGroup = document.getElementById("bloodGroup").value;
-      const city = document.getElementById("city").value;
-      const phone = document.getElementById("phone").value;
-
-      if (!name || !bloodGroup || !city || !phone) {
-          alert("Please fill all fields");
-          return;
-      }
-
-      if (wallet.type === "CIRCLE") {
-          alert(`✅ Registered successfully via Circle Wallet!\nUser ID: ${wallet.userId}`);
-          document.getElementById("name").value = "";
-          document.getElementById("city").value = "";
-          document.getElementById("phone").value = "";
-          return;
-      }
-
-      let latitude = 0;
-      let longitude = 0;
-
-      try {
-          const position = await new Promise((resolve, reject) => {
-              navigator.geolocation.getCurrentPosition(resolve, reject);
-          });
-
-          latitude = Math.round(position.coords.latitude * 1000000);
-          longitude = Math.round(position.coords.longitude * 1000000);
-
-      } catch (e) {
-          alert("Unable to get your location. Please allow GPS access.");
-          return;
-      }
-
-      try {
-          const tx = await contract.registerDonor(
-              name,
-              bloodGroup,
-              city,
-              phone,
-              latitude,
-              longitude
-          );
-
-          alert("Transaction submitted ⌛");
-          await tx.wait();
-
-          showExplorerButton(tx.hash);
-
-          try {
-              const donors = await contract.getDonors();
-              alert("Total donors on chain: " + donors.length);
-              await loadDonors();
-          } catch (e) {
-              console.log("Refresh failed:", e);
-          }
-
-          alert("✅ Donor registered on Arc ❤️");
-
-      } catch (err) {
-          console.log(err);
-          if (
-              err.message &&
-              (
-                  err.message.includes("429") ||
-                  err.message.includes("rate limited") ||
-                  err.message.includes("CALL_EXCEPTION")
-              )
-          ) {
-              console.log("Ignoring RPC refresh error.");
-              return;
-          }
-
-          alert(err.message);
-      }
-  });
-}
-
-if (searchBtn) {
-  searchBtn.addEventListener("click", async () => {
-      const activeContract = contract || readOnlyContract;
-      const bloodGroup = document.getElementById("searchBloodGroup").value;
-      const city = document.getElementById("searchCity").value.toLowerCase();
-
-      const donors = await activeContract.getDonors();
-      if (totalDonors) totalDonors.innerText = donors.length;
-    
-      const filtered = donors.filter((donor) => {
-          return (
-              donor.bloodGroup === bloodGroup &&
-              donor.city.toLowerCase().includes(city)
-          );
-      });
-
-      searchResults.innerHTML = "";
-      if (filtered.length === 0) {
-          searchResults.innerHTML = "<p>❌ No nearby donors found in this city.</p>";
-          return;
-      }
-      
-      filtered.forEach((donor) => {
-          searchResults.innerHTML += `
-          <div style="border:1px solid #ddd;padding:10px;margin-top:10px;border-radius:10px;">
-              🩸 <strong>${donor.bloodGroup}</strong><br>
-              📍 ${donor.city}<br>
-
-              <button
-                onclick="window.location.href='tel:${donor.phone}'"
-                style="margin-top:10px;background:#2563eb;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;">
-                📞 Call Donor
-              </button>
-          </div>
-          `;
-      });
-  });
-}
-
-const requestBtn = document.getElementById("requestBtn");
-
-if (requestBtn) {
-  requestBtn.addEventListener("click", async () => {
-      const wallet = getActiveWallet();
-      if (!wallet) {
-          alert("Please connect via Connect Wallet or Sign in with Google first.");
-          return;
-      }
-
-      const patientName = document.getElementById("patientName").value;
-      const bloodGroup = document.getElementById("requestBloodGroup").value;
-      const hospital = document.getElementById("hospital").value;
-      const city = document.getElementById("requestCity").value;
-      const contact = document.getElementById("contact").value;
-
-      if (!patientName || !hospital || !city || !contact) {
-          alert("Please fill all fields");
-          return;
-      }
-
-      if (wallet.type === "CIRCLE") {
-          document.getElementById("patientName").value = "";
-          document.getElementById("requestBloodGroup").selectedIndex = 0;
-          document.getElementById("hospital").value = "";
-          document.getElementById("requestCity").value = "";
-          document.getElementById("contact").value = "";
-          alert("🚨 SOS Request Created via Circle Wallet!");
-          return;
-      }
-
-      try {
-          const tx = await contract.createRequest(
-              patientName,
-              bloodGroup,
-              hospital,
-              city,
-              contact
-          );
-
-          alert("Submitting SOS request...");
-          await tx.wait();
-
-          showExplorerButton(tx.hash);
-
-          try {
-              await loadRequests();
-          } catch (e) {
-              console.log("Refresh failed:", e);
-          }
-
-          document.getElementById("patientName").value = "";
-          document.getElementById("requestBloodGroup").selectedIndex = 0;
-          document.getElementById("hospital").value = "";
-          document.getElementById("requestCity").value = "";
-          document.getElementById("contact").value = "";
-          alert("🚨 SOS Request Created Successfully!");
-      } catch (err) {
-          console.error(err);
-
-          if (err.error && err.error.message) {
-              alert(err.error.message);
-          } else if (err.reason) {
-              alert(err.reason);
-          } else {
-              alert(JSON.stringify(err, null, 2));
-          }
-      }
-  });
-}
-
-const totalRequests = document.getElementById("totalRequests");
-const requestList = document.getElementById("requestList");
-
-async function loadRequests() {
-    try {
-        const wallet = getActiveWallet();
-  if (!wallet) return; // 🔒 Stop execution if wallet is not connected
-
-      if (totalRequests) totalRequests.innerText = active.length;
-      if (dashboardRequests) dashboardRequests.innerText = active.length;
-
-      const fulfilled = requests.filter(r => r.fulfilled);
-      if (dashboardFulfilled) dashboardFulfilled.innerText = fulfilled.length;
-
-      if (totalSOS) totalSOS.innerText = requests.length;
-
-      const bloodCount = {};
-      requests.forEach((r) => {
-          const group = String(r.bloodGroup);
-          if (!bloodCount[group]) bloodCount[group] = 0;
-          bloodCount[group]++;
-      });
-
-      let topGroup = "-";
-      let max = 0;
-      for (const group in bloodCount) {
-          if (bloodCount[group] > max) {
-              max = bloodCount[group];
-              topGroup = group;
-          }
-      }
-      if (topBloodGroup) topBloodGroup.innerText = topGroup;
-
-      const cities = [...new Set(requests.map(r => String(r.city).toLowerCase()))];
-      if (totalCities) totalCities.innerText = cities.length;
-        
-      if (!requestList) return;
-      requestList.innerHTML = "";
-
-      const reversedRequests = [...requests].reverse();
-
-      reversedRequests.forEach((req) => {
-          if (req.fulfilled) return;
-
-          requestList.innerHTML += `
-          <div style="border-left:6px solid #dc3545;background:#1E293B;color:#FFFFFF;border:1px solid #475569;border-radius:16px;padding:15px;margin-top:12px;box-shadow:0 8px 20px rgba(0,0,0,0.35);">
-              <h3 style="color:#ef4444;margin:0;">🚨 ${req.bloodGroup}</h3>
-
-              <div style="color:#E2E8F0;">
-                  👤 <strong>${req.patientName}</strong><br>
-                  🏥 ${req.hospital}<br>
-                  📍 ${req.city}<br>
-              </div>
-
-              <button
-                  onclick="window.location.href='tel:${req.contact}'"
-                  style="margin-top:10px;background:#dc3545;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;">
-                  📞 Call Patient
-              </button>
-              <button
-                  onclick="fulfillRequest(${req.id})"
-                  style="margin-top:10px;margin-left:10px;background:#16a34a;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;">
-                  ❤️ I'm Coming to Donate
-              </button>  
-          </div>
-          `;
-      });
-    } catch (e) {
-      console.log("Error loading requests:", e);
-    }
-}
-
-async function fulfillRequest(id) {
+// --- PAY HOSPITAL BILL ---
+if (payBillBtn) {
+  payBillBtn.addEventListener("click", async () => {
     const wallet = getActiveWallet();
     if (!wallet) {
-        alert("Please connect your wallet first");
-        return;
+      alert("Please connect via Connect Wallet or Sign in with Google first.");
+      return;
     }
 
+    const hospital = document.getElementById("hospitalName").value.trim();
+    const billId = document.getElementById("billId").value.trim();
+    const hospitalWallet = document.getElementById("hospitalWallet").value.trim();
+    const amount = document.getElementById("billAmount").value.trim();
+
+    if (!hospital || !billId || !hospitalWallet || !amount) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    // 🟢 CIRCLE WALLET TRANSACTION
     if (wallet.type === "CIRCLE") {
-        alert("❤️ Request marked as fulfilled via Circle Wallet!");
-        return;
+      try {
+        billStatus.innerHTML = "⌛ Processing Hospital Payment via Circle Wallet...";
+        const txHash = await executeCircleTransaction(
+          "payHospitalBill(string,string,address,uint256)",
+          PAYMENT_CONTRACT_ADDRESS,
+          [hospital, billId, hospitalWallet, ethers.utils.parseUnits(amount, 6).toString()]
+        );
+
+        showExplorerButton(txHash);
+        billStatus.innerHTML = "✅ Hospital bill recorded on blockchain via Circle Wallet.";
+        alert("✅ Hospital bill paid via Circle Wallet!");
+      } catch (err) {
+        billStatus.innerHTML = "❌ Payment failed";
+        alert("Circle Payment Error: " + err.message);
+      }
+      return;
+    }
+
+    // 🟢 METAMASK TRANSACTION
+    try {
+      const approveTx = await window.usdcContract.approve(
+        PAYMENT_CONTRACT_ADDRESS,
+        ethers.utils.parseUnits(amount, 6)
+      );
+
+      billStatus.innerHTML = "⏳ Approving USDC...";
+      await approveTx.wait();
+
+      const tx = await window.paymentContract.payHospitalBill(
+        hospital,
+        billId,
+        hospitalWallet,
+        ethers.utils.parseUnits(amount, 6)
+      );
+
+      billStatus.innerHTML = "⏳ Waiting for confirmation...";
+      await tx.wait();
+
+      showExplorerButton(tx.hash);
+      billStatus.innerHTML = "✅ Hospital bill recorded on blockchain.";
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  });
+}
+
+// --- REQUEST AMBULANCE ---
+if (ambulanceBtn) {
+  ambulanceBtn.addEventListener("click", async () => {
+    const wallet = getActiveWallet();
+    if (!wallet) {
+      alert("Please connect via Connect Wallet or Sign in with Google first.");
+      return;
+    }
+
+    const patient = document.getElementById("ambPatientName").value.trim();
+    const pickup = document.getElementById("pickupLocation").value.trim();
+    const hospital = document.getElementById("ambulanceHospital").value.trim();
+    const contact = document.getElementById("ambulanceContact").value.trim();
+    const level = document.getElementById("emergencyLevel").value;
+
+    if (!patient || !pickup || !hospital || !contact) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    // 🟢 CIRCLE WALLET TRANSACTION
+    if (wallet.type === "CIRCLE") {
+      try {
+        ambulanceStatus.innerHTML = "🚑 Sending ambulance request via Circle Wallet...";
+        const txHash = await executeCircleTransaction(
+          "requestAmbulance(string,string,string,string,string)",
+          EMERGENCY_CONTRACT_ADDRESS,
+          [patient, pickup, hospital, contact, level]
+        );
+
+        showExplorerButton(txHash);
+        ambulanceStatus.innerHTML = "✅ Ambulance request recorded on blockchain via Circle Wallet.";
+        alert("🚑 Ambulance requested via Circle Wallet!");
+        await loadAmbulanceRequests();
+      } catch (err) {
+        ambulanceStatus.innerHTML = "❌ Ambulance Request Failed";
+        alert("Circle Ambulance Error: " + err.message);
+      }
+      return;
+    }
+
+    // 🟢 METAMASK TRANSACTION
+    try {
+      ambulanceStatus.innerHTML = "🚑 Sending ambulance request...";
+      const tx = await window.emergencyContract.requestAmbulance(patient, pickup, hospital, contact, level);
+      await tx.wait();
+
+      ambulanceStatus.innerHTML = "✅ Ambulance request recorded on blockchain.";
+      await loadAmbulanceRequests();
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  });
+}
+
+// --- COMPLETE AMBULANCE REQUEST ---
+async function completeAmbulance(id) {
+  const wallet = getActiveWallet();
+  if (!wallet) {
+    alert("Connect wallet first");
+    return;
+  }
+
+  // 🟢 CIRCLE WALLET TRANSACTION
+  if (wallet.type === "CIRCLE") {
+    try {
+      ambulanceStatus.innerHTML = "⏳ Completing request via Circle Wallet...";
+      const txHash = await executeCircleTransaction(
+        "completeRequest(uint256)",
+        EMERGENCY_CONTRACT_ADDRESS,
+        [id.toString()]
+      );
+
+      showExplorerButton(txHash);
+      ambulanceStatus.innerHTML = "✅ Request completed via Circle Wallet.";
+      alert("✅ Ambulance request completed via Circle Wallet!");
+      await loadAmbulanceRequests();
+    } catch (err) {
+      ambulanceStatus.innerHTML = "❌ Action Failed";
+      alert("Circle Action Failed: " + err.message);
+    }
+    return;
+  }
+
+  // 🟢 METAMASK TRANSACTION
+  try {
+    ambulanceStatus.innerHTML = "⏳ Completing request...";
+    const tx = await window.emergencyContract.completeRequest(id);
+    await tx.wait();
+
+    ambulanceStatus.innerHTML = "✅ Request completed.";
+    await loadAmbulanceRequests();
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+}
+
+// --- DOCTOR PATIENT LOOKUP ---
+if (searchPatientBtn) {
+  searchPatientBtn.addEventListener("click", async () => {
+    const activeHealthcare = window.healthcareContract || readOnlyHealthcare;
+    const wallet = doctorWallet.value.trim();
+
+    if (!ethers.utils.isAddress(wallet)) {
+      alert("Enter a valid wallet address");
+      return;
     }
 
     try {
-        const tx = await contract.fulfillRequest(id);
-        alert("Updating request...");
-        await tx.wait();
+      doctorStatus.innerHTML = "🔍 Searching patient...";
+      const profile = await activeHealthcare.getProfile(wallet);
 
-        showExplorerButton(tx.hash);
-        alert("✅ Request marked as fulfilled!");
+      viewName.textContent = profile[0];
+      viewBlood.textContent = profile[1];
+      viewDOB.textContent = profile[2];
+      viewGender.textContent = profile[3];
+      viewEmergency.textContent = profile[4];
+      viewAllergies.textContent = profile[5];
+      viewAddress.textContent = profile[6];
 
-        try {
-            await loadRequests();
-            await loadDonors();
-        } catch (e) {
-            console.log("Refresh failed:", e);
-        }
+      patientProfileCard.style.display = "block";
+      doctorStatus.innerHTML = "✅ Patient record loaded.";
     } catch (err) {
-        console.log(err);
-        if (
-            err.message &&
-            (
-                err.message.includes("429") ||
-                err.message.includes("rate limited") ||
-                err.message.includes("CALL_EXCEPTION")
-            )
-        ) {
-            console.log("Ignoring RPC refresh error.");
-            return;
-        }
-
-        alert(err.message);
+      console.error(err);
+      doctorStatus.innerHTML = "❌ Patient profile not found.";
+      patientProfileCard.style.display = "none";
     }
+  });
 }
 
-loadDonors();
-loadRequests();
-loadAmbulanceRequests();
-
+// --- AI ASSISTANT CHAT ---
 const askAIBtn = document.getElementById("askAIBtn");
-
 if (askAIBtn) {
   askAIBtn.addEventListener("click", async () => {
     const question = document.getElementById("aiQuestion").value.trim();
@@ -984,9 +1115,7 @@ if (askAIBtn) {
     </div>`;
 
     chatBox.innerHTML += `
-    <div id="loading" style="margin:10px 0;color:#CBD5E1;">
-    🤖 Thinking...
-    </div>`;
+    <div id="loading" style="margin:10px 0;color:#CBD5E1;">🤖 Thinking...</div>`;
 
     chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -998,8 +1127,7 @@ if (askAIBtn) {
       });
 
       const data = await response.json();
-
-      document.getElementById("loading").remove();
+      document.getElementById("loading")?.remove();
 
       chatBox.innerHTML += `
       <div style="text-align:left;margin:10px 0;">
@@ -1008,260 +1136,21 @@ if (askAIBtn) {
         </div>
       </div>`;
 
-      chatBox.scrollTop = chatBox.scrollHeight;
-
+          chatBox.scrollTop = chatBox.scrollHeight;
     } catch (err) {
-      document.getElementById("loading").remove();
-      chatBox.innerHTML += `
-      <div style="color:red;">
-      ❌ Failed to contact AI.
-      </div>`;
+      document.getElementById("loading")?.remove();
+      chatBox.innerHTML += `<div style="color:red;">❌ Failed to contact AI.</div>`;
     }
   });
 }
 
-function showExplorerButton(txHash) {
-  const explorer = `${EXPLORER}/tx/${txHash}`;
-  let card = document.getElementById("txCard");
-
-  if (!card) {
-    card = document.createElement("div");
-    card.id = "txCard";
-    card.style.margin = "15px 0";
-    if (walletAddress) {
-      walletAddress.insertAdjacentElement("afterend", card);
-    }
-  }
-
-  card.innerHTML = `
-  <div style="background:#1E293B;border:1px solid #334155;border-radius:16px;padding:18px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.25);">
-  <h3 style="color:#ffffff;margin:0 0 12px 0;">
-  📦 Latest Blockchain Transaction
-  </h3>
-  <p style="color:#94a3b8;font-size:13px;word-break:break-all;margin-bottom:16px;">
-  ${txHash}
-  </p>
-  <a href="${explorer}" target="_blank">
-  <button style="width:100%;padding:14px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:white;border:none;border-radius:12px;font-size:17px;font-weight:bold;cursor:pointer;">
-  🔗 View on ArcScan
-  </button>
-  </a>
-  </div>
-  `;
-}
-
-if (payBillBtn) {
-    payBillBtn.addEventListener("click", async () => {
-        const wallet = getActiveWallet();
-        if (!wallet) {
-            alert("Please connect via Connect Wallet or Sign in with Google first.");
-            return;
-        }
-
-        const hospital = document.getElementById("hospitalName").value.trim();
-        const billId = document.getElementById("billId").value.trim();
-        const hospitalWallet = document.getElementById("hospitalWallet").value.trim();
-        const amount = document.getElementById("billAmount").value.trim();
-
-        if (!hospital || !billId || !hospitalWallet || !amount) {
-            alert("Please fill all fields");
-            return;
-        }
-
-        if (wallet.type === "CIRCLE") {
-            billStatus.innerHTML = "✅ Bill Payment recorded via Circle Wallet.";
-            alert("✅ Hospital bill paid via Circle Wallet!");
-            return;
-        }
-
-        try {
-            const approveTx = await window.usdcContract.approve(
-                PAYMENT_CONTRACT_ADDRESS,
-                ethers.utils.parseUnits(amount, 6)
-            );
-
-            billStatus.innerHTML = "⏳ Approving USDC...";
-            await approveTx.wait();
-
-            const tx = await window.paymentContract.payHospitalBill(
-                hospital,
-                billId,
-                hospitalWallet,
-                ethers.utils.parseUnits(amount, 6)
-            );
-
-            billStatus.innerHTML = "⏳ Waiting for confirmation...";
-
-            await tx.wait();
-
-            showExplorerButton(tx.hash);
-
-            billStatus.innerHTML = "✅ Hospital bill recorded on blockchain.";
-
-        } catch (err) {
-            console.log(err);
-            alert(err.message);
-        }
-    });
-}
-
-if (ambulanceBtn) {
-    ambulanceBtn.addEventListener("click", async () => {
-        const wallet = getActiveWallet();
-        if (!wallet) {
-            alert("Please connect via Connect Wallet or Sign in with Google first.");
-            return;
-        }
-
-        const patient = document.getElementById("ambPatientName").value.trim();
-        const pickup = document.getElementById("pickupLocation").value.trim();
-        const hospital = document.getElementById("ambulanceHospital").value.trim();
-        const contact = document.getElementById("ambulanceContact").value.trim();
-        const level = document.getElementById("emergencyLevel").value;
-
-        if (!patient || !pickup || !hospital || !contact) {
-            alert("Please fill all fields");
-            return;
-        }
-
-        if (wallet.type === "CIRCLE") {
-            ambulanceStatus.innerHTML = "✅ Ambulance requested via Circle Wallet.";
-            alert("🚑 Ambulance requested via Circle Wallet!");
-            return;
-        }
-
-        try {
-            ambulanceStatus.innerHTML = "🚑 Sending ambulance request...";
-
-            const tx = await window.emergencyContract.requestAmbulance(
-                patient,
-                pickup,
-                hospital,
-                contact,
-                level
-            );
-
-            await tx.wait();
-
-            ambulanceStatus.innerHTML = "✅ Ambulance request recorded on blockchain.";
-
-            loadAmbulanceRequests();
-
-        } catch (err) {
-            console.log(err);
-            alert(err.message);
-        }
-    });
-}
-
-async function loadAmbulanceRequests() {
-  try {
-      const wallet = getActiveWallet();
-  if (!wallet) return; // 🔒 Stop execution if wallet is not connected
-    
-
-    if (!ambulanceList) return;
-    ambulanceList.innerHTML = "";
-
-    requests.forEach((r) => {
-      if (r.completed) return;
-      
-      ambulanceList.innerHTML += `
-      <div class="card" style="margin-top:10px;">
-          <b>${r.patientName}</b><br>
-          🚨 ${r.emergencyLevel}<br>
-          📍 ${r.pickupLocation}<br>
-          🏥 ${r.hospital}<br><br>
-
-          <a href="tel:${r.contact}">
-            <button>📞 Call Patient</button>
-          </a>
-          <button onclick="completeAmbulance(${r.id})">
-            ✅ Complete Request
-          </button>
-      </div>
-      `;
-    });
-  } catch (e) {
-    console.log("Error loading ambulance requests:", e);
-  }
-}
-
-async function completeAmbulance(id) {
-    const wallet = getActiveWallet();
-    if (!wallet) {
-        alert("Connect wallet first");
-        return;
-    }
-
-    if (wallet.type === "CIRCLE") {
-        ambulanceStatus.innerHTML = "✅ Request completed via Circle Wallet.";
-        alert("✅ Ambulance request completed via Circle Wallet!");
-        return;
-    }
-  
-  try {
-        ambulanceStatus.innerHTML = "⏳ Completing request...";
-        const tx = await window.emergencyContract.completeRequest(id);
-        await tx.wait();
-
-        ambulanceStatus.innerHTML = "✅ Request completed.";
-        loadAmbulanceRequests();
-    } catch (err) {
-        console.log(err);
-        alert(err.message);
-    }
-}
-
-if (searchPatientBtn) {
-    searchPatientBtn.addEventListener("click", async () => {
-        if (!window.healthcareContract) {
-            alert("Connect wallet first");
-            return;
-        }
-
-        const wallet = doctorWallet.value.trim();
-
-        if (!ethers.utils.isAddress(wallet)) {
-            alert("Enter a valid wallet address");
-            return;
-        }
-
-        try {
-            doctorStatus.innerHTML = "🔍 Searching patient...";
-
-            const profile = await window.healthcareContract.getProfile(wallet);
-
-            viewName.textContent = profile[0];
-            viewBlood.textContent = profile[1];
-            viewDOB.textContent = profile[2];
-            viewGender.textContent = profile[3];
-            viewEmergency.textContent = profile[4];
-            viewAllergies.textContent = profile[5];
-            viewAddress.textContent = profile[6];
-
-            patientProfileCard.style.display = "block";
-
-            doctorStatus.innerHTML = "✅ Patient record loaded.";
-
-        } catch (err) {
-            console.log(err);
-            doctorStatus.innerHTML = "❌ Patient profile not found.";
-            patientProfileCard.style.display = "none";
-        }
-    });
-}
-
+// Quick action navigation
 document.querySelectorAll(".quick-action").forEach(button => {
-    button.addEventListener("click", () => {
-        const target = button.dataset.target;
-        const section = document.getElementById(target);
-
-        if (section) {
-            section.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-        }
-    });
+  button.addEventListener("click", () => {
+    const target = button.dataset.target;
+    const section = document.getElementById(target);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
 });
