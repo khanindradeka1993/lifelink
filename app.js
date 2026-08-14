@@ -516,12 +516,54 @@ async function loadRequests() {
     if (!activeContract) return;
 
     const requests = await activeContract.getRequests();
-    const active = requests.filter((r) => !r.fulfilled);
 
+    const activeRequests = requests.filter(r => !r.fulfilled);
+    const fulfilledRequests = requests.filter(r => r.fulfilled);
+
+    // 1. Hospital Dashboard Counters
     const totalReq = document.getElementById("totalRequests");
-    if (totalReq) totalReq.innerText = active.length;
-    if (typeof dashboardRequests !== "undefined" && dashboardRequests) dashboardRequests.innerText = active.length;
+    if (totalReq) totalReq.innerText = activeRequests.length;
+    
+    if (typeof dashboardRequests !== "undefined" && dashboardRequests) {
+      dashboardRequests.innerText = activeRequests.length;
+    }
+    
+    const fulfilledElem = document.getElementById("dashboardFulfilled");
+    if (fulfilledElem) fulfilledElem.innerText = fulfilledRequests.length;
 
+    // 2. Analytics Dashboard Calculations
+    const bloodGroupCounts = {};
+    const citiesSet = new Set();
+
+    requests.forEach(r => {
+      if (r.bloodGroup) {
+        const bg = r.bloodGroup.trim();
+        bloodGroupCounts[bg] = (bloodGroupCounts[bg] || 0) + 1;
+      }
+      if (r.city && r.city.trim() !== "") {
+        citiesSet.add(r.city.trim().toLowerCase());
+      }
+    });
+
+    let mostNeeded = "-";
+    let maxCount = 0;
+    for (const [bg, count] of Object.entries(bloodGroupCounts)) {
+      if (count > maxCount) {
+        maxCount = count;
+        mostNeeded = bg;
+      }
+    }
+
+    // 3. Analytics Dashboard UI Updates
+    const topBgElem = document.getElementById("topBloodGroup") || document.getElementById("analyticsMostNeeded");
+    const citiesElem = document.getElementById("totalCities") || document.getElementById("analyticsTotalCities");
+    const sosElem = document.getElementById("totalSOS") || document.getElementById("analyticsTotalSOS");
+
+    if (topBgElem) topBgElem.innerText = mostNeeded;
+    if (citiesElem) citiesElem.innerText = citiesSet.size;
+    if (sosElem) sosElem.innerText = requests.length;
+
+    // 4. Render Active SOS Cards
     const requestList = document.getElementById("requestList");
     if (!requestList) return;
     requestList.innerHTML = "";
@@ -538,18 +580,21 @@ async function loadRequests() {
           🏥 ${req.hospital}<br>
           📍 ${req.city}<br>
         </div>
-        <button onclick="window.location.href='tel:${req.contactNumber}'" style="margin-top:8px;background:#dc2626;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;">
-          📞 Call Patient
-        </button>
-        <button onclick="fulfillRequest(${req.id})" style="margin-top:8px;margin-left:8px;background:#16a34a;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;">
-          ❤️ I'm Coming to Donate
-        </button>
+        <div style="margin-top:8px;display:flex;gap:8px;">
+          <button onclick="window.location.href='tel:${req.contactNumber}'" style="background:#dc2626;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;">
+            📞 Call Patient
+          </button>
+          <button onclick="window.fulfillRequest(${req.id})" style="background:#16a34a;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;">
+            ❤️ I'm Coming to Donate
+          </button>
+        </div>
       </div>
       `;
     });
   } catch (e) {
     console.error("Error loading requests:", e);
   }
+}
 }
 
 async function loadAmbulanceRequests() {
