@@ -1221,3 +1221,44 @@ document.querySelectorAll(".quick-action").forEach(button => {
     }
   });
 });
+
+// ==========================================
+// HARD WALLET GATE & DATA RESET LOGIC
+// ==========================================
+
+function resetDashboardLists() {
+  const requestList = document.getElementById("requestList");
+  const ambulanceList = document.getElementById("ambulanceList");
+  const searchResults = document.getElementById("searchResults");
+  const registeredDonorsList = document.getElementById("registeredDonorsList");
+  
+  if (requestList) requestList.innerHTML = "<p style='color:#94a3b8;padding:10px;'>🔒 Connect wallet to view emergency requests.</p>";
+  if (ambulanceList) ambulanceList.innerHTML = "<p style='color:#94a3b8;padding:10px;'>🔒 Connect wallet to view live ambulance requests.</p>";
+  if (searchResults) searchResults.innerHTML = "";
+  if (registeredDonorsList) registeredDonorsList.innerHTML = "<p style='color:#94a3b8;padding:10px;'>🔒 Connect wallet to view donors.</p>";
+
+  const totalReq = document.getElementById("totalRequests");
+  const dashboardRequests = document.getElementById("dashboardRequests");
+  const fulfilledReq = document.getElementById("fulfilledRequests");
+  const totalDonorsEl = document.getElementById("totalDonors");
+  const totalSOS = document.getElementById("totalSOS");
+
+  if (totalReq) totalReq.innerText = "0";
+  if (dashboardRequests) dashboardRequests.innerText = "0";
+  if (fulfilledReq) fulfilledReq.innerText = "0";
+  if (totalDonorsEl) totalDonorsEl.innerText = "0";
+  if (totalSOS) totalSOS.innerText = "0";
+}
+
+async function reloadAppData() {
+  if (!isWalletConnected()) {
+    resetDashboardLists();
+    return;
+  }
+
+  await Promise.allSettled([
+    typeof loadDonors === "function" ? loadDonors() : Promise.resolve(),
+    typeof loadRequests === "function" ? loadRequests() : Promise.resolve(),
+    typeof loadAmbulanceRequests === "function" ? loadAmbulanceRequests() : Promise.resolve()
+  ]);
+}
