@@ -164,7 +164,7 @@
 <div class="dashboard-card">📈 <b>Total SOS Created:</b> <span id="totalSOS">0</span></div>
         </div>
 
-     <!-- Health Profile -->
+    <!-- Health Profile -->
     <div class="card">
       <h2>🏥 Health Profile</h2>
       <p>Store your essential medical information securely.</p>
@@ -184,56 +184,27 @@
       <button id="saveProfileBtn">💾 Save Health Profile</button>
       <div id="profileStatus"></div>
     </div>
-        
-        <!-- AI -->
-        <div id="aiSection" class="card">
-          <h2>🤖 AI Emergency Assistant</h2>
-          <p>Get instant first-aid guidance during emergencies.</p>
-          <textarea id="aiQuestion" placeholder="Describe the emergency... (e.g. A person is unconscious after an accident)" style="width:100%;height:120px;padding:12px;border-radius:8px;margin-bottom:10px;"></textarea>
-          <button id="askAIBtn">🤖 Ask AI Assistant</button>
-          <div id="chatBox" style="max-height:350px; overflow-y:auto; margin-top:15px; padding:10px; background:#1E293B; border:1px solid #475569; border-radius:10px;"></div>
-        </div>
-      </div>
 
-      <!-- RIGHT COLUMN -->
-      <div class="right-column">
-        <!-- Map -->
-        <div class="card">
-          <h2>🗺️ Nearby Donor Map</h2>
-          <div id="map"></div>
-        </div>
+    <!-- AI Assistant -->
+    <div id="aiSection" class="card">
+      <h2>🤖 AI Emergency Assistant</h2>
+      <p>Get instant first-aid guidance during emergencies.</p>
+      <textarea id="aiQuestion" placeholder="Describe the emergency... (e.g. A person is unconscious after an accident)"></textarea>
+      <button id="askAiBtn">🤖 Ask AI Assistant</button>
+      <div id="aiStatus" style="max-height:150px; overflow-y:auto; margin-top:10px; padding:10px; background:#0f172a; border-radius:8px;"></div>
+    </div>
 
-        <!-- SOS -->
-        <div class="card">
-          <h2 id="sosSection">🚨 SOS Emergency Request</h2>
-          <p>Request urgent blood assistance from nearby donors.</p>
-          <input id="patientName" type="text" placeholder="Patient Name">
-          <select id="requestBloodGroup">
-            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
-            <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
-          </select>
-          <input id="hospital" type="text" placeholder="Hospital">
-          <input id="requestCity" type="text" placeholder="City">
-          <input id="contact" type="text" placeholder="Contact Number">
-          <button id="requestBtn">🩸 Send Emergency SOS</button>
-          <div style="background:#fef2f2; border-left:5px solid #dc2626; padding:12px; border-radius:12px; margin:15px 0; color:#991b1b; font-weight:600;">
-            🚨 Emergency requests are immediately visible to nearby donors.
-          </div>
-          <div id="requestList"></div>
-        </div>
+  </div> <!-- /left-column -->
 
-        <!-- Hospital Bill Payment -->
-        <div class="card">
-          <h2>🏥 Hospital Bill Payment</h2>
-          <p>Pay hospital bills securely using USDC on Arc Testnet.</p>
-          <input type="text" id="hospitalName" placeholder="Hospital Name">
-          <input type="text" id="billId" placeholder="Bill ID">
-          <input type="text" id="hospitalWallet" placeholder="Hospital Wallet Address (0x...)">
-          <input type="number" id="billAmount" placeholder="Amount (USDC)">
-          <button id="payBillBtn">💳 Pay Hospital Bill</button>
-          <div id="billStatus" style="margin-top:15px;"></div>
-        </div
+  <!-- RIGHT COLUMN -->
+  <div class="right-column">
 
+    <!-- Map -->
+    <div class="card">
+      <h2>📍 Nearby Donor Map</h2>
+      <div id="map"></div>
+    </div>
+    
         <!-- Ambulance -->
         <div id="ambulanceSection" class="card">
           <h2>🚑 Emergency Ambulance</h2>
