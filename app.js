@@ -402,12 +402,22 @@ function showExplorerButton(txHash) {
 // 5. DATA LOADERS (RUNS FOR ALL WALLET TYPES)
 // ==========================================
 async function reloadAppData() {
+  const circleWallet = sessionStorage.getItem("circle_wallet_address");
+  const metaMaskWallet = window.ethereum?.selectedAddress;
+
+  // Stop if no wallet is connected
+  if (!circleWallet && !metaMaskWallet) {
+    console.log("No wallet connected. Skipping data load.");
+    return;
+  }
+
   await Promise.all([
     loadDonors(),
     loadRequests(),
     loadAmbulanceRequests()
   ]);
 }
+
 
 async function loadDonors() {
   try {
