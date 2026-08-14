@@ -460,17 +460,20 @@ async function loadDonors() {
 
     const targetList = document.getElementById("registeredDonorsList") || donorList;
 
-          targetList.innerHTML += `
-      <div style="border:1px solid #334155;background:#1E293B;color:#FFFFFF;padding:12px;margin-top:10px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.2);">
-        <strong style="color:#ef4444;">🩸 ${donor.bloodGroup}</strong> - ${donor.name}<br>
-        <span style="color:#94a3b8;">📍 City: ${donor.city}</span><br>
-        <button onclick="window.location.href='tel:${donor.phone}'" style="margin-top:8px;background:#2563eb;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;">
-          📞 Call Donor
-        </button>
-      </div>
+    if (targetList) {
+      targetList.innerHTML = "";
+      donors.forEach((donor) => {
+        targetList.innerHTML += `
+        <div style="border:1px solid #334155;background:#1E293B;color:#FFFFFF;padding:12px;margin-top:10px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+          <strong style="color:#ef4444;">🩸 ${donor.bloodGroup}</strong> - ${donor.name}<br>
+          <span style="color:#94a3b8;">📍 City: ${donor.city}</span><br>
+          <button onclick="window.location.href='tel:${donor.phone}'" style="margin-top:8px;background:#2563eb;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;">
+            📞 Call Donor
+          </button>
+        </div>
         `;
-});
-  
+      });
+    }
 
     const mapDiv = document.getElementById("map");
     if (mapDiv && window.L) {
@@ -480,7 +483,7 @@ async function loadDonors() {
         window.donorMap.remove();
       }
 
-      window.donorMap = L.map("map").setView([26.1445, 91.7362], 11);
+      window.donorMap = L.map("map").setView([26.1443, 91.7362], 11);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
@@ -495,9 +498,9 @@ async function loadDonors() {
           .addTo(window.donorMap)
           .bindPopup(`<b>${donor.name}</b><br>${donor.bloodGroup}<br>${donor.city}`);
         }
-        });
-} } catch (e) {
-  
+      });
+    }
+  } catch (e) {
     console.error("Error loading donors:", e);
   }
 }
