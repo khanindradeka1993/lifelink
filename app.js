@@ -336,28 +336,41 @@ function enableWalletCopy(address) {
 // 🟢 REAL TRANSACTION DISPATCHER FOR CIRCLE WALLETS
 async function executeCircleTransaction(abiFunction, contractAddress, args) {
   const userToken = sessionStorage.getItem("circle_user_token");
-  const walletAddress = sessionStorage.getItem("circle_wallet_address");
+  
+  if (!userToken) {
+    throw new Error("Circle session expired. Please sign in again.");
+  }
 
-  const response = await fetch("/api/circle-transaction", {
+  // Calls your execute API endpoint
+  const response = await fetch("/api/execute-circle-tx", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       userToken,
-      walletAddress,
+      functionSignature: abiFunction,
       contractAddress,
-      abiFunction,
       args
     })
   });
 
-  const data = await response.json();
+  // Read response as text first to avoid JSON parse crashes on HTML error pages
+  const responseText = await response.text();
 
-  if (!response.ok) {
-    throw new Error(data.error || "Circle Transaction Execution Failed");
+  let data;
+  try {
+    data = JSON.parse(responseText);
+  } catch (err) {
+    console.error("Non-JSON Server Response:", responseText);
+    throw new Error(`Server error (${response.status}). Check Vercel Function logs.`);
+  }
+
+  if (!response.ok || data.error) {
+    throw new Error(data.error || `Transaction failed with status ${response.status}`);
   }
 
   return data.txHash;
 }
+
 
 function showExplorerButton(txHash) {
   const explorer = `${EXPLORER}/tx/${txHash}`;
