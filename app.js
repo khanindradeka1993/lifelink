@@ -287,6 +287,12 @@ let currentAccount = "";
 // ==========================================
 // 4. HELPER FUNCTIONS
 // ==========================================
+function isWalletConnected() {
+  const circleWallet = sessionStorage.getItem("circle_wallet_address");
+  const metaMaskWallet = currentAccount || window.ethereum?.selectedAddress;
+  return !!(circleWallet || metaMaskWallet);
+}
+
 function getActiveWallet() {
   if (currentAccount) {
     return {
@@ -371,7 +377,6 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
   return data.txHash;
 }
 
-
 function showExplorerButton(txHash) {
   const explorer = `${EXPLORER}/tx/${txHash}`;
   let card = document.getElementById("txCard");
@@ -398,16 +403,30 @@ function showExplorerButton(txHash) {
   `;
 }
 
+function resetDashboardLists() {
+  if (donorList) donorList.innerHTML = "<p style='color:#aaa;padding:10px;'>Connect wallet to view donors.</p>";
+  
+  const requestList = document.getElementById("requestList");
+  if (requestList) requestList.innerHTML = "<p style='color:#aaa;padding:10px;'>Connect wallet to view active SOS requests.</p>";
+  
+  if (ambulanceList) ambulanceList.innerHTML = "<p style='color:#aaa;padding:10px;'>Connect wallet to view ambulance requests.</p>";
+  
+  if (totalDonors) totalDonors.innerText = "0";
+  if (dashboardDonors) dashboardDonors.innerText = "0";
+  if (dashboardRequests) dashboardRequests.innerText = "0";
+  if (dashboardFulfilled) dashboardFulfilled.innerText = "0";
+  if (totalSOS) totalSOS.innerText = "0";
+  if (topBloodGroup) topBloodGroup.innerText = "-";
+  if (totalCities) totalCities.innerText = "0";
+}
+
 // ==========================================
 // 5. DATA LOADERS (RUNS FOR ALL WALLET TYPES)
 // ==========================================
 async function reloadAppData() {
-  const circleWallet = sessionStorage.getItem("circle_wallet_address");
-  const metaMaskWallet = window.ethereum?.selectedAddress;
-
-  // Stop if no wallet is connected
-  if (!circleWallet && !metaMaskWallet) {
-    console.log("No wallet connected. Skipping data load.");
+  if (!isWalletConnected()) {
+    console.log("No wallet connected. Skipping initial data load.");
+    resetDashboardLists();
     return;
   }
 
@@ -418,8 +437,9 @@ async function reloadAppData() {
   ]);
 }
 
-
 async function loadDonors() {
+  if (!isWalletConnected()) return;
+
   try {
     const activeContract = contract || readOnlyContract;
     const donors = await activeContract.getDonors();
@@ -470,6 +490,8 @@ async function loadDonors() {
 }
 
 async function loadRequests() {
+  if (!isWalletConnected()) return;
+
   try {
     const activeContract = contract || readOnlyContract;
     const requests = await activeContract.getRequests();
@@ -512,7 +534,7 @@ async function loadRequests() {
       if (req.fulfilled) return;
 
       requestList.innerHTML += `
-      <div style="border-left:6px solid #dc3545;background:#1E293B;color:#FFFFFF;border:1px solid #475569;border-radius:16px;padding:15px;margin-top:12px;box-shadow:0 8px 20px rgba(0,0,0,0.35);">
+            <div style="border-left:6px solid #dc3545;background:#1E293B;color:#FFFFFF;border:1px solid #475569;border-radius:16px;padding:15px;margin-top:12px;box-shadow:0 8px 20px rgba(0,0,0,0.35);">
         <h3 style="color:#ef4444;margin:0;">🚨 ${req.bloodGroup}</h3>
         <div style="color:#E2E8F0;">
           👤 <strong>${req.patientName}</strong><br>
@@ -534,6 +556,8 @@ async function loadRequests() {
 }
 
 async function loadAmbulanceRequests() {
+  if (!isWalletConnected()) return;
+
   try {
     const activeEmergency = window.emergencyContract || readOnlyEmergency;
     const requests = await activeEmergency.getAmbulanceRequests();
@@ -551,7 +575,6 @@ async function loadAmbulanceRequests() {
         📍 Location: ${r.pickupLocation}<br>
         🏥 Hospital: ${r.hospital}<br><br>
         <a href="tel:${r.contact}">
-           <a href="tel:${r.contact}">
           <button style="background:#2563eb;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;">📞 Call Patient</button>
         </a>
         <button onclick="completeAmbulance(${r.id})" style="background:#16a34a;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;margin-left:8px;">
@@ -565,14 +588,25 @@ async function loadAmbulanceRequests() {
   }
 }
 
-// Automatically load app data on script startup
-window.addEventListener("DOMContentLoaded", reloadAppData);
+// Initial initialization check (will not load data if disconnected)
+window.addEventListener("DOMContentLoaded", () => {
+  if (isWalletConnected()) {
+    reloadAppData();
+  } else {
+    resetDashboardLists();
+  }
+});
+
 window.addEventListener("load", () => {
   const savedCircle = sessionStorage.getItem("circle_wallet_address");
   if (savedCircle) {
     enableWalletCopy(savedCircle);
   }
-  reloadAppData();
+  if (isWalletConnected()) {
+    reloadAppData();
+  } else {
+    resetDashboardLists();
+  }
 });
 
 // ==========================================
@@ -777,6 +811,11 @@ if (registerBtn) {
 // --- SEARCH DONORS ---
 if (searchBtn) {
   searchBtn.addEventListener("click", async () => {
+    if (!isWalletConnected()) {
+      alert("Please connect your wallet first.");
+      return;
+    }
+
     const activeContract = contract || readOnlyContract;
     const bloodGroup = document.getElementById("searchBloodGroup").value;
     const city = document.getElementById("searchCity").value.toLowerCase();
@@ -1091,6 +1130,11 @@ async function completeAmbulance(id) {
 // --- DOCTOR PATIENT LOOKUP ---
 if (searchPatientBtn) {
   searchPatientBtn.addEventListener("click", async () => {
+    if (!isWalletConnected()) {
+      alert("Please connect your wallet first.");
+      return;
+    }
+
     const activeHealthcare = window.healthcareContract || readOnlyHealthcare;
     const wallet = doctorWallet.value.trim();
 
@@ -1159,7 +1203,7 @@ if (askAIBtn) {
         </div>
       </div>`;
 
-          chatBox.scrollTop = chatBox.scrollHeight;
+      chatBox.scrollTop = chatBox.scrollHeight;
     } catch (err) {
       document.getElementById("loading")?.remove();
       chatBox.innerHTML += `<div style="color:red;">❌ Failed to contact AI.</div>`;
