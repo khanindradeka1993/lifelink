@@ -635,19 +635,17 @@ async function loadAmbulanceRequests() {
   }
 }
 
-// Force clean state on initial startup if disconnected
+// Force clean state on startup - Data ONLY loads after user explicitly connects wallet
 window.addEventListener("DOMContentLoaded", () => {
-  if (isWalletConnected()) {
-    reloadAppData();
-  } else {
-    resetDashboardLists();
-  }
+  resetDashboardLists();
 });
 
 window.addEventListener("load", () => {
-  if (isWalletConnected()) {
-    const savedCircle = sessionStorage.getItem("circle_wallet_address");
-    if (savedCircle) enableWalletCopy(savedCircle);
+  const activeType = sessionStorage.getItem("active_wallet_type");
+  const savedCircle = sessionStorage.getItem("circle_wallet_address");
+
+  if (activeType === "CIRCLE" && savedCircle) {
+    enableWalletCopy(savedCircle);
     reloadAppData();
   } else {
     resetDashboardLists();
