@@ -1226,7 +1226,7 @@ document.querySelectorAll(".quick-action").forEach(button => {
 // HARD WALLET GATE & DATA RESET LOGIC
 // ==========================================
 
-function resetDashboardLists() {
+resetDashboardLists = function() {
   const requestList = document.getElementById("requestList");
   const ambulanceList = document.getElementById("ambulanceList");
   const searchResults = document.getElementById("searchResults");
