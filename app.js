@@ -531,19 +531,19 @@ async function loadRequests() {
       if (req.fulfilled) return;
 
       requestList.innerHTML += `
-      <div style="border-left:6px solid #dc3545;background:#1E293B;color:#FFFFFF;border:1px solid #475569;border-radius:16px;padding:15px;margin-top:12px;box-shadow:0 8px 20px rgba(0,0,0,0.35);">
-        <h3 style="color:#ef4444;margin:0;">🚨 ${req.bloodGroup}</h3>
-        <div style="color:#E2E8F0;">
+      <div style="border-left:4px solid #dc2626;background:#1E293B;color:#FFFFFF;border:1px solid #334155;border-radius:12px;padding:12px;margin-top:10px;">
+        <h3 style="color:#f87171;margin:0;">🚨 ${req.bloodGroup}</h3>
+        <div style="color:#e2e8f0;">
           👤 <strong>${req.patientName}</strong><br>
           🏥 ${req.hospital}<br>
           📍 ${req.city}<br>
         </div>
-        <button onclick="window.location.href='tel:${req.contact}'" style="margin-top:10px;background:#dc3545;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;">
+        <button onclick="window.location.href='tel:${req.contactNumber}'" style="margin-top:8px;background:#dc2626;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;">
           📞 Call Patient
         </button>
-        <button onclick="fulfillRequest(${req.id})" style="margin-top:10px;margin-left:10px;background:#16a34a;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;">
+        <button onclick="fulfillRequest(${req.id})" style="margin-top:8px;margin-left:8px;background:#16a34a;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;">
           ❤️ I'm Coming to Donate
-        </button>  
+        </button>
       </div>
       `;
     });
