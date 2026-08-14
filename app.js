@@ -425,7 +425,7 @@ function resetDashboardLists() {
 // ==========================================
 async function reloadAppData() {
   if (!isWalletConnected()) {
-    console.log("No wallet connected. Skipping initial data load.");
+    console.loasyncg("No wallet connected. Skipping initial data load.");
     resetDashboardLists();
     return;
   }
@@ -437,23 +437,22 @@ async function reloadAppData() {
   ]);
 }
 
-async function loadDonors() {
+ async function loadDonors() {
   if (!isWalletConnected()) {
     resetDashboardLists();
     return;
   }
 
   try {
-    // STRICT FIX: Only use the wallet contract, NOT readOnlyContract
     const activeContract = contract; 
     if (!activeContract) return;
 
     const donors = await activeContract.getDonors();
 
-    if (totalDonors) totalDonors.innerText = donors.length;
-    if (dashboardDonors) dashboardDonors.innerText = donors.length;
+    if (typeof totalDonors !== "undefined" && totalDonors) totalDonors.innerText = donors.length;
+    if (typeof dashboardDonors !== "undefined" && dashboardDonors) dashboardDonors.innerText = donors.length;
 
-    if (donorList) {
+    if (typeof donorList !== "undefined" && donorList) {
       donorList.innerHTML = "";
       donors.forEach((donor) => {
         donorList.innerHTML += `
@@ -490,6 +489,11 @@ async function loadDonors() {
         }
       });
     }
+  } catch (e) {
+    console.error("Error loading donors:", e);
+  }
+ }
+
   } catch (e) {
     console.error("Error loading donors:", e);
   }
