@@ -253,475 +253,45 @@ footer{
   max-width:none !important;
 }
 
-/* ---------- Tablet / smaller desktop ---------- */
-@media (max-width: 900px){
-  body{
-    padding:18px;
-  }
-
-  .hero h1{
-    font-size:42px;
-  }
-
-  .desktop-dashboard{
-    grid-template-columns:1fr !important;
-  }
-
-  .left-column,
-  .right-column{
-    gap:20px !important;
-  }
-
-  #dashboard{
-    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-  }
-
-  #map{
-    height:420px !important;
-  }
-}
-
-/* ---------- Phone ---------- */
-@media (max-width: 600px){
-  body{
-    padding:12px;
-  }
-
-  .hero-logo{
-    width:90px;
-    height:90px;
-  }
-
-  .hero h1{
-    font-size:36px;
-  }
-
-  .hero h3{
-    font-size:18px;
-       }
-
-  .heroCard{
-    padding:18px !important;
-  }
-
-  .heroRight{
-    font-size:45px;
-  }
-
-  #dashboard{
-    grid-template-columns:1fr !important;
-  }
-
-  .card{
-    padding:18px !important;
-  }
-
-  #map{
-    height:340px !important;
-  }
-}
-
 /* =========================================================
-   LifeLink — Clean Responsive Desktop Dashboard
-   One consolidated layout system.
+   LIFELINK: CLEAN FLEX GRID LAYOUT
    ========================================================= */
 
 @media (min-width: 900px) {
-
-  html,
-  body {
-    width: 100%;
-    min-width: 100%;
-    overflow-x: hidden;
-  }
-
-  body {
-    margin: 0 !important;
-    padding: 0 28px 40px !important;
-  }
-
-  .container {
-    width: 100% !important;
-    max-width: 1800px !important;
-    margin: 0 auto !important;
-    padding: 28px 0 50px !important;
-  }
-
-  .hero {
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 0 28px !important;
-  }
-
-  /* The HTML dashboard wrappers become transparent so each
-     card participates directly in the desktop grid. */
-  /* Desktop masonry-style layout:
-     two independent vertical card columns.
-     This avoids CSS Grid row-height gaps and is compatible
-     with older desktop browsers. */
+  /* Main desktop dashboard wrapper */
   .desktop-dashboard {
-    width: 100% !important;
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    column-gap: 24px !important;
-    align-items: start !important;
-  }
-
-  .desktop-dashboard > .left-column,
-  .desktop-dashboard > .right-column {
     display: flex !important;
-    flex-direction: column !important;
     gap: 24px !important;
+    align-items: flex-start !important;
     width: 100% !important;
-    min-width: 0 !important;
-    align-self: start !important;
   }
 
-  .desktop-dashboard .card {
-    width: 100% !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-    box-sizing: border-box !important;
-    align-self: stretch !important;
-  }
-
-  /* Make the dashboard visually consistent without forcing
-     every card to have the same height. */
-  .desktop-dashboard .card h2 {
-    line-height: 1.25;
-  }
-
-  .desktop-dashboard input,
-  .desktop-dashboard select,
-  .desktop-dashboard textarea,
-  .desktop-dashboard button {
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  #map {
-    width: 100% !important;
-    height: 500px !important;
-    box-sizing: border-box !important;
-  }
-
-  footer {
-    width: 100% !important;
-    max-width: none !important;
-  }
-}
-
-/* Medium screens */
-@media (min-width: 700px) and (max-width: 899px) {
-
-  body {
-    padding: 18px !important;
-  }
-
-  .container {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 20px 0 40px !important;
-  }
-
-  .desktop-dashboard {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 20px !important;
-  }
-
-  .desktop-dashboard > .left-column,
-  .desktop-dashboard > .right-column {
-    display: contents !important;
-  }
-
-  .desktop-dashboard .card {
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  #map {
-    height: 420px !important;
-  }
-}
-
-/* Phones */
-@media (max-width: 699px) {
-
-  body {
-    padding: 12px !important;
-  }
-
-  .container {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 14px 0 35px !important;
-  }
-
-  .desktop-dashboard {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 20px !important;
-  }
-
+  /* Left and Right 50/50 columns */
   .desktop-dashboard > .left-column,
   .desktop-dashboard > .right-column {
     display: flex !important;
     flex-direction: column !important;
-    gap: 20px !important;
+    flex: 1 !important;
+    gap: 24px !important;
+    width: 50% !important;
   }
 
+  /* Card styling inside columns */
   .desktop-dashboard .card {
-    width: 100% !important;
-  }
-
-  #map {
-    height: 340px !important;
-  }
-}
-/* =========================================================
-   LIFELINK — FINAL TRUE MASONRY DESKTOP FIX
-   Fixes empty space between cards.
-   No HTML / JS changes.
-   ========================================================= */
-
-@media (min-width: 900px) {
-
-  .desktop-dashboard {
-    width: 100% !important;
-    display: block !important;
-    column-count: 2 !important;
-    column-gap: 24px !important;
-    column-fill: balance !important;
-  }
-
-  /* Make the two old wrappers transparent */
-  .desktop-dashboard > .left-column,
-  .desktop-dashboard > .right-column {
-    display: contents !important;
-  }
-
-  /* Every card becomes a masonry item */
-  .desktop-dashboard .card {
-    width: 100% !important;
-    display: inline-block !important;
-    vertical-align: top !important;
-    box-sizing: border-box !important;
-
-    margin: 0 0 24px 0 !important;
-
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-
-    min-width: 0 !important;
-  }
-
-  /* Keep the map stable */
-  .desktop-dashboard #map {
-    width: 100% !important;
-    height: 500px !important;
-    min-height: 500px !important;
-    box-sizing: border-box !important;
-  }
-}
-
-/* Tablet */
-@media (min-width: 700px) and (max-width: 899px) {
-
-  .desktop-dashboard {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 20px !important;
-  }
-
-  .desktop-dashboard > .left-column,
-  .desktop-dashboard > .right-column {
-    display: contents !important;
-  }
-
-  .desktop-dashboard .card {
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  #map {
-    height: 420px !important;
-  }
-}
-
-/* Phone */
-@media (max-width: 699px) {
-
-  .desktop-dashboard {
-    display: block !important;
-  }
-
-  .desktop-dashboard > .left-column,
-  .desktop-dashboard > .right-column {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 20px !important;
-  }
-
-  .desktop-dashboard .card {
-    width: 100% !important;
-    margin-bottom: 20px !important;
-  }
-
-  #map {
-    height: 340px !important;
-  }
-}
-
-/* Center Card Wrapper */
-.wallet-section-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 16px;
-  margin: 15px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Button Group Alignment */
-.wallet-btn-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  max-width: 380px;
-}
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  height: 48px;
-  font-size: 15px;
-  font-weight: 600;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.primary-btn {
-  background-color: #2563eb;
-  color: #ffffff;
-}
-
-.primary-btn:hover {
-  background-color: #1d4ed8;
-}
-
-.google-btn {
-  background-color: #ffffff;
-  color: #1f2937;
-}
-
-.google-btn:hover {
-  background-color: #f3f4f6;
-}
-
-/* Status Badge */
-.status-badge {
-  background-color: #059669;
-  color: white;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  text-align: center;
-  width: fit-content;
-}
-
-/* Address Box Layout */
-.address-box {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #111827;
-  border: 1px solid #374151;
-  border-radius: 8px;
-  padding: 8px 14px;
-  width: 100%;
-  max-width: 380px;
-  box-sizing: border-box;
-}
-
-#walletAddress {
-  color: #10b981;
-  font-family: monospace;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  flex-grow: 1;
-}
-
-.copy-btn {
-  background: #374151;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.copy-btn:hover {
-  background: #4b5563;
-}
-
-/* =========================================================
-   LIFELINK: MASONRY GRID OVERRIDE (Desktop & Mobile Fix)
-   ========================================================= */
-
-@media (min-width: 900px) {
-  /* 1. Turn main desktop container into a 2 column masonry context */
-  .desktop-dashboard {
     display: block !important;
     width: 100% !important;
-    column-count: 2 !important;
-    column-gap: 24px !important;
-    column-fill: balance !important;
-  }
-
-  /* 2. Flatten sub-wrappers so cards flow freely across columns */
-  .desktop-dashboard > .left-column,
-  .desktop-dashboard > .right-column {
-    display: contents !important;
-  }
-
-  /* 3. Style cards to stack tightly without splitting */
-  .desktop-dashboard .card,
-  .desktop-dashboard > .left-column > .card,
-  .desktop-dashboard > .right-column > .card,
-  .card {
-    display: inline-block !important;
-    width: 100% !important;
-    margin-bottom: 24px !important;
-    vertical-align: top !important;
+    margin-bottom: 0 !important;
     box-sizing: border-box !important;
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-    -webkit-column-break-inside: avoid !important;
   }
 
-  /* 4. Fix Map height so it fits compactly in masonry flow */
+  /* Map size */
   #map {
     width: 100% !important;
     height: 380px !important;
-    box-sizing: border-box !important;
   }
 }
 
-/* Mobile Responsiveness Reset */
+/* Tablet & Mobile Layout */
 @media (max-width: 899px) {
   .desktop-dashboard {
     display: flex !important;
@@ -741,30 +311,5 @@ footer{
     display: block !important;
     width: 100% !important;
     margin-bottom: 16px !important;
-  }
-}
-
-@media (min-width: 900px) {
-  /* Turn layout into 2 flex columns */
-  .desktop-dashboard {
-    display: flex !important;
-    gap: 24px !important;
-    align-items: stretch !important;
-  }
-
-  /* Force left and right column wrappers to match each other's height */
-  .desktop-dashboard > .left-column,
-  .desktop-dashboard > .right-column {
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 !important;
-    justify-content: space-between !important; /* Spreads cards evenly down to footer */
-    gap: 20px !important;
-  }
-
-  /* Let the map fill available space dynamically */
-  #map {
-    height: 100% !important;
-    min-height: 350px !important;
   }
 }
