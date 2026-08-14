@@ -650,6 +650,10 @@ window.addEventListener("load", () => {
 // ==========================================
 if (connectBtn) {
   connectBtn.addEventListener("click", async () => {
+       if (sessionStorage.getItem("active_wallet_type") === "CIRCLE") {
+      alert("Circle Wallet is already connected. Disconnect it first.");
+      return;
+       } 
     if (!window.ethereum) {
       alert("Please install MetaMask");
       return;
@@ -712,6 +716,10 @@ explicitWalletConnected = true;
 }
 
 async function handleCircleGoogleLogin() {
+    if (currentAccount) {
+    alert("MetaMask is already connected. Disconnect it first.");
+    return;
+    }
   try {
     if (walletAddress) {
       walletAddress.innerText = "Initializing Circle Wallet...";
