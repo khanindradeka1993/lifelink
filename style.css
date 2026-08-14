@@ -683,7 +683,7 @@ footer{
    ========================================================= */
 
 @media (min-width: 900px) {
-  /* 1. Turn main desktop container into a 2-column masonry context */
+  /* 1. Turn main desktop container into a 2 column masonry context */
   .desktop-dashboard {
     display: block !important;
     width: 100% !important;
