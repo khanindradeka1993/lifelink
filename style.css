@@ -414,3 +414,103 @@ footer{
   }
 }
 
+/* =========================================================
+   LIFELINK — FINAL DESKTOP DASHBOARD LAYOUT
+   Desktop only — mobile layout remains unchanged
+   ========================================================= */
+
+@media (min-width: 900px) {
+
+  /* Main page width */
+  .container {
+    width: 100% !important;
+    max-width: 1600px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Top statistics */
+  #dashboard {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 24px !important;
+  }
+
+  #dashboard > div {
+    min-height: 150px !important;
+  }
+
+  /* Quick Actions */
+  .quick-action {
+    min-height: 105px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  .quick-action small {
+    font-size: 18px !important;
+    margin-top: 6px !important;
+  }
+
+  /* MAIN DESKTOP DASHBOARD */
+  .desktop-dashboard {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 28px !important;
+    align-items: start !important;
+    width: 100% !important;
+  }
+
+  /* LEFT + RIGHT COLUMNS */
+  .left-column,
+  .right-column {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 28px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* Cards */
+  .desktop-dashboard .card {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Forms */
+  .desktop-dashboard input,
+  .desktop-dashboard select,
+  .desktop-dashboard textarea,
+  .desktop-dashboard button {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Nearby Donor Map */
+  .right-column #map {
+    width: 100% !important;
+    height: 460px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Footer */
+  footer {
+    width: 100% !important;
+    margin-top: 40px !important;
+  }
+}
+
+/* Large desktop: 6 Quick Action buttons in one row */
+@media (min-width: 1200px) {
+
+  .hero > div[style*="grid-template-columns:repeat(3"] {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+  }
+
+}
