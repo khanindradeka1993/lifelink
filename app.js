@@ -1248,9 +1248,9 @@ resetDashboardLists = function() {
   if (fulfilledReq) fulfilledReq.innerText = "0";
   if (totalDonorsEl) totalDonorsEl.innerText = "0";
   if (totalSOS) totalSOS.innerText = "0";
-}
+};
 
-async function reloadAppData() {
+reloadAppData = async function() {
   if (!isWalletConnected()) {
     resetDashboardLists();
     return;
@@ -1261,4 +1261,4 @@ async function reloadAppData() {
     typeof loadRequests === "function" ? loadRequests() : Promise.resolve(),
     typeof loadAmbulanceRequests === "function" ? loadAmbulanceRequests() : Promise.resolve()
   ]);
-}
+};
