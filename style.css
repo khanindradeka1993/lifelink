@@ -313,3 +313,37 @@ footer{
     margin-bottom: 16px !important;
   }
 }
+
+/* =========================================================
+   DESKTOP GRID SYSTEM (Only affects screens wider than 768px)
+   Mobile rules are completely untouched!
+   ========================================================= */
+@media (min-width: 768px) {
+  /* Main Container Grid Setup */
+  .dashboard-grid, 
+  main, 
+  .container > .grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+    align-items: start !important;
+  }
+
+  /* Make Map and Wide Sections stretch naturally across desktop */
+  .map-card, 
+  #map, 
+  .full-width-card {
+    grid-column: span 1 !important;
+    min-height: 420px !important;
+  }
+
+  /* Equal height card alignment for clean side-by-side rows */
+  .card, 
+  .section-card {
+    margin-bottom: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+}
