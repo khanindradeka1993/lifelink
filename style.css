@@ -298,7 +298,6 @@ footer{
     flex-direction: column !important;
     gap: 16px !important;
   }
-
   .desktop-dashboard > .left-column,
   .desktop-dashboard > .right-column {
     display: flex !important;
@@ -315,35 +314,103 @@ footer{
 }
 
 /* =========================================================
-   DESKTOP GRID SYSTEM (Only affects screens wider than 768px)
-   Mobile rules are completely untouched!
+   LIFELINK DESKTOP DASHBOARD — FINAL LAYOUT
+   Desktop only. Existing mobile/tablet layout remains intact.
    ========================================================= */
-@media (min-width: 768px) {
-  /* Main Container Grid Setup */
-  .dashboard-grid, 
-  main, 
-  .container > .grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 20px !important;
-    align-items: start !important;
+
+@media (min-width: 900px) {
+
+  /* Keep the dashboard centered and readable on large screens */
+  .container{
+    max-width:1600px !important;
   }
 
-  /* Make Map and Wide Sections stretch naturally across desktop */
-  .map-card, 
-  #map, 
-  .full-width-card {
-    grid-column: span 1 !important;
-    min-height: 420px !important;
+  /* Top statistics */
+  #dashboard{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:24px !important;
   }
 
-  /* Equal height card alignment for clean side-by-side rows */
-  .card, 
-  .section-card {
-    margin-bottom: 0 !important;
-    height: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
+  #dashboard > div{
+    min-height:150px !important;
+  }
+
+  /* Quick actions: 6 equal desktop buttons */
+  .quick-action{
+    min-height:105px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:center !important;
+    align-items:center !important;
+    font-size:18px !important;
+  }
+
+  .quick-action small{
+    font-size:18px !important;
+    margin-top:6px !important;
+  }
+
+  /* Main dashboard: two clean columns */
+  .desktop-dashboard{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+    gap:28px !important;
+    align-items:start !important;
+  }
+
+  .left-column,
+  .right-column{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:28px !important;
+    width:100% !important;
+  }
+
+  /* Do not force cards to equal height */
+  .desktop-dashboard .card{
+    height:auto !important;
+    min-height:0 !important;
+    display:block !important;
+    width:100% !important;
+    margin:0 !important;
+  }
+
+  /* Give the map a strong dashboard presence */
+  .right-column .card:first-child{
+    padding-bottom:20px !important;
+  }
+
+  #map{
+    height:460px !important;
+    width:100% !important;
+  }
+
+  /* Comfortable desktop form controls */
+  .desktop-dashboard input,
+  .desktop-dashboard select,
+  .desktop-dashboard textarea{
+    font-size:16px !important;
+    padding:14px !important;
+  }
+
+  /* Keep footer visually separated from dashboard */
+  footer{
+    margin-top:40px !important;
   }
 }
+
+/* Desktop quick-action grid override.
+   The HTML currently uses an inline 3-column grid. */
+@media (min-width: 1200px) {
+  .hero > div[style*="grid-template-columns:repeat(3"]{
+    grid-template-columns:repeat(6,minmax(0,1fr)) !important;
+  }
+}
+
+/* Medium desktop/tablet: keep 3 columns */
+@media (min-width: 900px) and (max-width:1199px) {
+  .hero > div[style*="grid-template-columns:repeat(3"]{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+}
+
