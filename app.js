@@ -595,7 +595,6 @@ async function loadRequests() {
     console.error("Error loading requests:", e);
   }
 }
-}
 
 async function loadAmbulanceRequests() {
   if (!isWalletConnected()) {
