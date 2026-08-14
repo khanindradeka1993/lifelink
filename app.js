@@ -438,10 +438,16 @@ async function reloadAppData() {
 }
 
 async function loadDonors() {
-  if (!isWalletConnected()) return;
+  if (!isWalletConnected()) {
+    resetDashboardLists();
+    return;
+  }
 
   try {
-    const activeContract = contract || readOnlyContract;
+    // STRICT FIX: Only use the wallet contract, NOT readOnlyContract
+    const activeContract = contract; 
+    if (!activeContract) return;
+
     const donors = await activeContract.getDonors();
 
     if (totalDonors) totalDonors.innerText = donors.length;
@@ -469,8 +475,8 @@ async function loadDonors() {
 
       window.donorMap = L.map("map").setView([26.1445, 91.7362], 11);
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors"
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
       }).addTo(window.donorMap);
 
       donors.forEach((donor) => {
@@ -487,6 +493,8 @@ async function loadDonors() {
   } catch (e) {
     console.error("Error loading donors:", e);
   }
+}
+
 }
 
 async function loadRequests() {
