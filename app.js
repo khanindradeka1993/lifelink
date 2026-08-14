@@ -914,7 +914,7 @@ if (requestBtn) {
 }
 
 // --- FULFILL SOS REQUEST ---
-async function fulfillRequest(id) {
+window.fulfillRequest = async function(id) {
   const wallet = getActiveWallet();
   if (!wallet) {
     alert("Please connect your wallet first");
@@ -951,7 +951,8 @@ async function fulfillRequest(id) {
     console.error(err);
     alert(err.message);
   }
-}
+};
+
 
 // --- PAY HOSPITAL BILL ---
 if (payBillBtn) {
