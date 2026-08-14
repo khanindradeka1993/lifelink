@@ -1075,7 +1075,7 @@ if (ambulanceBtn) {
 }
 
 // --- COMPLETE AMBULANCE REQUEST ---
-async function completeAmbulance(id) {
+window.completeAmbulance = async function(id) {
   const wallet = getActiveWallet();
   if (!wallet) {
     alert("Connect wallet first");
@@ -1113,7 +1113,7 @@ async function completeAmbulance(id) {
     console.error(err);
     alert(err.message);
   }
-}
+};
 
 // --- DOCTOR PATIENT LOOKUP ---
 if (searchPatientBtn) {
