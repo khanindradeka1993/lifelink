@@ -677,3 +677,69 @@ footer{
 .copy-btn:hover {
   background: #4b5563;
 }
+
+/* =========================================================
+   LIFELINK: MASONRY GRID OVERRIDE (Desktop & Mobile Fix)
+   ========================================================= */
+
+@media (min-width: 900px) {
+  /* 1. Turn main desktop container into a 2-column masonry context */
+  .desktop-dashboard {
+    display: block !important;
+    width: 100% !important;
+    column-count: 2 !important;
+    column-gap: 24px !important;
+    column-fill: balance !important;
+  }
+
+  /* 2. Flatten sub-wrappers so cards flow freely across columns */
+  .desktop-dashboard > .left-column,
+  .desktop-dashboard > .right-column {
+    display: contents !important;
+  }
+
+  /* 3. Style cards to stack tightly without splitting */
+  .desktop-dashboard .card,
+  .desktop-dashboard > .left-column > .card,
+  .desktop-dashboard > .right-column > .card,
+  .card {
+    display: inline-block !important;
+    width: 100% !important;
+    margin-bottom: 24px !important;
+    vertical-align: top !important;
+    box-sizing: border-box !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
+  }
+
+  /* 4. Fix Map height so it fits compactly in masonry flow */
+  #map {
+    width: 100% !important;
+    height: 380px !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* Mobile Responsiveness Reset */
+@media (max-width: 899px) {
+  .desktop-dashboard {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .desktop-dashboard > .left-column,
+  .desktop-dashboard > .right-column {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    width: 100% !important;
+  }
+
+  .card {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 16px !important;
+  }
+}
