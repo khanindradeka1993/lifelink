@@ -345,7 +345,12 @@ footer{
     box-sizing: border-box !important;
   }
 
-  /* Map */
+   #aiSection {
+  min-height: 465px !important;
+  box-sizing: border-box !important;
+   }
+
+   /* Map */
   #map {
     width: 100% !important;
     height: 460px !important;
