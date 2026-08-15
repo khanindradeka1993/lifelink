@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 
 export default async function handler(req, res) {
-  // CORS Headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -17,32 +16,25 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Circle session expired. Please sign in again." });
     }
 
-    if (!contractAddress || !functionSignature) {
-      return res.status(400).json({ error: "Missing contract details or signature." });
+    if (!contractAddress || contractAddress.includes("YOUR_REAL_CONTRACT")) {
+      return res.status(400).json({ error: "Please provide a valid EVM contract address." });
     }
 
     const apiKey = process.env.CIRCLE_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: "CIRCLE_API_KEY missing in Vercel settings." });
+      return res.status(500).json({ error: "CIRCLE_API_KEY missing in server configuration." });
     }
 
-    // Must be a valid UUID v4 for Circle API validation
-    const idempotencyKey = crypto.randomUUID();
-
-    // Payload following Circle User-Controlled Wallet specifications
+    // Build standard body for Circle User-Controlled Contract Execution
     const payload = {
-      idempotencyKey,
+      idempotencyKey: crypto.randomUUID(),
+      walletId: walletId || sessionStorage.getItem("circle_wallet_id"),
       contractAddress: contractAddress.trim(),
       abiFunctionSignature: functionSignature.trim(),
       abiParameters: (args || []).map(arg => String(arg)),
       feeLevel: "MEDIUM"
     };
 
-    if (walletId) {
-      payload.walletId = walletId;
-    }
-
-    // Make request to Circle API with X-User-Token header
     const response = await fetch("https://api.circle.com/v1/w3s/user/transactions/contractExecution", {
       method: "POST",
       headers: {
@@ -57,7 +49,7 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       return res.status(response.status).json({
-        error: data.message || "Circle API parameter validation failed.",
+        error: data.message || "Circle validation failed",
         details: data
       });
     }
