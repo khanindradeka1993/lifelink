@@ -332,7 +332,7 @@ function enableWalletCopy(address) {
   }
 
   copyBtn.style.display = "inline-block";
-  copyBtn.onclick = () => {
+  copyBtn.onclick = () => {async
     navigator.clipboard.writeText(addrToCopy);
     copyBtn.innerText = "✅ Copied!";
     setTimeout(() => {
@@ -341,7 +341,7 @@ function enableWalletCopy(address) {
   };
 }
 
-async function executeCircleTransaction(abiFunction, contractAddress, args) {
+ async function executeCircleTransaction(abiFunction, contractAddress, args) {
   const userToken = sessionStorage.getItem("circle_user_token");
   if (!userToken) throw new Error("Circle session expired. Please sign in again.");
 
@@ -352,11 +352,16 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
   });
 
   const data = await response.json();
+  const sdkInstance = window.circleSdk || (typeof circleSdk !== "undefined" ? circleSdk : (typeof sdk !== "undefined" ? sdk : null));
+
+  if (!sdkInstance) {
+    throw new Error("Circle SDK instance is not initialized on this page.");
+  }
 
   if (data.needsWalletSetup && data.challengeId) {
     alert("First-time setup required. Opening Circle PIN setup...");
     return new Promise((resolve, reject) => {
-      sdk.execute(data.challengeId, (error) => {
+      sdkInstance.execute(data.challengeId, (error) => {
         if (error) reject(error);
         else {
           alert("Wallet created! Retry action.");
@@ -370,7 +375,7 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
   if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
 
   return new Promise((resolve, reject) => {
-    sdk.execute(challengeId, (error, sdkResult) => {
+    sdkInstance.execute(challengeId, (error, sdkResult) => {
       if (error) return reject(error);
       
       const finalHash = sdkResult?.txHash || sdkResult?.transactionHash || challengeId;
@@ -383,7 +388,8 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
       resolve(finalHash);
     });
   });
-}
+ }
+
 
 function showExplorerButton(txHash) {
   txHash = typeof txHash === 'object' ? (txHash.txHash || txHash.challengeId || "") : txHash;
