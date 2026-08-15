@@ -500,3 +500,27 @@ footer{
     width: 100%;
   }
 }
+
+/* Scrollable emergency request lists */
+#requestList {
+  max-height: 160px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 6px !important;
+}
+
+/* Scrollable ambulance request lists */
+#ambulanceList {
+  max-height: 180px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 6px !important;
+}
+
+/* Scrollable registered donor list */
+#registeredDonorList {
+  max-height: 160px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 6px !important;
+}
