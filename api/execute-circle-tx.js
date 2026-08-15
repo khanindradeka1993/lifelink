@@ -9,63 +9,44 @@ export default async function handler(req, res) {
   if (!userToken) return res.status(400).json({ error: "Missing userToken" });
 
   try {
-    // 1. Fetch user wallets
-    let walletRes = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
-        "X-User-Token": userToken
-      }
+    // 1. Fetch user wallet
+    const walletRes = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
+      headers: { Authorization: `Bearer ${apiKey}`, "X-User-Token": userToken }
     });
+    const walletData = await walletRes.json();
+    const walletId = walletData.data?.wallets?.[0]?.id;
 
-    let walletData = await walletRes.json();
-    let wallet = walletData.data?.wallets?.[0];
-
-    // 2. If no wallet exists, generate the Wallet Creation challenge
-    if (!wallet) {
+    if (!walletId) {
+      // Return wallet setup challenge if needed
       const initWalletRes = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`,
-          "X-User-Token": userToken
-        },
-        body: JSON.stringify({
-          idempotencyKey: crypto.randomUUID(),
-          blockchains: ["ETH-SEPOLIA"],
-          accountType: "SCA"
-        })
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}`, "X-User-Token": userToken },
+        body: JSON.stringify({ idempotencyKey: crypto.randomUUID(), blockchains: ["ETH-SEPOLIA"], accountType: "SCA" })
       });
-
       const initWalletData = await initWalletRes.json();
-      
-      return res.status(200).json({
-        needsWalletSetup: true,
-        challengeId: initWalletData.data?.challengeId,
-        message: "Wallet setup challenge created. Execute challenge in Circle SDK."
-      });
+      return res.status(200).json({ needsWalletSetup: true, challengeId: initWalletData.data?.challengeId });
     }
 
-    // 3. If wallet exists, proceed with contract transaction execution
+    // 2. Submit contract transaction
     const txRes = await fetch("https://api.circle.com/v1/w3s/user/transactions/contractExecution", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
-        "X-User-Token": userToken
-      },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}`, "X-User-Token": userToken },
       body: JSON.stringify({
         idempotencyKey: crypto.randomUUID(),
-        walletId: wallet.id,
-        contractAddress: contractAddress,
+        walletId,
+        contractAddress,
         abiFunctionSignature: functionSignature,
         abiParameters: (args || []).map(arg => String(arg))
       })
     });
 
     const txData = await txRes.json();
-    return res.status(txRes.status).json(txData);
+    
+    // Return challengeId to frontend SDK execution
+    return res.status(txRes.status).json({
+      challengeId: txData.data?.challengeId,
+      id: txData.data?.id
+    });
 
   } catch (err) {
     return res.status(500).json({ error: err.message });
