@@ -1,4 +1,4 @@
-import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
+import { initiateUserControlledWalletsClient } from "@circle-fin/user-controlled-wallets";
 
 export default async function handler(req, res) {
   // CORS Headers
@@ -17,29 +17,30 @@ export default async function handler(req, res) {
   try {
     const { userToken, functionSignature, contractAddress, args } = req.body;
 
+    if (!userToken) {
+      return res.status(400).json({ error: "Missing userToken for User-Controlled Wallet" });
+    }
+
     if (!contractAddress || !functionSignature) {
       return res.status(400).json({ error: "Missing contract details or signature" });
     }
 
     const apiKey = process.env.CIRCLE_API_KEY;
-    const entitySecret = process.env.CIRCLE_ENTITY_SECRET;
-    const walletId = process.env.CIRCLE_WALLET_ID;
 
-    if (!apiKey || !entitySecret || !walletId) {
+    if (!apiKey) {
       return res.status(500).json({
-        error: "Server configuration missing: Ensure CIRCLE_API_KEY, CIRCLE_ENTITY_SECRET, and CIRCLE_WALLET_ID are set in Vercel settings."
+        error: "Server configuration missing: Ensure CIRCLE_API_KEY is set in Vercel settings."
       });
     }
 
-    // Correct Client Initialization
-    const circleClient = initiateDeveloperControlledWalletsClient({
-      apiKey,
-      entitySecret
+    // Initialize User-Controlled SDK Client
+    const circleClient = initiateUserControlledWalletsClient({
+      apiKey
     });
 
-    // Send Contract Execution Transaction
+    // Create Contract Execution Challenge for User-Controlled Wallet
     const response = await circleClient.createContractExecutionTransaction({
-      walletId,
+      userToken,
       contractAddress,
       abiFunctionSignature: functionSignature,
       abiParameters: args || [],
@@ -51,18 +52,19 @@ export default async function handler(req, res) {
       }
     });
 
-    const txHash = response.data?.txHash || response.data?.id || "Pending";
+    // Return the challengeId to the frontend
+    const challengeId = response.data?.challengeId;
 
     return res.status(200).json({
       success: true,
-      txHash,
+      challengeId,
       data: response.data
     });
 
   } catch (error) {
     console.error("Execute Circle Tx Error:", error);
     return res.status(500).json({
-      error: error.message || "Failed to execute transaction via Circle"
+      error: error.message || "Failed to create transaction challenge via Circle"
     });
   }
 }
