@@ -1,4 +1,4 @@
-import { CircleDeveloperSdk } from "@circle-fin/developer-controlled-wallets";
+import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
 
 export default async function handler(req, res) {
   // CORS Headers
@@ -31,14 +31,14 @@ export default async function handler(req, res) {
       });
     }
 
-    // Initialize Circle SDK
-    const circleDeveloperSdk = new CircleDeveloperSdk({
+    // Correct Client Initialization
+    const circleClient = initiateDeveloperControlledWalletsClient({
       apiKey,
       entitySecret
     });
 
-    // Send Contract Execution Transaction via Circle Developer SDK
-    const response = await circleDeveloperSdk.createContractExecutionTransaction({
+    // Send Contract Execution Transaction
+    const response = await circleClient.createContractExecutionTransaction({
       walletId,
       contractAddress,
       abiFunctionSignature: functionSignature,
