@@ -375,9 +375,11 @@ footer{
   }
 
   footer {
-    width: 100% !important;
-    max-width: none !important;
-    margin-top: 40px !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin-top: 40px !important;
+  grid-column: 1 / -1 !important;
+  box-sizing: border-box !important;
   }
 }
 
