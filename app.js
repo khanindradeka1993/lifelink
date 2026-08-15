@@ -352,7 +352,12 @@ function enableWalletCopy(address) {
   });
 
   const data = await response.json();
-  const sdkInstance = window.circleSdk || (typeof circleSdk !== "undefined" ? circleSdk : (typeof sdk !== "undefined" ? sdk : null));
+    let sdkInstance = window.circleSdk;
+  if (!sdkInstance && typeof W3SSdk !== "undefined") {
+    window.circleSdk = new W3SSdk();
+    sdkInstance = window.circleSdk;
+  }
+   
 
   if (!sdkInstance) {
     throw new Error("Circle SDK instance is not initialized on this page.");
