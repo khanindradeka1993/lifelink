@@ -13,11 +13,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { userToken, functionSignature, contractAddress, args } = req.body;
+    // Read userToken or circle_user_token from request body
+    const userToken = req.body.userToken || req.body.circle_user_token;
+    const { functionSignature, contractAddress, args } = req.body;
 
-    // Validate required User-Controlled Wallet inputs
     if (!userToken || userToken === "undefined" || userToken === "null") {
-      return res.status(400).json({ error: "User session expired or not logged in. Please sign in again." });
+      return res.status(400).json({ error: "Circle session expired. Please sign in again." });
     }
 
     if (!contractAddress || !functionSignature) {
@@ -30,10 +31,10 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "CIRCLE_API_KEY is not configured in Vercel settings." });
     }
 
-    // Reliable UUID generator for Vercel Serverless environment
+    // Generate reliable UUID for Vercel Serverless environment
     const idempotencyKey = 'idx-' + Date.now() + '-' + Math.random().toString(36).substring(2, 11);
 
-    // Circle Web3 Services REST API endpoint for User-Controlled Contract Execution
+    // Call Circle REST API for User-Controlled Contract Execution Challenge
     const response = await fetch("https://api.circle.com/v1/w3s/user/transactions/contractExecution", {
       method: "POST",
       headers: {
@@ -76,4 +77,3 @@ export default async function handler(req, res) {
     });
   }
 }
-
