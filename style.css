@@ -254,225 +254,88 @@ footer{
 }
 
 /* =========================================================
-   LIFELINK: CLEAN FLEX GRID LAYOUT
-   ========================================================= */
-
-@media (min-width: 900px) {
-  /* Main desktop dashboard wrapper */
-  .desktop-dashboard {
-    display: flex !important;
-    gap: 24px !important;
-    align-items: flex-start !important;
-    width: 100% !important;
-  }
-
-  /* Left and Right 50/50 columns */
-  .desktop-dashboard > .left-column,
-  .desktop-dashboard > .right-column {
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 !important;
-    gap: 24px !important;
-    width: 50% !important;
-  }
-
-  /* Card styling inside columns */
-  .desktop-dashboard .card {
-    display: block !important;
-    width: 100% !important;
-    margin-bottom: 0 !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Map size */
-  #map {
-    width: 100% !important;
-    height: 380px !important;
-  }
-}
-
-/* Tablet & Mobile Layout */
-@media (max-width: 899px) {
-  .desktop-dashboard {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 16px !important;
-  }
-  .desktop-dashboard > .left-column,
-  .desktop-dashboard > .right-column {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 16px !important;
-    width: 100% !important;
-  }
-
-  .card {
-    display: block !important;
-    width: 100% !important;
-    margin-bottom: 16px !important;
-  }
-}
 
 /* =========================================================
-   LIFELINK DESKTOP DASHBOARD — FINAL LAYOUT
-   Desktop only. Existing mobile/tablet layout remains intact.
+   LIFELINK — CLEAN RESPONSIVE DASHBOARD
+   Uses the existing HTML:
+   .desktop-dashboard
+     ├── .left-column
+     └── .right-column
+
+   Desktop: two independent vertical columns.
+   Mobile/tablet: one column.
    ========================================================= */
 
+/* ---------- Desktop ---------- */
 @media (min-width: 900px) {
 
-  /* Keep the dashboard centered and readable on large screens */
-  .container{
-    max-width:1600px !important;
+  html,
+  body {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
   }
 
-  /* Top statistics */
-  #dashboard{
-    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-    gap:24px !important;
+  body {
+    margin: 0 !important;
+    padding: 24px !important;
   }
 
-  #dashboard > div{
-    min-height:150px !important;
-  }
-
-  /* Quick actions: 6 equal desktop buttons */
-  .quick-action{
-    min-height:105px !important;
-    display:flex !important;
-    flex-direction:column !important;
-    justify-content:center !important;
-    align-items:center !important;
-    font-size:18px !important;
-  }
-
-  .quick-action small{
-    font-size:18px !important;
-    margin-top:6px !important;
-  }
-
-  /* Main dashboard: two clean columns */
-  .desktop-dashboard{
-    display:grid !important;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
-    gap:28px !important;
-    align-items:start !important;
-  }
-
-  .left-column,
-  .right-column{
-    display:flex !important;
-    flex-direction:column !important;
-    gap:28px !important;
-    width:100% !important;
-  }
-
-  /* Do not force cards to equal height */
-  .desktop-dashboard .card{
-    height:auto !important;
-    min-height:0 !important;
-    display:block !important;
-    width:100% !important;
-    margin:0 !important;
-  }
-
-  /* Give the map a strong dashboard presence */
-  .right-column .card:first-child{
-    padding-bottom:20px !important;
-  }
-
-  #map{
-    height:460px !important;
-    width:100% !important;
-  }
-
-  /* Comfortable desktop form controls */
-  .desktop-dashboard input,
-  .desktop-dashboard select,
-  .desktop-dashboard textarea{
-    font-size:16px !important;
-    padding:14px !important;
-  }
-
-  /* Keep footer visually separated from dashboard */
-  footer{
-    margin-top:40px !important;
-  }
-}
-
-/* Desktop quick-action grid override.
-   The HTML currently uses an inline 3-column grid. */
-@media (min-width: 1200px) {
-  .hero > div[style*="grid-template-columns:repeat(3"]{
-    grid-template-columns:repeat(6,minmax(0,1fr)) !important;
-  }
-}
-
-/* Medium desktop/tablet: keep 3 columns */
-@media (min-width: 900px) and (max-width:1199px) {
-  .hero > div[style*="grid-template-columns:repeat(3"]{
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-  }
-}
-
-/* =========================================================
-   LIFELINK — FINAL DESKTOP DASHBOARD LAYOUT
-   Desktop only — mobile layout remains unchanged
-   ========================================================= */
-
-@media (min-width: 900px) {
-
-  /* Main page width */
   .container {
     width: 100% !important;
-    max-width: 1600px !important;
+    max-width: 1800px !important;
     margin: 0 auto !important;
+    padding: 0 0 50px !important;
+  }
+
+  .hero {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 auto 30px !important;
   }
 
   /* Top statistics */
   #dashboard {
+    width: 100% !important;
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 24px !important;
+    gap: 20px !important;
+    margin: 22px 0 !important;
   }
 
   #dashboard > div {
-    min-height: 150px !important;
-  }
-
-  /* Quick Actions */
-  .quick-action {
-    min-height: 105px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-  }
-
-  .quick-action small {
-    font-size: 18px !important;
-    margin-top: 6px !important;
-  }
-
-  /* MAIN DESKTOP DASHBOARD */
-  .desktop-dashboard {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-    gap: 28px !important;
-    align-items: start !important;
-    width: 100% !important;
-  }
-
-  /* LEFT + RIGHT COLUMNS */
-  .left-column,
-  .right-column {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 28px !important;
     width: 100% !important;
     min-width: 0 !important;
   }
 
-  /* Cards */
+  /* Main dashboard:
+     left and right remain independent vertical columns. */
+  .desktop-dashboard {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    column-gap: 28px !important;
+    align-items: start !important;
+  }
+
+  .desktop-dashboard > .left-column,
+  .desktop-dashboard > .right-column {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 28px !important;
+    align-self: start !important;
+  }
+
+  .desktop-dashboard > .left-column > *,
+  .desktop-dashboard > .right-column > * {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+
   .desktop-dashboard .card {
     width: 100% !important;
     min-width: 0 !important;
@@ -480,6 +343,18 @@ footer{
     min-height: 0 !important;
     margin: 0 !important;
     box-sizing: border-box !important;
+  }
+
+  /* Map */
+  #map {
+    width: 100% !important;
+    height: 460px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Keep the existing 3-column Quick Actions layout on desktop. */
+  .quick-action {
+    min-width: 0 !important;
   }
 
   /* Forms */
@@ -491,26 +366,108 @@ footer{
     box-sizing: border-box !important;
   }
 
-  /* Nearby Donor Map */
-  .right-column #map {
-    width: 100% !important;
-    height: 460px !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Footer */
   footer {
     width: 100% !important;
+    max-width: none !important;
     margin-top: 40px !important;
   }
 }
 
-/* Large desktop: 6 Quick Action buttons in one row */
-@media (min-width: 1200px) {
+/* ---------- Tablet ---------- */
+@media (min-width: 600px) and (max-width: 899px) {
 
-  .hero > div[style*="grid-template-columns:repeat(3"] {
-    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
-    gap: 14px !important;
+  body {
+    padding: 18px !important;
   }
 
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .desktop-dashboard {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .desktop-dashboard > .left-column,
+  .desktop-dashboard > .right-column {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+
+  .desktop-dashboard .card {
+    width: 100% !important;
+  }
+
+  #map {
+    height: 420px !important;
+  }
+}
+
+/* ---------- Phone ---------- */
+@media (max-width: 599px) {
+
+  body {
+    padding: 12px !important;
+  }
+
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-bottom: 35px !important;
+  }
+
+  .hero-logo {
+    width: 90px;
+    height: 90px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+  }
+
+  .hero h3 {
+    font-size: 18px;
+  }
+
+  .heroCard {
+    padding: 18px !important;
+  }
+
+  .heroRight {
+    font-size: 45px;
+  }
+
+  #dashboard {
+    grid-template-columns: 1fr !important;
+  }
+
+  .desktop-dashboard {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+
+  .desktop-dashboard > .left-column,
+  .desktop-dashboard > .right-column {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+
+  .desktop-dashboard .card {
+    width: 100% !important;
+    padding: 18px !important;
+  }
+
+  #map {
+    height: 340px !important;
+  }
 }
