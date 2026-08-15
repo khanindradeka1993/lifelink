@@ -16,24 +16,26 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Circle session expired. Please sign in again." });
     }
 
-    if (!contractAddress || contractAddress.includes("YOUR_REAL_CONTRACT")) {
-      return res.status(400).json({ error: "Please provide a valid EVM contract address." });
+    if (!contractAddress || contractAddress.includes("YOUR_NEW_DEPLOYED")) {
+      return res.status(400).json({ error: "Please pass your valid deployed EVM contract address." });
     }
 
     const apiKey = process.env.CIRCLE_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: "CIRCLE_API_KEY missing in server configuration." });
+      return res.status(500).json({ error: "CIRCLE_API_KEY missing in Vercel settings." });
     }
 
-    // Build standard body for Circle User-Controlled Contract Execution
     const payload = {
       idempotencyKey: crypto.randomUUID(),
-      walletId: walletId || sessionStorage.getItem("circle_wallet_id"),
       contractAddress: contractAddress.trim(),
       abiFunctionSignature: functionSignature.trim(),
       abiParameters: (args || []).map(arg => String(arg)),
       feeLevel: "MEDIUM"
     };
+
+    if (walletId) {
+      payload.walletId = walletId;
+    }
 
     const response = await fetch("https://api.circle.com/v1/w3s/user/transactions/contractExecution", {
       method: "POST",
@@ -49,7 +51,7 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       return res.status(response.status).json({
-        error: data.message || "Circle validation failed",
+        error: data.message || "Circle validation failed.",
         details: data
       });
     }
@@ -64,3 +66,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: error.message || "Internal server error" });
   }
 }
+
