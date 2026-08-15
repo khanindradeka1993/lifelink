@@ -343,69 +343,46 @@ function enableWalletCopy(address) {
 
 async function executeCircleTransaction(abiFunction, contractAddress, args) {
   const userToken = sessionStorage.getItem("circle_user_token");
-
-  if (!userToken) {
-    throw new Error("Circle session expired. Please sign in again.");
-  }
+  if (!userToken) throw new Error("Circle session expired. Please sign in again.");
 
   const response = await fetch("/api/execute-circle-tx", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      userToken,
-      functionSignature: abiFunction,
-      contractAddress,
-      args
-    })
+    body: JSON.stringify({ userToken, functionSignature: abiFunction, contractAddress, args })
   });
 
-  const responseText = await response.text();
+  const data = await response.json();
 
-  let data;
-  try {
-    data = JSON.parse(responseText);
-  } catch (err) {
-    console.error("Non-JSON Server Response:", responseText);
-    throw new Error(`Server error (${response.status}). Check Vercel Function logs.`);
-  }
-
-  // Handle first-time wallet setup challenge
   if (data.needsWalletSetup && data.challengeId) {
     alert("First-time setup required. Opening Circle PIN setup...");
     return new Promise((resolve, reject) => {
-      sdk.execute(data.challengeId, (error, sdkResult) => {
-        if (error) {
-          console.error("SDK Setup Error:", error);
-          reject(new Error("Wallet setup failed: " + (error.message || "Unknown error")));
-          return;
+      sdk.execute(data.challengeId, (error) => {
+        if (error) reject(error);
+        else {
+          alert("Wallet created! Retry action.");
+          resolve(null);
         }
-        alert("Wallet created successfully! Click the button again to execute.");
-        resolve(sdkResult);
       });
     });
   }
 
-  if (!response.ok || data.error) {
-    throw new Error(data.error || `Transaction failed with status ${response.status}`);
-  }
+  const challengeId = data.challengeId || data.data?.challengeId;
+  if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
 
-  // Handle standard execution challenge
-  const challengeId = data.data?.challengeId;
-  if (challengeId) {
-    return new Promise((resolve, reject) => {
-      sdk.execute(challengeId, (error, sdkResult) => {
-        if (error) {
-          console.error("SDK Execution Error:", error);
-          reject(new Error("Transaction execution failed."));
-          return;
-        }
-        resolve(sdkResult);
-      });
+  return new Promise((resolve, reject) => {
+    sdk.execute(challengeId, (error, sdkResult) => {
+      if (error) return reject(error);
+      
+      const finalHash = sdkResult?.txHash || sdkResult?.transactionHash || challengeId;
+      
+      showExplorerButton(finalHash);
+      
+      if (typeof loadDashboardData === "function") loadDashboardData();
+      if (typeof fetchRequests === "function") fetchRequests();
+
+      resolve(finalHash);
     });
-  }
-
-  return data.txHash || data.data?.txHash || data.data?.challengeId || data.challengeId || "";
-
+  });
 }
 
 function showExplorerButton(txHash) {
