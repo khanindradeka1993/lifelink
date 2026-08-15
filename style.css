@@ -345,11 +345,13 @@ footer{
     box-sizing: border-box !important;
   }
 
-   #aiSection {
+   #hospitalSection,
+#hospitalSection + .card,
+#aiSection {
   height: 217px !important;
   min-height: 217px !important;
   box-sizing: border-box !important;
-   }
+}
 
    /* Map */
   #map {
