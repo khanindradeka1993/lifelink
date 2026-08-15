@@ -1,7 +1,7 @@
 // ==========================================
 // 1. CONTRACT ADDRESSES & RPC CONFIGURATION
 // ==========================================
-const CONTRACT_ADDRESS = "0x3e4c9Ec9598A507707d08Fd847Fe9909F2bb91AB";
+const CONTRACT_ADDRESS = "0x80C0E143602DfDaD980adF1ae3cfF9B9153Aa2b7";
 const HEALTHCARE_CONTRACT_ADDRESS = "0xE32313e236784f57a7479a830E4a9c0ce22d0761";
 const EMERGENCY_CONTRACT_ADDRESS = "0x8d1183f802b5688e5244a493Ea965e856150c2Ef";
 const PAYMENT_CONTRACT_ADDRESS = "0x0CA164a6FE7FfEA47945761748D77cd0aa16Afb1";
@@ -491,15 +491,16 @@ async function loadDonors() {
     if (!activeContract) return;
 
     const donors = await activeContract.getDonors();
-
-    if (typeof totalDonors !== "undefined" && totalDonors) totalDonors.innerText = donors.length;
-    if (typeof dashboardDonors !== "undefined" && dashboardDonors) dashboardDonors.innerText = donors.length;
+const availableDonors = donors.filter(donor => donor.available);
+    
+    if (typeof totalDonors !== "undefined" && totalDonors) totalDonors.innerText = availableDonors.length;
+    if (typeof dashboardDonors !== "undefined" && dashboardDonors) dashboardDonors.innerText = availableDonors.length;
 
     const targetList = document.getElementById("registeredDonorsList") || donorList;
 
     if (targetList) {
       targetList.innerHTML = "";
-      donors.forEach((donor) => {
+      availableDonors.forEach((donor) => {
         targetList.innerHTML += `
         <div style="border:1px solid #334155;background:#1E293B;color:#FFFFFF;padding:12px;margin-top:10px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.2);">
           <strong style="color:#ef4444;">🩸 ${donor.bloodGroup}</strong> - ${donor.name}<br>
