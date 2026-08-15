@@ -332,7 +332,7 @@ function enableWalletCopy(address) {
   }
 
   copyBtn.style.display = "inline-block";
-  copyBtn.onclick = () => {async
+  copyBtn.onclick = async () => {
     navigator.clipboard.writeText(addrToCopy);
     copyBtn.innerText = "✅ Copied!";
     setTimeout(() => {
@@ -368,7 +368,6 @@ function enableWalletCopy(address) {
           resolve(null);
         }
       });
-    });
   }
 
   const challengeId = data.challengeId || data.data?.challengeId;
