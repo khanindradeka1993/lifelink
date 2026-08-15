@@ -306,8 +306,15 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script type="module" src="/src/circle-wallet.js"></script>
-<script type="module" src="app.js"></script>
+<script src="/src/circle-wallet.js"></script>
+<script>
+  if (typeof W3SSdk !== 'undefined') {
+    window.circleSdk = new W3SSdk({
+      appSettings: { appId: "YOUR_CIRCLE_APP_ID" }
+    });
+  }
+</script>
+<script src="app.js"></script>
 
 </body>
 </html>
