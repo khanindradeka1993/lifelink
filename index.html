@@ -211,27 +211,6 @@
 <div class="dashboard-card">📈 <b>Total SOS Created:</b> <span id="totalSOS">0</span></div>
         </div>
 
-    <!-- Health Profile -->
-    <div class="card">
-      <h2>🏥 Health Profile</h2>
-      <p>Store your essential medical information securely.</p>
-      <input type="text" id="profileName" placeholder="Full Name">
-      <select id="profileBloodGroup">
-        <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
-        <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
-      </select>
-      <label for="profileDOB">📅 Date of Birth</label>
-      <input type="date" id="profileDOB">
-      <select id="profileGender">
-        <option>Male</option><option>Female</option><option>Other</option>
-      </select>
-      <input type="text" id="profileEmergency" placeholder="Emergency Contact">
-      <input type="text" id="profileAllergies" placeholder="Medical History (e.g. Diabetes, Hypertension)">
-      <textarea id="profileAddress" placeholder="Address" rows="3"></textarea>
-      <button id="saveProfileBtn">💾 Save Health Profile</button>
-      <div id="profileStatus"></div>
-    </div>
-
     <!-- AI Assistant -->
     <div id="aiSection" class="card">
       <h2>🤖 AI Emergency Assistant</h2>
@@ -290,8 +269,28 @@
             <p><b>🏠 Address:</b> <span id="viewAddress"></span></p>
           </div>
         </div>
-      </div>
 
+      <!-- Health Profile -->
+<div class="card">
+  <h2>🏥 Health Profile</h2>
+  <p>Store your essential medical information securely.</p>
+  <input type="text" id="profileName" placeholder="Full Name">
+  <select id="profileBloodGroup">
+    <option>A+</option><option>A-</option><option>B+</option>
+    <option>B-</option><option>AB+</option><option>AB-</option>
+    <option>O+</option><option>O-</option>
+  </select>
+  <label for="profileDOB">📅 Date of Birth</label>
+  <input type="date" id="profileDOB">
+  <select id="profileGender">
+    <option>Male</option><option>Female</option><option>Other</option>
+  </select>
+  <input type="text" id="profileEmergency" placeholder="Emergency Contact">
+  <input type="text" id="profileAllergies" placeholder="Medical History (e.g. Diabetes, Hypertension)">
+  <textarea id="profileAddress" placeholder="Address" rows="3"></textarea>
+  <button id="saveProfileBtn">💾 Save Health Profile</button>
+  <div id="profileStatus"></div>
+</div>
     </div>
 
     <footer style="margin-top:40px; padding:30px 20px; background:linear-gradient(135deg,#0f172a,#1e293b); color:white; text-align:center; border-radius:22px; box-shadow:0 10px 30px rgba(0,0,0,.25);">
