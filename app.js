@@ -404,10 +404,12 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
     });
   }
 
-  return data.txHash || data;
+  return data.txHash || data.data?.txHash || data.data?.challengeId || data.challengeId || "";
+
 }
 
 function showExplorerButton(txHash) {
+  txHash = typeof txHash === 'object' ? (txHash.txHash || txHash.challengeId || "") : txHash;
   const explorer = `${EXPLORER}/tx/${txHash}`;
   let card = document.getElementById("txCard");
 
