@@ -1,22 +1,18 @@
 import crypto from 'crypto';
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const { userToken, contractAddress, functionSignature, args } = req.body;
   const apiKey = process.env.CIRCLE_API_KEY;
 
   if (!userToken || !contractAddress || !functionSignature) {
-    return res.status(400).json({ 
-      error: "Missing required parameters (userToken, contractAddress, functionSignature)" 
-    });
+    return res.status(400).json({ error: "Missing required parameters" });
   }
 
   try {
-    // 1. Automatically fetch the logged-in user's active wallet
-    const walletRes = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
+    // 1. Fetch user wallets
+    let walletRes = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -25,18 +21,36 @@ export default async function handler(req, res) {
       }
     });
 
-    const walletData = await walletRes.json();
-    
-    if (!walletRes.ok || !walletData.data?.wallets?.[0]) {
-      return res.status(walletRes.status || 400).json({ 
-        error: "Could not retrieve user wallet from Circle", 
-        details: walletData 
+    let walletData = await walletRes.json();
+    let walletId = walletData.data?.wallets?.[0]?.id;
+
+    // 2. Auto-create wallet if none exists for this user session
+    if (!walletId) {
+      const createRes = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`,
+          "X-User-Token": userToken
+        },
+        body: JSON.stringify({
+          idempotencyKey: crypto.randomUUID(),
+          blockchains: ["ETH-SEPOLIA"], // Or MATIC-AMOY
+          accountType: "SCA"
+        })
+      });
+      const createData = await createRes.json();
+      walletId = createData.data?.wallets?.[0]?.id;
+    }
+
+    if (!walletId) {
+      return res.status(400).json({ 
+        error: "User has no wallet initialized. Please complete wallet setup in Circle SDK.",
+        details: walletData
       });
     }
 
-    const walletId = walletData.data.wallets[0].id;
-
-    // 2. Execute transaction dynamically for ANY target smart contract
+    // 3. Execute contract transaction
     const txRes = await fetch("https://api.circle.com/v1/w3s/user/transactions/contractExecution", {
       method: "POST",
       headers: {
@@ -49,7 +63,7 @@ export default async function handler(req, res) {
         walletId: walletId,
         contractAddress: contractAddress,
         abiFunctionSignature: functionSignature,
-        abiParameters: args || []
+        abiParameters: (args || []).map(arg => String(arg))
       })
     });
 
