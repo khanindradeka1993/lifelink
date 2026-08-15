@@ -367,10 +367,10 @@ function enableWalletCopy(address) {
           alert("Wallet created! Retry action.");
           resolve(null);
         }
-      });
-  }
-
-  const challengeId = data.challengeId || data.data?.challengeId;
+  });
+    }
+  
+                       const challengeId = data.challengeId || data.data?.challengeId;
   if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
 
   return new Promise((resolve, reject) => {
