@@ -479,3 +479,14 @@ footer{
   overflow-x: hidden !important;
   padding-right: 6px;
 }
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr !important;
+  }
+
+  .left-column,
+  .right-column {
+    width: 100%;
+  }
+}
