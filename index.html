@@ -306,14 +306,24 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="src/circle-wallet.js"></script>
-<script>
-  if (typeof W3SSdk !== 'undefined') {
-    window.circleSdk = new W3SSdk();
-  }
-</script>
-<script src="app.js"></script>
 
+<!-- Load Circle SDK and initialize it safely -->
+<script src="https://assets.circle.com/w3s/sdk-web.js"></script>
+<script src="src/circle-wallet.js"></script>
+
+<script>
+  function initCircleSDK() {
+    if (typeof W3SSdk !== 'undefined') {
+      window.circleSdk = new W3SSdk();
+    } else if (typeof circleSDK !== 'undefined') {
+      window.circleSdk = new circleSDK.W3SSdk();
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', initCircleSDK);
+</script>
+
+<script src="app.js"></script>
   
 </body>
 </html>
