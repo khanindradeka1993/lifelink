@@ -343,7 +343,7 @@ function enableWalletCopy(address) {
 
 async function executeCircleTransaction(abiFunction, contractAddress, args) {
   const userToken = sessionStorage.getItem("circle_user_token");
-  
+
   if (!userToken) {
     throw new Error("Circle session expired. Please sign in again.");
   }
@@ -369,11 +369,42 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
     throw new Error(`Server error (${response.status}). Check Vercel Function logs.`);
   }
 
+  // Handle first-time wallet setup challenge
+  if (data.needsWalletSetup && data.challengeId) {
+    alert("First-time setup required. Opening Circle PIN setup...");
+    return new Promise((resolve, reject) => {
+      sdk.execute(data.challengeId, (error, sdkResult) => {
+        if (error) {
+          console.error("SDK Setup Error:", error);
+          reject(new Error("Wallet setup failed: " + (error.message || "Unknown error")));
+          return;
+        }
+        alert("Wallet created successfully! Click the button again to execute.");
+        resolve(sdkResult);
+      });
+    });
+  }
+
   if (!response.ok || data.error) {
     throw new Error(data.error || `Transaction failed with status ${response.status}`);
   }
 
-  return data.txHash;
+  // Handle standard execution challenge
+  const challengeId = data.data?.challengeId;
+  if (challengeId) {
+    return new Promise((resolve, reject) => {
+      sdk.execute(challengeId, (error, sdkResult) => {
+        if (error) {
+          console.error("SDK Execution Error:", error);
+          reject(new Error("Transaction execution failed."));
+          return;
+        }
+        resolve(sdkResult);
+      });
+    });
+  }
+
+  return data.txHash || data;
 }
 
 function showExplorerButton(txHash) {
