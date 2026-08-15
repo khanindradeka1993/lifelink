@@ -346,7 +346,8 @@ footer{
   }
 
    #aiSection {
-  min-height: 465px !important;
+  height: 217px !important;
+  min-height: 217px !important;
   box-sizing: border-box !important;
    }
 
