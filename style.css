@@ -471,3 +471,11 @@ footer{
     height: 340px !important;
   }
 }
+
+/* Registered Donors - fixed scrollable list */
+#registeredDonorsList {
+  max-height: 520px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 6px;
+}
