@@ -360,10 +360,9 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
     sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
   }
 
-  let sdkInstance = window.circleSdk || (typeof circleSdk !== "undefined" ? circleSdk : null);
-
-  if (!sdkInstance) {
-    const appId = import.meta.env ? import.meta.env.VITE_CIRCLE_APP_ID : process.env.VITE_CIRCLE_APP_ID;
+  let sdkInstance = window.circleSdk;
+  if (!sdkInstance && typeof W3SSdk !== "undefined") {
+    const appId = import.meta.env?.VITE_CIRCLE_APP_ID || process.env.VITE_CIRCLE_APP_ID;
     if (appId) {
       sdkInstance = new W3SSdk({ appSettings: { appId } });
       await sdkInstance.getDeviceId();
@@ -383,44 +382,33 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
     });
   }
 
-  if (data.needsWalletSetup && data.challengeId) {
+  const challengeId = data.challengeId || data.data?.challengeId;
+
+  if (data.needsWalletSetup && challengeId) {
     alert("First-time setup required. Opening Circle PIN setup...");
     return new Promise((resolve, reject) => {
-      sdkInstance.execute(data.challengeId, (error, result) => {
-        if (error) {
-          reject(error);
-        } else {
-          // Clear stale encryption keys so the next click fetches fresh credentials
-          sessionStorage.removeItem("circle_encryption_key");
-          sessionStorage.removeItem("circle_user_token");
-          
-          alert("Wallet & PIN created successfully! Please sign in or tap the action button again to execute your transaction.");
-          resolve(null);
+      sdkInstance.execute(challengeId, async (error) => {
+        if (error) return reject(error);
+        
+        alert("Wallet & PIN created successfully! Processing your transaction...");
+        try {
+          const retryRes = await executeCircleTransaction(abiFunction, contractAddress, args);
+          resolve(retryRes);
+        } catch (e) {
+          reject(e);
         }
       });
     });
   }
 
-  const challengeId = data.challengeId || data.data?.challengeId;
-  if (!challengeId) throw new Erreturnror(data.error || "Failed to create transaction challenge.");
+  if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
 
-     return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     sdkInstance.execute(challengeId, (error, sdkResult) => {
       if (error) return reject(error);
 
-      // Print everything the SDK returns so you can inspect it in DevTools
-      console.log("--- DEBUG CIRCLE SDK RESULT ---");
-      console.log("error:", error);
-      console.log("sdkResult:", sdkResult);
-      console.log("JSON stringified:", JSON.stringify(sdkResult, null, 2));
-
-      // Safe fallback so it doesn't crash even if properties are missing
-      const finalHash = 
-        sdkResult?.txHash || 
-        sdkResult?.transactionHash || 
-        sdkResult?.data?.txHash || 
-        sdkResult?.data?.transactionHash || 
-        challengeId;
+      const resObj = sdkResult || {};
+      const finalHash = resObj.txHash || resObj.transactionHash || resObj.data?.txHash || resObj.data?.transactionHash || challengeId;
 
       showExplorerButton(finalHash);
 
@@ -433,6 +421,7 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
     });
   });
 }
+
 
 function showExplorerButton(txHash) {
   txHash = typeof txHash === 'object' ? (txHash.txHash || txHash.challengeId || "") : txHash;
