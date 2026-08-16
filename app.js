@@ -10,6 +10,7 @@ const PAYMENT_CONTRACT_ADDRESS = "0x0CA164a6FE7FfEA47945761748D77cd0aa16Afb1";
 const EXPLORER = "https://testnet.arcscan.app";
 const ARC_RPC_URL = "https://rpc.testnet.arc.network";
 
+
 // ==========================================
 // 2. ABIs
 // ==========================================
