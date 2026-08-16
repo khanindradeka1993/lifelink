@@ -355,10 +355,10 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
 
   const data = await response.json();
 
-    // 1. Initialize SDK Instance first
+  // 1. Initialize SDK Instance first
   let sdkInstance = window.circleSdk;
   if (!sdkInstance || typeof sdkInstance === "undefined") {
-        const appId = import.meta.env?.VITE_CIRCLE_APP_ID || process.env.VITE_CIRCLE_APP_ID;
+    const appId = import.meta.env?.VITE_CIRCLE_APP_ID || process.env.VITE_CIRCLE_APP_ID;
     if (appId) {
       const SdkConstructor = window.W3sSdk || window.CircleW3sSdk || window.Cw3Sdk;
       if (!SdkConstructor) {
@@ -367,7 +367,10 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
       sdkInstance = new SdkConstructor({ appSettings: { appId } });
       await sdkInstance.getDeviceId();
       window.circleSdk = sdkInstance;
+    } else {
+      throw new Error("Missing VITE_CIRCLE_APP_ID environment variable.");
     }
+  }
 
   // 2. Prioritize fresh keys returned from the backend response data, fallback to sessionStorage
   const activeUserToken = data.userToken || sessionStorage.getItem("circle_user_token");
@@ -382,12 +385,12 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
     });
   }
 
-
   const challengeId = data.challengeId || data.data?.challengeId;
 
-if (data.needsWalletSetup && challengeId) {
-  alert("First-time setup required. Opening Circle PIN setup...");
-  
+  if (data.needsWalletSetup && challengeId) {
+    alert("First-time setup required. Opening Circle PIN setup...");
+  }
+
   if (data.userToken && data.encryptionKey) {
     sessionStorage.setItem("circle_user_token", data.userToken);
     sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
@@ -398,42 +401,43 @@ if (data.needsWalletSetup && challengeId) {
   }
 
   return new Promise((resolve, reject) => {
-    sdkInstance.execute(challengeId, async (error) => {
-        if (error) return reject(error);
-        
-        alert("Wallet & PIN created successfully! Processing your transaction...");
-        try {
-          const txResponse = await fetch("/api/execute-circle-tx", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userToken, functionSignature: abiFunction, contractAddress, args, skipSetup: true })
-          });
-          const txData = await txResponse.json();
-          const newChallengeId = txData.challengeId || txData.data?.challengeId;
+    sdkInstance.execute(challengeId, async (error, sdkResult) => {
+      if (error) return reject(error);
 
-          if (!newChallengeId) throw new Error(txData.error || "Failed to create transaction challenge after setup.");
+      alert("Wallet & PIN created successfully! Processing your transaction...");
+      try {
+        const txResponse = await fetch("/api/execute-circle-tx", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userToken, functionSignature: abiFunction, contractAddress, args, skipSetup: true })
+        });
+        const txData = await txResponse.json();
+        const newChallengeId = txData.challengeId || txData.data?.challengeId;
 
-          sdkInstance.execute(newChallengeId, (txErr, sdkResult) => {
-            if (txErr) return reject(txErr);
+        if (!newChallengeId) throw new Error(txData.error || "Failed to create transaction challenge after setup.");
 
-            const resObj = sdkResult || {};
-            const finalHash = resObj.txHash || resObj.transactionHash || resObj.data?.txHash || resObj.data?.transactionHash || newChallengeId;
+        sdkInstance.execute(newChallengeId, (txErr, txSdkResult) => {
+          if (txErr) return reject(txErr);
 
-            showExplorerButton(finalHash);
+          const resObj = txSdkResult || {};
+          const finalHash = resObj.transactionHash || resObj.data?.txHash || resObj.data?.tx?.transactionHash;
 
-            setTimeout(async () => {
-              if (typeof loadDashboardData === "function") await loadDashboardData();
-              if (typeof fetchRequests === "function") await fetchRequests();
-            }, 4000);
+          showExplorerButton(finalHash);
 
-            resolve(finalHash);
-          });
-        } catch (e) {
-          reject(e);
-        }
-      });
+          setTimeout(async () => {
+            if (typeof loadDashboardData === "function") await loadDashboardData();
+            if (typeof fetchRequests === "function") await fetchRequests();
+          }, 4000);
+
+          resolve(finalHash);
+        });
+      } catch (err) {
+        reject(err);
+      }
     });
-  }
+  });
+}
+
 
   if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
 
