@@ -386,11 +386,15 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
   if (data.needsWalletSetup && data.challengeId) {
     alert("First-time setup required. Opening Circle PIN setup...");
     return new Promise((resolve, reject) => {
-      sdkInstance.execute(data.challengeId, (error) => {
+      sdkInstance.execute(data.challengeId, (error, result) => {
         if (error) {
           reject(error);
         } else {
-          alert("Wallet created! Please tap the button again to execute the transaction.");
+          // Clear stale encryption keys so the next click fetches fresh credentials
+          sessionStorage.removeItem("circle_encryption_key");
+          sessionStorage.removeItem("circle_user_token");
+          
+          alert("Wallet & PIN created successfully! Please sign in or tap the action button again to execute your transaction.");
           resolve(null);
         }
       });
