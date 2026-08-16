@@ -393,8 +393,10 @@ function enableWalletCopy(address) {
       
       showExplorerButton(finalHash);
       
-      if (typeof loadDashboardData === "function") loadDashboardData();
-      if (typeof fetchRequests === "function") fetchRequests();
+      setTimeout(async () => {
+  if (typeof loadDashboardData === "function") await loadDashboardData();
+  if (typeof fetchRequests === "function") await fetchRequests();
+}, 4000);
 
       resolve(finalHash);
     });
