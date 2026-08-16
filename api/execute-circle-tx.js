@@ -1,142 +1,86 @@
-import crypto from "crypto";
+async function executeCircleTransaction(functionSignature, contractAddress, args) {
+  const userToken = sessionStorage.getItem("circle_user_token");
+  if (!userToken) throw new Error("User session expired. Please sign in again.");
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  // 1. Call backend to get a fresh challenge AND a fresh encryption key
+  const response = await fetch("/api/execute-circle-tx", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userToken, contractAddress, functionSignature, args })
+  });
 
-  const { userToken, contractAddress, functionSignature, args, skipSetup } = req.body;
-  const apikey = process.env.CIRCLE_API_KEY;
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Failed to initialize transaction");
 
-  if (!userToken || userToken === "undefined") {
-    return res.status(400).json({ error: "Missing or invalid user token. Please sign in again." });
+  // 2. CRITICAL: Save the fresh encryption key returned by the backend
+  if (data.userToken && data.encryptionKey) {
+    sessionStorage.setItem("circle_user_token", data.userToken);
+    sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
   }
 
-  try {
-    let freshUserToken = userToken;
-    let freshEncryptionKey = null;
-
-    try {
-      const tokenRes = await fetch("https://api.circle.com/v1/w3s/users/token", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}` },
-        body: JSON.stringify({ userToken })
-      });
-      const tokenData = await tokenRes.json();
-      if (tokenData.data) {
-        freshUserToken = tokenData.data.userToken || userToken;
-        freshEncryptionKey = tokenData.data.encryptionKey || null;
-      }
-    } catch (e) {
-      console.warn("Token refresh warning:", e);
-    }
-
-    async function getWallet(token) {
-      try {
-        const res = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
-          headers: { "Authorization": `Bearer ${apikey}`, "X-User-Token": token }
-        });
-        const data = await res.json();
-        return data.data?.wallets?.[0];
-      } catch (err) {
-        return null;
-      }
-    }
-
-    let wallet = await getWallet(freshUserToken);
-
-    // Only trigger PIN setup if skipSetup is NOT requested and wallet doesn't exist
-    if (!wallet && !skipSetup) {
-      const pinRes = await fetch(`https://api.circle.com/v1/w3s/user/pin`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },
-        body: JSON.stringify({ idempotencyKey: crypto.randomUUID() })
-      });
-      const pinData = await pinRes.json();
-      const challengeId = pinData.data?.challengeId;
-
-      if (pinRes.ok && challengeId) {
-        return res.status(200).json({
-          needsWalletSetup: true,
-          challengeId: challengeId,
-          userToken: freshUserToken,
-          encryptionKey: freshEncryptionKey
-        });
-      }
-    }
-
-    // If skipSetup is true or we bypassed setup, ensure wallet set & wallet are created
-    if (!wallet) {
-      let walletSetId = null;
-      const wsRes = await fetch("https://api.circle.com/v1/w3s/user/walletSets", {
-        headers: { "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken }
-      });
-      const wsData = await wsRes.json();
-      walletSetId = wsData.data?.walletSets?.[0]?.id;
-
-      if (!walletSetId) {
-        const createWsRes = await fetch("https://api.circle.com/v1/w3s/user/walletSets", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },
-          body: JSON.stringify({ idempotencyKey: crypto.randomUUID(), name: "LifeLink Wallet Set" })
-        });
-        const createWsData = await createWsRes.json();
-        walletSetId = createWsData.data?.walletSet?.id;
-      }
-
-      if (walletSetId) {
-        await fetch("https://api.circle.com/v1/w3s/user/wallets", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },
-          body: JSON.stringify({
-            idempotencyKey: crypto.randomUUID(),
-            walletSetId: walletSetId,
-            blockchains: ["ETH-SEPOLIA"],
-            accountType: "SCA"
-          })
-        });
-      }
-
-      // Wait for wallet creation propagation
-      let attempts = 0;
-      while (!wallet && attempts < 6) {
-        attempts++;
-        await new Promise(r => setTimeout(r, 2500));
-        wallet = await getWallet(freshUserToken);
-      }
-    }
-
-    if (!wallet) {
-      return res.status(400).json({ error: "Failed to create or locate user wallet. Please try again." });
-    }
-
-    // Execute contract transaction challenge
-    const txRes = await fetch(`https://api.circle.com/v1/w3s/user/transactions/contractExecution`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },
-      body: JSON.stringify({
-        idempotencyKey: crypto.randomUUID(),
-        walletId: wallet.id,
-        contractAddress: contractAddress,
-        abiFunctionSignature: functionSignature,
-        abiParameters: args || [],
-        feeLevel: "MEDIUM"
-      })
-    });
-
-    const txData = await txRes.json();
-
-    if (!txRes.ok || !txData.data?.challengeId) {
-      return res.status(400).json({
-        error: txData.message || txData.error || "Failed to execute transaction"
-      });
-    }
-
-    return res.status(200).json({
-      challengeId: txData.data.challengeId,
-      userToken: freshUserToken,
-      encryptionKey: freshEncryptionKey
-    });
-
-  } catch (err) {
-    return res.status(500).json({ error: err.message || "Internal server error" });
+  // 3. Initialize Circle SDK with the verified fresh key
+  if (!window.circleSdk) {
+    const { W3sSdk } = window.W3sSdk || {};
+    if (!W3sSdk) throw new Error("Circle SDK failed to load.");
+    window.circleSdk = new W3sSdk();
+    window.circleSdk.setAppSettings({ appId: "YOUR_CIRCLE_APP_ID" });
   }
+
+  window.circleSdk.setAuthentication({
+    userToken: sessionStorage.getItem("circle_user_token"),
+    encryptionKey: sessionStorage.getItem("circle_encryption_key")
+  });
+
+  // 4. Handle setup challenge or execute transaction challenge
+  const challengeId = data.challengeId;
+
+  if (data.needsWalletSetup) {
+    alert("First-time setup required. Opening Circle PIN setup...");
+    return new Promise((resolve, reject) => {
+      window.circleSdk.execute(challengeId, async (error) => {
+        if (error) return reject(error);
+
+        alert("Wallet & PIN created successfully! Processing your transaction...");
+        setTimeout(async () => {
+          try {
+            // Retry transaction with skipSetup: true now that wallet exists
+            const retryRes = await fetch("/api/execute-circle-tx", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ userToken: sessionStorage.getItem("circle_user_token"), contractAddress, functionSignature, args, skipSetup: true })
+            });
+            const retryData = await retryRes.json();
+            if (!retryRes.ok) throw new Error(retryData.error);
+
+            if (retryData.encryptionKey) {
+              sessionStorage.setItem("circle_encryption_key", retryData.encryptionKey);
+              window.circleSdk.setAuthentication({
+                userToken: sessionStorage.getItem("circle_user_token"),
+                encryptionKey: retryData.encryptionKey
+              });
+            }
+
+            window.circleSdk.execute(retryData.challengeId, (err, resObj) => {
+              if (err) return reject(err);
+              const txHash = resObj?.txHash || resObj?.transactionHash;
+              showExplorerButton(txHash);
+              resolve(txHash);
+            });
+          } catch (e) {
+            reject(e);
+          }
+        }, 3000);
+      });
+    });
+  }
+
+  // Execute standard transaction challenge
+  return new Promise((resolve, reject) => {
+    window.circleSdk.execute(challengeId, (err, resObj) => {
+      if (err) return reject(err);
+      const txHash = resObj?.txHash || resObj?.transactionHash;
+      showExplorerButton(txHash);
+      resolve(txHash);
+    });
+  });
 }
