@@ -359,14 +359,15 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
   let sdkInstance = window.circleSdk;
   if (!sdkInstance || typeof sdkInstance === "undefined") {
     const appId = import.meta.env?.VITE_CIRCLE_APP_ID || process.env.VITE_CIRCLE_APP_ID;
-    if (appId) {
-      sdkInstance = new W3sSdk({ appSettings: { appId } });
+        if (appId) {
+      const SdkConstructor = window.W3sSdk || window.CircleW3sSdk || window.Cw3Sdk;
+      if (!SdkConstructor) {
+        throw new Error("Circle SDK script not loaded on page.");
+      }
+      sdkInstance = new SdkConstructor({ appSettings: { appId } });
       await sdkInstance.getDeviceId();
       window.circleSdk = sdkInstance;
-    } else {
-      throw new Error("Missing VITE_CIRCLE_APP_ID environment variable.");
-    }
-  }
+        }
 
   // 2. Prioritize fresh keys returned from the backend response data, fallback to sessionStorage
   const activeUserToken = data.userToken || sessionStorage.getItem("circle_user_token");
