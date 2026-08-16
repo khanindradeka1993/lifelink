@@ -21,18 +21,24 @@ export async function loginWithCircleGoogle() {
       throw new Error("Failed to fetch Circle device token from server endpoint");
     }
 
-    const { deviceToken, deviceEncryptionKey } = await response.json();
+    const data = await response.json();
 
-    circleSdkInstance.performLogin(
-      {
-        provider: "google",
-        clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
-      },
-      {
-        deviceToken,
-        deviceEncryptionKey,
-      }
-    );
+// Store both keys so app.js can use them for SDK challenges
+sessionStorage.setItem("circle_user_token", data.userToken);
+if (data.encryptionKey) {
+  sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
+}
+
+circleSdkInstance.performLogin(
+  {
+    provider: "google",
+    clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
+  },
+  {
+    deviceToken: data.deviceToken || data.userToken,
+    deviceEncryptionKey: data.deviceEncryptionKey || data.encryptionKey,
+  }
+);
   } catch (err) {
     console.error("Circle Login Error:", err);
     alert("Circle Login Error: " + err.message);
