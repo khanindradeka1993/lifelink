@@ -14,6 +14,7 @@ export default async function handler(req, res) {
     let freshUserToken = userToken;
     let freshEncryptionKey = null;
 
+    // 1. Always acquire a fresh user token and encryption key from Circle
     try {
       const tokenRes = await fetch("https://api.circle.com/v1/w3s/users/token", {
         method: "POST",
@@ -43,6 +44,7 @@ export default async function handler(req, res) {
 
     let wallet = await getWallet(freshUserToken);
 
+    // 2. If no wallet exists and setup isn't skipped, request PIN setup
     if (!wallet && !skipSetup) {
       const pinRes = await fetch(`https://api.circle.com/v1/w3s/user/pin`, {
         method: "POST",
@@ -62,6 +64,7 @@ export default async function handler(req, res) {
       }
     }
 
+    // 3. Ensure Wallet Set and Wallet exist
     if (!wallet) {
       let walletSetId = null;
       const wsRes = await fetch("https://api.circle.com/v1/w3s/user/walletSets", {
@@ -105,6 +108,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Failed to create or locate user wallet. Please try again." });
     }
 
+    // 4. Execute contract transaction challenge
     const txRes = await fetch(`https://api.circle.com/v1/w3s/user/transactions/contractExecution`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },
