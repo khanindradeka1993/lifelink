@@ -28,11 +28,16 @@ export async function loginWithCircleGoogle() {
       sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
     }
 
-    const deviceIdResult = await circleSdkInstance.getDeviceId();
-    const deviceToken = deviceIdResult?.deviceToken;
+    let deviceToken = "";
+    try {
+      const deviceIdResult = await circleSdkInstance.getDeviceId();
+      deviceToken = deviceIdResult?.deviceToken;
+    } catch (err) {
+      console.warn("getDeviceId SDK warning, fallback active:", err);
+    }
 
     if (!deviceToken) {
-      throw new Error("Failed to generate device token from Circle SDK.");
+      deviceToken = data.userToken;
     }
 
     circleSdkInstance.performLogin(
