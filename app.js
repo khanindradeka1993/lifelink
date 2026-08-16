@@ -352,11 +352,21 @@ function enableWalletCopy(address) {
   });
 
   const data = await response.json();
-  const sdkInstance = window.circleSdk || (typeof circleSdk !== "undefined" ? circleSdk : (typeof sdk !== "undefined" ? sdk : null));
+  let sdkInstance = window.circleSdk || (typeof circleSdk !== "undefined" ? circleSdk : null);
 
-  if (!sdkInstance) {
-    throw new Error("Circle SDK instance is not initialized on this page.");
+if (!sdkInstance) {
+  // Dynamically initialize SDK if not found on window
+  const appId = import.meta.env ? import.meta.env.VITE_CIRCLE_APP_ID : process.env.VITE_CIRCLE_APP_ID;
+  
+  if (window.W3SSdk && appId) {
+    sdkInstance = new window.W3SSdk({ appSettings: { appId } });
+    await sdkInstance.getDeviceId();
+    window.circleSdk = sdkInstance;
+  } else {
+    throw new Error("Circle SDK instance is not initialized and could not be auto-created.");
   }
+}
+
 
   if (data.needsWalletSetup && data.challengeId) {
     alert("First-time setup required. Opening Circle PIN setup...");
