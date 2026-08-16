@@ -383,7 +383,6 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
     throw new Error("Circle Web SDK failed to load.");
   }
 
-  // Authenticate session parameters into the SDK
   sdkInstance.setAuthentication({
     userToken: data.userToken || userToken,
     encryptionKey: data.encryptionKey || encryptionKey
@@ -402,7 +401,6 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
       }
 
       try {
-        // 4. Post-setup transaction completion call if required
         const txResponse = await fetch("/api/execute-circle-tx", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -416,7 +414,8 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
         });
 
         const txData = await txResponse.json();
-        const finalHash = txData.transactionHash || txData.data?.txHash || sdkResult?.data?.txHash;
+        const resObj = sdkResult || {};
+        const finalHash = txData.transactionHash || txData.data?.txHash || resObj.transactionHash || resObj.data?.txHash;
 
         if (typeof showExplorerButton === "function" && finalHash) {
           showExplorerButton(finalHash);
@@ -431,28 +430,6 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
       } catch (err) {
         reject(err);
       }
-    });
-  });
-}
-
-
-  if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
-
-  return new Promise((resolve, reject) => {
-    sdkInstance.execute(challengeId, (error, sdkResult) => {
-      if (error) return reject(error);
-
-      const resObj = sdkResult || {};
-      const finalHash = resObj.txHash || resObj.transactionHash || resObj.data?.txHash || resObj.data?.transactionHash || challengeId;
-
-      showExplorerButton(finalHash);
-
-      setTimeout(async () => {
-        if (typeof loadDashboardData === "function") await loadDashboardData();
-        if (typeof fetchRequests === "function") await fetchRequests();
-      }, 4000);
-
-      resolve(finalHash);
     });
   });
 }
