@@ -358,8 +358,8 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
     // 1. Initialize SDK Instance first
   let sdkInstance = window.circleSdk;
   if (!sdkInstance || typeof sdkInstance === "undefined") {
-    const appId = import.meta.env?.VITE_CIRCLE_APP_ID || process.env.VITE_CIRCLE_APP_ID;
-        if (appId) {
+        const appId = import.meta.env?.VITE_CIRCLE_APP_ID || process.env.VITE_CIRCLE_APP_ID;
+    if (appId) {
       const SdkConstructor = window.W3sSdk || window.CircleW3sSdk || window.Cw3Sdk;
       if (!SdkConstructor) {
         throw new Error("Circle SDK script not loaded on page.");
@@ -367,7 +367,7 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
       sdkInstance = new SdkConstructor({ appSettings: { appId } });
       await sdkInstance.getDeviceId();
       window.circleSdk = sdkInstance;
-        }
+    }
 
   // 2. Prioritize fresh keys returned from the backend response data, fallback to sessionStorage
   const activeUserToken = data.userToken || sessionStorage.getItem("circle_user_token");
