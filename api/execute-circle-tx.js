@@ -3,7 +3,7 @@ import crypto from "crypto";
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { userToken, contractAddress, functionSignature, args, skipSetup } = req.body;
+  const { userToken, contractAddress, functionSignature, args } = req.body;
   const apikey = process.env.CIRCLE_API_KEY;
 
   if (!userToken || userToken === "undefined") {
@@ -26,70 +26,32 @@ export default async function handler(req, res) {
         freshEncryptionKey = tokenData.data.encryptionKey || null;
       }
     } catch (e) {
-      console.warn("Could not generate fresh session encryption key:", e);
+      console.warn("Token refresh notice:", e);
     }
 
-    // Helper function to fetch wallets with a built-in retry buffer for propagation delay
-    async function fetchUserWallet(token, retries = 3, delay = 1500) {
-      for (let i = 0; i < retries; i++) {
-        const walletRes = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
-          headers: { "Authorization": `Bearer ${apikey}`, "X-User-Token": token }
-        });
-        const walletData = await walletRes.json();
-        const foundWallet = walletData.data?.wallets?.[0];
-        if (foundWallet) return foundWallet;
-        if (i < retries - 1) await new Promise(r => setTimeout(r, delay));
-      }
-      return null;
+    // Helper to fetch user wallets
+    async function getWallet(token) {
+      const res = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
+        headers: { "Authorization": `Bearer ${apikey}`, "X-User-Token": token }
+      });
+      const data = await res.json();
+      return data.data?.wallets?.[0];
     }
 
-    let wallet = await fetchUserWallet(freshUserToken);
+    let wallet = await getWallet(freshUserToken);
 
-    // If no wallet exists, check if we need to create a wallet set + wallet automatically
+    // If no wallet exists, check if user needs PIN setup challenge first
     if (!wallet) {
-      try {
-        // 1. Create a Wallet Set first if none exists
-        const walletSetRes = await fetch("https://api.circle.com/v1/w3s/user/walletSets", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },
-          body: JSON.stringify({ idempotencyKey: crypto.randomUUID(), name: "LifeLink User Wallet Set" })
-        });
-        const walletSetData = await walletSetRes.json();
-        const walletSetId = walletSetData.data?.walletSet?.id;
-
-        if (walletSetId) {
-          // 2. Create a Developer-Controlled / User-Controlled Wallet inside that set
-          await fetch("https://api.circle.com/v1/w3s/user/wallets", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },
-            body: JSON.stringify({
-              idempotencyKey: crypto.randomUUID(),
-              walletSetId: walletSetId,
-              blockchains: ["ETH-SEPOLIA"], // Adjust to your active chain if needed
-              accountType: "SCA"
-            })
-          });
-        }
-      } catch (err) {
-        console.warn("Wallet set/wallet creation step notice:", err);
-      }
-    }
-
-    // Re-check wallet after auto-provisioning attempt
-    wallet = await fetchUserWallet(freshUserToken, 3, 2000);
-
-    // If still no wallet and skipSetup is allowed, trigger PIN setup challenge
-    if (!wallet && !skipSetup) {
       try {
         const pinRes = await fetch(`https://api.circle.com/v1/w3s/user/pin`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },
           body: JSON.stringify({ idempotencyKey: crypto.randomUUID() })
         });
-
         const pinData = await pinRes.json();
         const challengeId = pinData.data?.challengeId;
 
+        // If a PIN challenge is returned, prompt the user for PIN setup
         if (pinRes.ok && challengeId) {
           return res.status(200).json({
             needsWalletSetup: true,
@@ -99,12 +61,49 @@ export default async function handler(req, res) {
           });
         }
       } catch (e) {
-        console.warn("PIN setup creation notice:", e);
+        console.warn("PIN setup check notice:", e);
       }
     }
 
+    // If still no wallet after PIN setup (or user already had PIN), auto-create Wallet Set & Wallet
     if (!wallet) {
-      return res.status(400).json({ error: "No wallet found for this user. Please complete PIN setup or refresh." });
+      let walletSetId = null;
+      const wsRes = await fetch("https://api.circle.com/v1/w3s/user/walletSets", {
+        headers: { "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken }
+      });
+      const wsData = await wsRes.json();
+      walletSetId = wsData.data?.walletSets?.[0]?.id;
+
+      if (!walletSetId) {
+        const createWsRes = await fetch("https://api.circle.com/v1/w3s/user/walletSets", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },
+          body: JSON.stringify({ idempotencyKey: crypto.randomUUID(), name: "LifeLink Wallet Set" })
+        });
+        const createWsData = await createWsRes.json();
+        walletSetId = createWsData.data?.walletSet?.id;
+      }
+
+      if (walletSetId) {
+        await fetch("https://api.circle.com/v1/w3s/user/wallets", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },
+          body: JSON.stringify({
+            idempotencyKey: crypto.randomUUID(),
+            walletSetId: walletSetId,
+            blockchains: ["ETH-SEPOLIA"],
+            accountType: "SCA"
+          })
+        });
+      }
+
+      // Brief pause for blockchain/wallet registration propagation
+      await new Promise(r => setTimeout(r, 2000));
+      wallet = await getWallet(freshUserToken);
+    }
+
+    if (!wallet) {
+      return res.status(400).json({ error: "Failed to create or locate user wallet. Please try again." });
     }
 
     // Execute smart contract transaction
@@ -132,8 +131,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       challengeId: txData.data.challengeId,
       userToken: freshUserToken,
-      encryptionKey: freshEncryptionKey,
-      id: txData.data.id
+      encryptionKey: freshEncryptionKey
     });
 
   } catch (err) {
