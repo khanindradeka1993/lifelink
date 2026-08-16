@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
@@ -6,23 +6,28 @@ export default async function handler(req, res) {
   const { userToken, contractAddress, functionSignature, args } = req.body;
   const apiKey = process.env.CIRCLE_API_KEY;
 
-  if (!userToken) return res.status(400).json({ error: "Missing userToken" });
+  if (!userToken || userToken === "undefined") {
+    return res.status(400).json({ error: "Missing or invalid userToken. Please sign in again." });
+  }
 
   try {
     // 1. Fetch user wallets
     const walletRes = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
-      headers: { Authorization: `Bearer ${apiKey}`, "X-User-Token": userToken }
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "X-User-Token": userToken
+      }
     });
     const walletData = await walletRes.json();
-    const wallet = walletData.data?.wallets?.[0];
+    const wallet = walletData?.data?.wallets?.[0];
 
-    // 2. If no wallet exists, create PIN setup challenge for initial wallet creation
+    // 2. If no wallet exists, create PIN setup challenge
     if (!wallet) {
       const pinRes = await fetch("https://api.circle.com/v1/w3s/user/pin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
+          "Authorization": `Bearer ${apiKey}`,
           "X-User-Token": userToken
         },
         body: JSON.stringify({
@@ -31,7 +36,7 @@ export default async function handler(req, res) {
       });
 
       const pinData = await pinRes.json();
-      const challengeId = pinData.data?.challengeId || pinData.challengeId;
+      const challengeId = pinData?.data?.challengeId || pinData?.challengeId;
 
       return res.status(200).json({
         needsWalletSetup: true,
@@ -40,12 +45,12 @@ export default async function handler(req, res) {
       });
     }
 
-    // 3. Wallet exists -> Execute transaction
+    // 3. Wallet exists -> Execute smart contract transaction
     const txRes = await fetch("https://api.circle.com/v1/w3s/user/transactions/contractExecution", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        "Authorization": `Bearer ${apiKey}`,
         "X-User-Token": userToken
       },
       body: JSON.stringify({
@@ -58,7 +63,7 @@ export default async function handler(req, res) {
     });
 
     const txData = await txRes.json();
-    const challengeId = txData.data?.challengeId || txData.challengeId;
+    const challengeId = txData?.data?.challengeId || txData?.challengeId;
 
     if (!txRes.ok || !challengeId) {
       return res.status(400).json({
@@ -66,8 +71,7 @@ export default async function handler(req, res) {
       });
     }
 
-    return res.status(200).json({ challengeId, id: txData.data?.id });
-
+    return res.status(200).json({ challengeId, id: txData?.data?.id });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
