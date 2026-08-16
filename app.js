@@ -332,7 +332,7 @@ function enableWalletCopy(address) {
   }
 
   copyBtn.style.display = "inline-block";
-  copyBtn.onclick = async () => {
+  copyBtn.onclick = () => {async
     navigator.clipboard.writeText(addrToCopy);
     copyBtn.innerText = "✅ Copied!";
     setTimeout(() => {
@@ -352,12 +352,7 @@ function enableWalletCopy(address) {
   });
 
   const data = await response.json();
-    let sdkInstance = window.circleSdk;
-  if (!sdkInstance && typeof W3SSdk !== "undefined") {
-    window.circleSdk = new W3SSdk();
-    sdkInstance = window.circleSdk;
-  }
-   
+  const sdkInstance = window.circleSdk || (typeof circleSdk !== "undefined" ? circleSdk : (typeof sdk !== "undefined" ? sdk : null));
 
   if (!sdkInstance) {
     throw new Error("Circle SDK instance is not initialized on this page.");
@@ -372,10 +367,11 @@ function enableWalletCopy(address) {
           alert("Wallet created! Retry action.");
           resolve(null);
         }
-  });
-    }
-  
-                       const challengeId = data.challengeId || data.data?.challengeId;
+      });
+    });
+  }
+
+  const challengeId = data.challengeId || data.data?.challengeId;
   if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
 
   return new Promise((resolve, reject) => {
@@ -1002,7 +998,7 @@ if (requestBtn) {
         alert("Circle SOS Failed: " + err.message);
       }
       return;
-    }
+                             }
 
     try {
       const tx = await contract.createRequest(patientName, bloodGroup, hospital, city, contact);
@@ -1321,3 +1317,4 @@ document.querySelectorAll(".quick-action").forEach(button => {
     }
   });
 });
+        
