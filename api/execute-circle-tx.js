@@ -14,6 +14,7 @@ export default async function handler(req, res) {
     let freshUserToken = userToken;
     let freshEncryptionKey = null;
 
+    // 1. Always generate a fresh session token & encryption key pair from Circle
     try {
       const tokenRes = await fetch("https://api.circle.com/v1/w3s/users/token", {
         method: "POST",
@@ -26,10 +27,9 @@ export default async function handler(req, res) {
         freshEncryptionKey = tokenData.data.encryptionKey || null;
       }
     } catch (e) {
-      console.warn("Token refresh notice:", e);
+      console.warn("Token refresh warning:", e);
     }
 
-    // Helper to fetch user wallets
     async function getWallet(token) {
       const res = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
         headers: { "Authorization": `Bearer ${apikey}`, "X-User-Token": token }
@@ -40,32 +40,27 @@ export default async function handler(req, res) {
 
     let wallet = await getWallet(freshUserToken);
 
-    // If no wallet exists, check if user needs PIN setup challenge first
+    // 2. If no wallet, trigger PIN/User setup challenge
     if (!wallet) {
-      try {
-        const pinRes = await fetch(`https://api.circle.com/v1/w3s/user/pin`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },
-          body: JSON.stringify({ idempotencyKey: crypto.randomUUID() })
-        });
-        const pinData = await pinRes.json();
-        const challengeId = pinData.data?.challengeId;
+      const pinRes = await fetch(`https://api.circle.com/v1/w3s/user/pin`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },
+        body: JSON.stringify({ idempotencyKey: crypto.randomUUID() })
+      });
+      const pinData = await pinRes.json();
+      const challengeId = pinData.data?.challengeId;
 
-        // If a PIN challenge is returned, prompt the user for PIN setup
-        if (pinRes.ok && challengeId) {
-          return res.status(200).json({
-            needsWalletSetup: true,
-            challengeId: challengeId,
-            userToken: freshUserToken,
-            encryptionKey: freshEncryptionKey
-          });
-        }
-      } catch (e) {
-        console.warn("PIN setup check notice:", e);
+      if (pinRes.ok && challengeId) {
+        return res.status(200).json({
+          needsWalletSetup: true,
+          challengeId: challengeId,
+          userToken: freshUserToken,
+          encryptionKey: freshEncryptionKey // Crucial for SDK execution
+        });
       }
     }
 
-    // If still no wallet after PIN setup (or user already had PIN), auto-create Wallet Set & Wallet
+    // 3. Auto-create wallet set & wallet if missing
     if (!wallet) {
       let walletSetId = null;
       const wsRes = await fetch("https://api.circle.com/v1/w3s/user/walletSets", {
@@ -97,16 +92,15 @@ export default async function handler(req, res) {
         });
       }
 
-      // Brief pause for blockchain/wallet registration propagation
       await new Promise(r => setTimeout(r, 2000));
       wallet = await getWallet(freshUserToken);
     }
 
     if (!wallet) {
-      return res.status(400).json({ error: "Failed to create or locate user wallet. Please try again." });
+      return res.status(400).json({ error: "Failed to create or locate user wallet." });
     }
 
-    // Execute smart contract transaction
+    // 4. Execute smart contract transaction challenge
     const txRes = await fetch(`https://api.circle.com/v1/w3s/user/transactions/contractExecution`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },
@@ -131,7 +125,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       challengeId: txData.data.challengeId,
       userToken: freshUserToken,
-      encryptionKey: freshEncryptionKey
+      encryptionKey: freshEncryptionKey // Crucial for SDK execution
     });
 
   } catch (err) {
