@@ -387,18 +387,19 @@ function enableWalletCopy(address) {
   }
 
 
-  if (data.needsWalletSetup && data.challengeId) {
+    if (data.needsWalletSetup && data.challengeId) {
     alert("First-time setup required. Opening Circle PIN setup...");
     return new Promise((resolve, reject) => {
       sdkInstance.execute(data.challengeId, (error) => {
-        if (error) reject(error);
-       return else {
-          alert("Wallet created! Retry action.");
+        if (error) {
+          reject(error);
+        } else {
+          alert("Wallet created! Please tap the button again to execute the transaction.");
           resolve(null);
         }
       });
     });
-  }
+    }
 
   const challengeId = data.challengeId || data.data?.challengeId;
   if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
