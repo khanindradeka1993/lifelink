@@ -345,94 +345,96 @@ function enableWalletCopy(address) {
 
 async function executeCircleTransaction(abiFunction, contractAddress, args) {
   const userToken = sessionStorage.getItem("circle_user_token");
-  if (!userToken) throw new Error("Circle session expired. Please sign in again.");
+  const encryptionKey = sessionStorage.getItem("circle_encryption_key");
 
+  if (!userToken) {
+    throw new Error("Circle session expired. Please sign in again.");
+  }
+
+  // 1. Call backend to initiate the transaction challenge
   const response = await fetch("/api/execute-circle-tx", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userToken, functionSignature: abiFunction, contractAddress, args })
+    body: JSON.stringify({ 
+      userToken, 
+      functionSignature: abiFunction, 
+      contractAddress, 
+      args 
+    })
   });
 
   const data = await response.json();
-
-  if (data.userToken && data.encryptionKey) {
-    sessionStorage.setItem("circle_user_token", data.userToken);
-    sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
+  
+  if (!response.ok || data.error) {
+    throw new Error(data.error || "Failed to initialize transaction on server.");
   }
 
+  // 2. Ensure SDK instance is ready and authenticated
   let sdkInstance = window.circleSdk;
-  if (!sdkInstance && typeof W3SSdk !== "undefined") {
+  if (!sdkInstance && window.W3sSdk) {
     const appId = import.meta.env?.VITE_CIRCLE_APP_ID || process.env.VITE_CIRCLE_APP_ID;
     if (appId) {
-      sdkInstance = new W3SSdk({ appSettings: { appId } });
-      await sdkInstance.getDeviceId();
+      sdkInstance = new window.W3sSdk({ appSettings: { appId } });
       window.circleSdk = sdkInstance;
-    } else {
-      throw new Error("Missing VITE_CIRCLE_APP_ID environment variable.");
     }
   }
 
-  const activeUserToken = sessionStorage.getItem("circle_user_token");
-  const activeEncKey = sessionStorage.getItem("circle_encryption_key");
-
-  if (activeUserToken && activeEncKey) {
-    sdkInstance.setAuthentication({
-      userToken: activeUserToken,
-      encryptionKey: activeEncKey
-    });
+  if (!sdkInstance) {
+    throw new Error("Circle Web SDK failed to load.");
   }
+
+  // Authenticate session parameters into the SDK
+  sdkInstance.setAuthentication({
+    userToken: data.userToken || userToken,
+    encryptionKey: data.encryptionKey || encryptionKey
+  });
 
   const challengeId = data.challengeId || data.data?.challengeId;
-
-if (data.needsWalletSetup && challengeId) {
-  alert("First-time setup required. Opening Circle PIN setup...");
-  
-  if (data.userToken && data.encryptionKey) {
-    sessionStorage.setItem("circle_user_token", data.userToken);
-    sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
-    sdkInstance.setAuthentication({
-      userToken: data.userToken,
-      encryptionKey: data.encryptionKey
-    });
+  if (!challengeId) {
+    throw new Error("No challenge ID returned from Circle API.");
   }
 
+  // 3. Execute challenge via Circle SDK
   return new Promise((resolve, reject) => {
-    sdkInstance.execute(challengeId, async (error) => {
-        if (error) return reject(error);
-        
-        alert("Wallet & PIN created successfully! Processing your transaction...");
-        try {
-          const txResponse = await fetch("/api/execute-circle-tx", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userToken, functionSignature: abiFunction, contractAddress, args, skipSetup: true })
-          });
-          const txData = await txResponse.json();
-          const newChallengeId = txData.challengeId || txData.data?.challengeId;
+    sdkInstance.execute(challengeId, async (error, sdkResult) => {
+      if (error) {
+        return reject(error);
+      }
 
-          if (!newChallengeId) throw new Error(txData.error || "Failed to create transaction challenge after setup.");
+      try {
+        // 4. Post-setup transaction completion call if required
+        const txResponse = await fetch("/api/execute-circle-tx", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            userToken: data.userToken || userToken, 
+            functionSignature: abiFunction, 
+            contractAddress, 
+            args, 
+            skipSetup: true 
+          })
+        });
 
-          sdkInstance.execute(newChallengeId, (txErr, sdkResult) => {
-            if (txErr) return reject(txErr);
+        const txData = await txResponse.json();
+        const finalHash = txData.transactionHash || txData.data?.txHash || sdkResult?.data?.txHash;
 
-            const resObj = sdkResult || {};
-            const finalHash = resObj.txHash || resObj.transactionHash || resObj.data?.txHash || resObj.data?.transactionHash || newChallengeId;
-
-            showExplorerButton(finalHash);
-
-            setTimeout(async () => {
-              if (typeof loadDashboardData === "function") await loadDashboardData();
-              if (typeof fetchRequests === "function") await fetchRequests();
-            }, 4000);
-
-            resolve(finalHash);
-          });
-        } catch (e) {
-          reject(e);
+        if (typeof showExplorerButton === "function" && finalHash) {
+          showExplorerButton(finalHash);
         }
-      });
+
+        setTimeout(async () => {
+          if (typeof loadDashboardData === "function") await loadDashboardData();
+          if (typeof fetchRequests === "function") await fetchRequests();
+        }, 4000);
+
+        resolve(finalHash);
+      } catch (err) {
+        reject(err);
+      }
     });
+  });
 }
+
 
   if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
 
