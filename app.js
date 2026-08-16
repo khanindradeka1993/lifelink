@@ -343,7 +343,7 @@ function enableWalletCopy(address) {
   };
 }
 
- async function executeCircleTransaction(abiFunction, contractAddress, args) {
+async function executeCircleTransaction(abiFunction, contractAddress, args) {
   const userToken = sessionStorage.getItem("circle_user_token");
   if (!userToken) throw new Error("Circle session expired. Please sign in again.");
 
@@ -353,9 +353,8 @@ function enableWalletCopy(address) {
     body: JSON.stringify({ userToken, functionSignature: abiFunction, contractAddress, args })
   });
 
-    const data = await response.json();
+  const data = await response.json();
 
-  // 1. Save fresh session tokens returned from transaction creation
   if (data.userToken && data.encryptionKey) {
     sessionStorage.setItem("circle_user_token", data.userToken);
     sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
@@ -365,7 +364,6 @@ function enableWalletCopy(address) {
 
   if (!sdkInstance) {
     const appId = import.meta.env ? import.meta.env.VITE_CIRCLE_APP_ID : process.env.VITE_CIRCLE_APP_ID;
-
     if (appId) {
       sdkInstance = new W3SSdk({ appSettings: { appId } });
       await sdkInstance.getDeviceId();
@@ -375,7 +373,6 @@ function enableWalletCopy(address) {
     }
   }
 
-  // 2. Always apply latest credentials to SDK instance before execution
   const activeUserToken = sessionStorage.getItem("circle_user_token");
   const activeEncKey = sessionStorage.getItem("circle_encryption_key");
 
@@ -386,8 +383,7 @@ function enableWalletCopy(address) {
     });
   }
 
-
-      if (data.needsWalletSetup && data.challengeId) {
+  if (data.needsWalletSetup && data.challengeId) {
     alert("First-time setup required. Opening Circle PIN setup...");
     return new Promise((resolve, reject) => {
       sdkInstance.execute(data.challengeId, (error) => {
@@ -399,27 +395,28 @@ function enableWalletCopy(address) {
         }
       });
     });
-      }
+  }
 
   const challengeId = data.challengeId || data.data?.challengeId;
   if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
 
-   return new Promise((resolve, reject) => {
-  sdkInstance.execute(challengeId, (error, sdkResult) => {
-    if (error) return reject(error);
+  return new Promise((resolve, reject) => {
+    sdkInstance.execute(challengeId, (error, sdkResult) => {
+      if (error) return reject(error);
 
-    const finalHash = sdkResult?.txHash || sdkResult?.transactionHash || challengeId;
+      const finalHash = sdkResult?.txHash || sdkResult?.transactionHash || challengeId;
 
-    showExplorerButton(finalHash);
+      showExplorerButton(finalHash);
 
-    setTimeout(async () => {
-      if (typeof loadDashboardData === "function") await loadDashboardData();
-      if (typeof fetchRequests === "function") await fetchRequests();
-    }, 4000);
+      setTimeout(async () => {
+        if (typeof loadDashboardData === "function") await loadDashboardData();
+        if (typeof fetchRequests === "function") await fetchRequests();
+      }, 4000);
 
-    resolve(finalHash);
+      resolve(finalHash);
+    });
   });
-});
+}
 
 function showExplorerButton(txHash) {
   txHash = typeof txHash === 'object' ? (txHash.txHash || txHash.challengeId || "") : txHash;
