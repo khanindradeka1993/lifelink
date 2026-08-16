@@ -387,7 +387,7 @@ function enableWalletCopy(address) {
   }
 
 
-    if (data.needsWalletSetup && data.challengeId) {
+      if (data.needsWalletSetup && data.challengeId) {
     alert("First-time setup required. Opening Circle PIN setup...");
     return new Promise((resolve, reject) => {
       sdkInstance.execute(data.challengeId, (error) => {
@@ -399,7 +399,7 @@ function enableWalletCopy(address) {
         }
       });
     });
-    }
+      }
 
   const challengeId = data.challengeId || data.data?.challengeId;
   if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
