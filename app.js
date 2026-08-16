@@ -392,7 +392,7 @@ function enableWalletCopy(address) {
     return new Promise((resolve, reject) => {
       sdkInstance.execute(data.challengeId, (error) => {
         if (error) reject(error);
-        else {
+       return else {
           alert("Wallet created! Retry action.");
           resolve(null);
         }
@@ -403,24 +403,22 @@ function enableWalletCopy(address) {
   const challengeId = data.challengeId || data.data?.challengeId;
   if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
 
-  return new Promise((resolve, reject) => {
-    sdkInstance.execute(challengeId, (error, sdkResult) => {
-      if (error) return reject(error);
-      
-      const finalHash = sdkResult?.txHash || sdkResult?.transactionHash || challengeId;
-      
-      showExplorerButton(finalHash);
-      
-      setTimeout(async () => {
-  if (typeof loadDashboardData === "function") await loadDashboardData();
-  if (typeof fetchRequests === "function") await fetchRequests();
-}, 4000);
+   return new Promise((resolve, reject) => {
+  sdkInstance.execute(challengeId, (error, sdkResult) => {
+    if (error) return reject(error);
 
-      resolve(finalHash);
-    });
+    const finalHash = sdkResult?.txHash || sdkResult?.transactionHash || challengeId;
+
+    showExplorerButton(finalHash);
+
+    setTimeout(async () => {
+      if (typeof loadDashboardData === "function") await loadDashboardData();
+      if (typeof fetchRequests === "function") await fetchRequests();
+    }, 4000);
+
+    resolve(finalHash);
   });
- }
-
+});
 
 function showExplorerButton(txHash) {
   txHash = typeof txHash === 'object' ? (txHash.txHash || txHash.challengeId || "") : txHash;
