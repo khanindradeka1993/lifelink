@@ -360,11 +360,22 @@ function enableWalletCopy(address) {
     const appId = import.meta.env ? import.meta.env.VITE_CIRCLE_APP_ID : process.env.VITE_CIRCLE_APP_ID;
     
     if (appId) {
-      sdkInstance = new W3SSdk({ appSettings: { appId } });
-      await sdkInstance.getDeviceId();
-      window.circleSdk = sdkInstance;
-    } else {
-      throw new Error("Missing VITE_CIRCLE_APP_ID environment variable.");
+  sdkInstance = new W3SSdk({ appSettings: { appId } });
+  
+  const userToken = sessionStorage.getItem("circle_user_token");
+  const encKey = sessionStorage.getItem("circle_encryption_key");
+
+  if (userToken && encKey) {
+    sdkInstance.setAuthentication({
+      userToken: userToken,
+      encryptionKey: encKey
+    });
+  }
+
+  await sdkInstance.getDeviceId();
+  window.circleSdk = sdkInstance;
+} else {
+  throw new Error("Missing VITE_CIRCLE_APP_ID environment variable.");
     }
   }
 
