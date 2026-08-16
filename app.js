@@ -1,3 +1,5 @@
+import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
+
 // ==========================================
 // 1. CONTRACT ADDRESSES & RPC CONFIGURATION
 // ==========================================
@@ -352,20 +354,19 @@ function enableWalletCopy(address) {
   });
 
   const data = await response.json();
-  let sdkInstance = window.circleSdk || (typeof circleSdk !== "undefined" ? circleSdk : null);
+    let sdkInstance = window.circleSdk || (typeof circleSdk !== "undefined" ? circleSdk : null);
 
-if (!sdkInstance) {
-  // Dynamically initialize SDK if not found on window
-  const appId = import.meta.env ? import.meta.env.VITE_CIRCLE_APP_ID : process.env.VITE_CIRCLE_APP_ID;
-  
-  if (window.W3SSdk && appId) {
-    sdkInstance = new window.W3SSdk({ appSettings: { appId } });
-    await sdkInstance.getDeviceId();
-    window.circleSdk = sdkInstance;
-  } else {
-    throw new Error("Circle SDK instance is not initialized and could not be auto-created.");
+  if (!sdkInstance) {
+    const appId = import.meta.env ? import.meta.env.VITE_CIRCLE_APP_ID : process.env.VITE_CIRCLE_APP_ID;
+    
+    if (appId) {
+      sdkInstance = new W3SSdk({ appSettings: { appId } });
+      await sdkInstance.getDeviceId();
+      window.circleSdk = sdkInstance;
+    } else {
+      throw new Error("Missing VITE_CIRCLE_APP_ID environment variable.");
+    }
   }
-}
 
 
   if (data.needsWalletSetup && data.challengeId) {
