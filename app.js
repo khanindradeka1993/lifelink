@@ -355,36 +355,6 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
 
   const data = await response.json();
 
-  // 1. Initialize SDK Instance first
-  let sdkInstance = window.circleSdk;
-  if (!sdkInstance || typeof sdkInstance === "undefined") {
-    const appId = import.meta.env?.VITE_CIRCLE_APP_ID || process.env.VITE_CIRCLE_APP_ID;
-    if (appId) {
-      const SdkConstructor = window.W3sSdk || window.CircleW3sSdk || window.Cw3Sdk;
-      if (!SdkConstructor) {
-        throw new Error("Circle SDK script not loaded on page.");
-      }
-      sdkInstance = new SdkConstructor({ appSettings: { appId } });
-      await sdkInstance.getDeviceId();
-      window.circleSdk = sdkInstance;
-    } else {
-      throw new Error("Missing VITE_CIRCLE_APP_ID environment variable.");
-    }
-  }
-
-  // 2. Prioritize fresh keys returned from the backend response data, fallback to sessionStorage
-  const activeUserToken = data.userToken || sessionStorage.getItem("circle_user_token");
-  const activeEncryptionKey = data.encryptionKey || sessionStorage.getItem("circle_encryption_key");
-
-  if (activeUserToken && activeEncryptionKey) {
-    sessionStorage.setItem("circle_user_token", activeUserToken);
-    sessionStorage.setItem("circle_encryption_key", activeEncryptionKey);
-    sdkInstance.setAuthentication({
-      userToken: activeUserToken,
-      encryptionKey: activeEncryptionKey
-    });
-  }
-
   const challengeId = data.challengeId || data.data?.challengeId;
 
   if (data.needsWalletSetup && challengeId) {
