@@ -398,13 +398,25 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
   }
 
   const challengeId = data.challengeId || data.data?.challengeId;
-  if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
+  if (!challengeId) throw new Erreturnror(data.error || "Failed to create transaction challenge.");
 
-  return new Promise((resolve, reject) => {
+     return new Promise((resolve, reject) => {
     sdkInstance.execute(challengeId, (error, sdkResult) => {
       if (error) return reject(error);
 
-      const finalHash = sdkResult?.txHash || sdkResult?.transactionHash || challengeId;
+      // Print everything the SDK returns so you can inspect it in DevTools
+      console.log("--- DEBUG CIRCLE SDK RESULT ---");
+      console.log("error:", error);
+      console.log("sdkResult:", sdkResult);
+      console.log("JSON stringified:", JSON.stringify(sdkResult, null, 2));
+
+      // Safe fallback so it doesn't crash even if properties are missing
+      const finalHash = 
+        sdkResult?.txHash || 
+        sdkResult?.transactionHash || 
+        sdkResult?.data?.txHash || 
+        sdkResult?.data?.transactionHash || 
+        challengeId;
 
       showExplorerButton(finalHash);
 
