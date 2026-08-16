@@ -1,84 +1,142 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      error: "Method not allowed",
+    });
   }
 
   try {
-    const apiKey = process.env.CIRCLE_API_KEY;
+    const apiKey =
+      process.env.CIRCLE_API_KEY;
+
     if (!apiKey) {
-      return res.status(500).json({ error: 'CIRCLE_API_KEY is missing in Vercel environment variables.' });
-    }
-
-    const { userId } = req.body || {};
-    const userIdentifier = userId || `google_user_${Date.now()}`;
-
-    // Step 1: Create or fetch User in Circle W3S
-    await fetch('https://api.circle.com/v1/w3s/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({ userId: userIdentifier })
-    });
-
-    // Step 2: Request User Session Token
-    const tokenResponse = await fetch('https://api.circle.com/v1/w3s/users/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({ userId: userIdentifier })
-    });
-
-    const tokenData = await tokenResponse.json();
-
-    if (!tokenResponse.ok) {
-      return res.status(tokenResponse.status).json({
-        error: tokenData.message || tokenData.error || 'Failed to create Circle user token'
+      return res.status(500).json({
+        error:
+          "CIRCLE_API_KEY is missing in Vercel environment variables.",
       });
     }
 
-    const userToken = tokenData.data?.userToken;
-    const encryptionKey = tokenData.data?.encryptionKey;
+    const { deviceId } =
+      req.body || {};
 
-    // Step 3: Check for existing User Wallets
-    let walletAddress = null;
-    try {
-      const walletResponse = await fetch('https://api.circle.com/v1/w3s/wallets', {
-        method: 'GET',
+    if (!deviceId) {
+      return res.status(400).json({
+        error:
+          "Missing Circle deviceId.",
+      });
+    }
+
+    /*
+     * Circle requires a UUID v4
+     * idempotency key.
+     */
+    const idempotencyKey =
+      crypto.randomUUID();
+
+    const requestId =
+      crypto.randomUUID();
+
+    /*
+     * Create a DEVICE-BOUND token
+     * for social login.
+     */
+    const response = await fetch(
+      "https://api.circle.com/v1/w3s/users/social/token",
+      {
+        method: "POST",
+
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'X-User-Token': userToken
-        }
-      });
+          "Content-Type": "application/json",
 
-      const walletData = await walletResponse.json();
-      if (walletResponse.ok && walletData.data?.wallets?.length > 0) {
-        walletAddress = walletData.data.wallets[0].address;
+          Authorization:
+            `Bearer ${apiKey}`,
+
+          "X-Request-Id":
+            requestId,
+        },
+
+        body: JSON.stringify({
+          idempotencyKey,
+          deviceId,
+        }),
       }
-    } catch (wErr) {
-      console.log('No wallet address returned yet:', wErr);
+    );
+
+    const data =
+      await response.json();
+
+    console.log(
+      "Circle social token HTTP status:",
+      response.status
+    );
+
+    if (!response.ok) {
+      console.error(
+        "Circle social token error:",
+        data
+      );
+
+      return res
+        .status(response.status)
+        .json({
+          error:
+            data.message ||
+            data.error ||
+            "Circle failed to create device token.",
+          code: data.code,
+        });
     }
 
-    // Step 4: Fallback deterministic EVM address generation if Circle returns no wallets
-    if (!walletAddress) {
-      const hash = crypto.createHash('sha256').update(userIdentifier).digest('hex');
-      walletAddress = '0x' + hash.substring(0, 40);
+    /*
+     * Circle response:
+     *
+     * {
+     *   data: {
+     *     deviceToken,
+     *     deviceEncryptionKey
+     *   }
+     * }
+     */
+    const deviceToken =
+      data.data?.deviceToken;
+
+    const deviceEncryptionKey =
+      data.data?.deviceEncryptionKey;
+
+    if (!deviceToken) {
+      return res.status(500).json({
+        error:
+          "Circle response did not contain deviceToken.",
+      });
     }
 
+    if (!deviceEncryptionKey) {
+      return res.status(500).json({
+        error:
+          "Circle response did not contain deviceEncryptionKey.",
+      });
+    }
+
+    /*
+     * Return ONLY the device credentials
+     * required by the Web SDK.
+     */
     return res.status(200).json({
-      userToken: userToken,
-      encryptionKey: encryptionKey,
-      userId: userIdentifier,
-      walletAddress: walletAddress
+      deviceToken,
+      deviceEncryptionKey,
     });
-
   } catch (error) {
-    console.error('Circle Token API Error:', error);
-    return res.status(500).json({ error: error.message || 'Internal server error' });
+    console.error(
+      "Circle Token API Error:",
+      error
+    );
+
+    return res.status(500).json({
+      error:
+        error?.message ||
+        "Internal server error.",
+    });
   }
 }
