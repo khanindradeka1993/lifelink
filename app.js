@@ -384,7 +384,7 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
 
   const challengeId = data.challengeId || data.data?.challengeId;
 
-  if (data.needsWalletSetup && challengeId) {
+    if (data.needsWalletSetup && challengeId) {
     alert("First-time setup required. Opening Circle PIN setup...");
     return new Promise((resolve, reject) => {
       sdkInstance.execute(challengeId, async (error) => {
@@ -392,35 +392,38 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
         
         alert("Wallet & PIN created successfully! Processing your transaction...");
         try {
-          const retryRes = await executeCircleTransaction(abiFunction, contractAddress, args);
-          resolve(retryRes);
+          // Fetch a fresh transaction challenge directly instead of re-running the whole initialization flow
+          const txResponse = await fetch("/api/execute-circle-tx", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userToken, functionSignature: abiFunction, contractAddress, args, skipSetup: true })
+          });
+          const txData = await txResponse.json();
+          const newChallengeId = txData.challengeId || txData.data?.challengeId;
+
+          if (!newChallengeId) throw new Error(txData.error || "Failed to create transaction challenge after setup.");
+
+          sdkInstance.execute(newChallengeId, (txErr, sdkResult) => {
+            if (txErr) return reject(txErr);
+
+            const resObj = sdkResult || {};
+            const finalHash = resObj.txHash || resObj.transactionHash || resObj.data?.txHash || resObj.data?.transactionHash || newChallengeId;
+
+            showExplorerButton(finalHash);
+
+            setTimeout(async () => {
+              if (typeof loadDashboardData === "function") await loadDashboardData();
+              if (typeof fetchRequests === "function") await fetchRequests();
+            }, 4000);
+
+            resolve(finalHash);
+          });
         } catch (e) {
           reject(e);
         }
       });
     });
-  }
-
-  if (!challengeId) throw new Error(data.error || "Failed to create transaction challenge.");
-
-  return new Promise((resolve, reject) => {
-    sdkInstance.execute(challengeId, (error, sdkResult) => {
-      if (error) return reject(error);
-
-      const resObj = sdkResult || {};
-      const finalHash = resObj.txHash || resObj.transactionHash || resObj.data?.txHash || resObj.data?.transactionHash || challengeId;
-
-      showExplorerButton(finalHash);
-
-      setTimeout(async () => {
-        if (typeof loadDashboardData === "function") await loadDashboardData();
-        if (typeof fetchRequests === "function") await fetchRequests();
-      }, 4000);
-
-      resolve(finalHash);
-    });
-  });
-}
+    }
 
 
 function showExplorerButton(txHash) {
