@@ -353,30 +353,37 @@ function enableWalletCopy(address) {
     body: JSON.stringify({ userToken, functionSignature: abiFunction, contractAddress, args })
   });
 
-  const data = await response.json();
-    let sdkInstance = window.circleSdk || (typeof circleSdk !== "undefined" ? circleSdk : null);
+    const data = await response.json();
+
+  // 1. Save fresh session tokens returned from transaction creation
+  if (data.userToken && data.encryptionKey) {
+    sessionStorage.setItem("circle_user_token", data.userToken);
+    sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
+  }
+
+  let sdkInstance = window.circleSdk || (typeof circleSdk !== "undefined" ? circleSdk : null);
 
   if (!sdkInstance) {
     const appId = import.meta.env ? import.meta.env.VITE_CIRCLE_APP_ID : process.env.VITE_CIRCLE_APP_ID;
-    
-    if (appId) {
-  sdkInstance = new W3SSdk({ appSettings: { appId } });
-  
-  const userToken = sessionStorage.getItem("circle_user_token");
-  const encKey = sessionStorage.getItem("circle_encryption_key");
 
-  if (userToken && encKey) {
-    sdkInstance.setAuthentication({
-      userToken: userToken,
-      encryptionKey: encKey
-    });
+    if (appId) {
+      sdkInstance = new W3SSdk({ appSettings: { appId } });
+      await sdkInstance.getDeviceId();
+      window.circleSdk = sdkInstance;
+    } else {
+      throw new Error("Missing VITE_CIRCLE_APP_ID environment variable.");
+    }
   }
 
-  await sdkInstance.getDeviceId();
-  window.circleSdk = sdkInstance;
-} else {
-  throw new Error("Missing VITE_CIRCLE_APP_ID environment variable.");
-    }
+  // 2. Always apply latest credentials to SDK instance before execution
+  const activeUserToken = sessionStorage.getItem("circle_user_token");
+  const activeEncKey = sessionStorage.getItem("circle_encryption_key");
+
+  if (activeUserToken && activeEncKey) {
+    sdkInstance.setAuthentication({
+      userToken: activeUserToken,
+      encryptionKey: activeEncKey
+    });
   }
 
 
