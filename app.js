@@ -355,16 +355,12 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
 
   const data = await response.json();
 
-  if (data.userToken && data.encryptionKey) {
-    sessionStorage.setItem("circle_user_token", data.userToken);
-    sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
-  }
-
+    // 1. Initialize SDK Instance first
   let sdkInstance = window.circleSdk;
-  if (!sdkInstance && typeof W3SSdk !== "undefined") {
+  if (!sdkInstance || typeof sdkInstance === "undefined") {
     const appId = import.meta.env?.VITE_CIRCLE_APP_ID || process.env.VITE_CIRCLE_APP_ID;
     if (appId) {
-      sdkInstance = new W3SSdk({ appSettings: { appId } });
+      sdkInstance = new W3sSdk({ appSettings: { appId } });
       await sdkInstance.getDeviceId();
       window.circleSdk = sdkInstance;
     } else {
@@ -372,15 +368,19 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
     }
   }
 
-  const activeUserToken = sessionStorage.getItem("circle_user_token");
-  const activeEncKey = sessionStorage.getItem("circle_encryption_key");
+  // 2. Prioritize fresh keys returned from the backend response data, fallback to sessionStorage
+  const activeUserToken = data.userToken || sessionStorage.getItem("circle_user_token");
+  const activeEncryptionKey = data.encryptionKey || sessionStorage.getItem("circle_encryption_key");
 
-  if (activeUserToken && activeEncKey) {
+  if (activeUserToken && activeEncryptionKey) {
+    sessionStorage.setItem("circle_user_token", activeUserToken);
+    sessionStorage.setItem("circle_encryption_key", activeEncryptionKey);
     sdkInstance.setAuthentication({
       userToken: activeUserToken,
-      encryptionKey: activeEncKey
+      encryptionKey: activeEncryptionKey
     });
   }
+
 
   const challengeId = data.challengeId || data.data?.challengeId;
 
