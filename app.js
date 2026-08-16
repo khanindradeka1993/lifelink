@@ -8,7 +8,7 @@ const HEALTHCARE_CONTRACT_ADDRESS = "0xE32313e236784f57a7479a830E4a9c0ce22d0761"
 const EMERGENCY_CONTRACT_ADDRESS = "0x8d1183f802b5688e5244a493Ea965e856150c2Ef";
 const PAYMENT_CONTRACT_ADDRESS = "0x0CA164a6FE7FfEA47945761748D77cd0aa16Afb1";
 const EXPLORER = "https://testnet.arcscan.app";
-const ARC_RPC_URL = "https://rpc.testnet.arc.network"
+const ARC_RPC_URL = "https://rpc.testnet.arc.network";
 
 // ==========================================
 // 2. ABIs
