@@ -384,10 +384,20 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
 
   const challengeId = data.challengeId || data.data?.challengeId;
 
-  if (data.needsWalletSetup && challengeId) {
-    alert("First-time setup required. Opening Circle PIN setup...");
-    return new Promise((resolve, reject) => {
-      sdkInstance.execute(challengeId, async (error) => {
+if (data.needsWalletSetup && challengeId) {
+  alert("First-time setup required. Opening Circle PIN setup...");
+  
+  if (data.userToken && data.encryptionKey) {
+    sessionStorage.setItem("circle_user_token", data.userToken);
+    sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
+    sdkInstance.setAuthentication({
+      userToken: data.userToken,
+      encryptionKey: data.encryptionKey
+    });
+  }
+
+  return new Promise((resolve, reject) => {
+    sdkInstance.execute(challengeId, async (error) => {
         if (error) return reject(error);
         
         alert("Wallet & PIN created successfully! Processing your transaction...");
