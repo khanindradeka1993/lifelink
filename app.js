@@ -372,14 +372,17 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
     throw new Error(data.error || "Failed to initialize transaction on server.");
   }
 
-  // 2. Ensure SDK instance is ready and authenticated
-  let sdkInstance = window.circleSdk;
-  if (!sdkInstance) {
-    const appId = window.env?.VITE_CIRCLE_APP_ID || "";
-    if (window.W3SSdk && appId) {
-      sdkInstance = new window.W3SSdk({ appSettings: { appId } });
-      window.circleSdk = sdkInstance;
-    }
+  // 2. Ensure SDK instance is ready and authenticated using your working global function
+let sdkInstance;
+try {
+  sdkInstance = window.getCircleSdk();
+} catch (err) {
+  console.error("Failed to call getCircleSdk:", err);
+}
+
+if (!sdkInstance) {
+  throw new Error("Circle web SDK failed to load.");
+}
   }
 
   if (!sdkInstance) {
