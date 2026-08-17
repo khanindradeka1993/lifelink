@@ -1,4 +1,4 @@
-import "./circle-wallet.js";
+import "./src/circle-wallet.js";
 import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
 
 // ==========================================
