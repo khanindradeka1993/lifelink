@@ -1,27 +1,17 @@
-function getCircleSdkInstance() {
-  if (window.circleSdk) {
-    return window.circleSdk;
-  }
+import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
 
-  // Check all possible global variants injected by Circle's CDN script
-  const SDKConstructor = window.W3SSdk || window.CircleW3SSdk || window.вичаW3SSdk;
+let sdkInstance = null;
 
-  if (!SDKConstructor) {
-    console.error("Circle Web SDK CDN script has not loaded into window scope.");
-    return null;
-  }
+export function getCircleSdk() {
+  if (sdkInstance) return sdkInstance;
 
-  const appId = window.env?.VITE_CIRCLE_APP_ID || import.meta.env?.VITE_CIRCLE_APP_ID || "";
-  
-  try {
-    window.circleSdk = new SDKConstructor({
-      appSettings: {
-        appId: appId
-      }
-    });
-    return window.circleSdk;
-  } catch (err) {
-    console.error("Failed to instantiate W3SSdk:", err);
-    return null;
-  }
+  const appId = import.meta.env.VITE_CIRCLE_APP_ID || "";
+
+  sdkInstance = new W3SSdk({
+    appSettings: {
+      appId: appId
+    }
+  });
+
+  return sdkInstance;
 }
