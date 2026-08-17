@@ -371,10 +371,10 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
 
   // 2. Ensure SDK instance is ready and authenticated
   let sdkInstance = window.circleSdk;
-  if (!sdkInstance && window.W3sSdk) {
-    const appId = import.meta.env?.VITE_CIRCLE_APP_ID || process.env.VITE_CIRCLE_APP_ID;
-    if (appId) {
-      sdkInstance = new window.W3sSdk({ appSettings: { appId } });
+  if (!sdkInstance) {
+    const appId = window.env?.VITE_CIRCLE_APP_ID || "";
+    if (window.W3SSdk && appId) {
+      sdkInstance = new window.W3SSdk({ appSettings: { appId } });
       window.circleSdk = sdkInstance;
     }
   }
@@ -433,6 +433,7 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
     });
   });
 }
+
 
 
 function showExplorerButton(txHash) {
