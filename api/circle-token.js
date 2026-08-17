@@ -37,8 +37,8 @@ export default async function handler(req, res) {
     const tokenData = await tokenResponse.json();
 
     if (!tokenResponse.ok) {
-      return res.status(tokenResponse.status).json({
-        error: tokenData.message || tokenData.error || 'Failed to create Circle user token'
+      return res.status(500).json({ 
+        error: tokenData.message || tokenData.error || 'Failed to create Circle user token' 
       });
     }
 
@@ -78,7 +78,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Circle Token API Error:', error);
+    console.error('Circle token API error:', error);
     return res.status(500).json({ error: error.message || 'Internal server error' });
   }
 }
