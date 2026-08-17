@@ -347,8 +347,8 @@ function enableWalletCopy(address) {
 }
 
 async function executeCircleTransaction(abiFunction, contractAddress, args) {
-  const userToken = sessionStorage.getItem("circle_user_token");
-  const encryptionKey = sessionStorage.getItem("circle_encryption_key");
+  sessionStorage.setItem("circle_user_token", data.userToken);
+sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
 
   if (!userToken) {
     throw new Error("Circle session required. Please sign in again.");
