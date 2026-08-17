@@ -1,74 +1,27 @@
-import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
-
-let circleSdkInstance = null;
-
-export function getCircleSdk() {
-  if (!circleSdkInstance) {
-    const appId = import.meta.env.VITE_CIRCLE_APP_ID || "";
-    if (!appId) {
-      console.error("VITE_CIRCLE_APP_ID is missing from environment variables.");
-    }
-    circleSdkInstance = new W3SSdk({
-      appSettings: { appId },
-    });
+function getCircleSdkInstance() {
+  if (window.circleSdk) {
+    return window.circleSdk;
   }
-  return circleSdkInstance;
-}
 
-export async function loginWithCircleGoogle() {
+  // Check all possible global variants injected by Circle's CDN script
+  const SDKConstructor = window.W3SSdk || window.CircleW3SSdk || window.вичаW3SSdk;
+
+  if (!SDKConstructor) {
+    console.error("Circle Web SDK CDN script has not loaded into window scope.");
+    return null;
+  }
+
+  const appId = window.env?.VITE_CIRCLE_APP_ID || import.meta.env?.VITE_CIRCLE_APP_ID || "";
+  
   try {
-    const sdk = getCircleSdk();
-
-    const response = await fetch("/api/circle-token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: "google_user_" + Date.now() })
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch Circle device token from server endpoint");
-    }
-
-    const data = await response.json();
-
-    sessionStorage.setItem("circle_user_token", data.userToken);
-    if (data.encryptionKey) {
-      sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
-    }
-
-    let deviceToken = "";
-    try {
-      const deviceIdResult = await sdk.getDeviceId();
-      deviceToken = deviceIdResult?.deviceToken;
-    } catch (err) {
-      console.warn("getDeviceId SDK warning, fallback active:", err);
-    }
-
-    if (!deviceToken) {
-      deviceToken = data.userToken;
-    }
-
-    sdk.performLogin(
-      {
-        provider: "google",
-        clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
-      },
-      {
-        deviceToken: deviceToken,
-        deviceEncryptionKey: data.encryptionKey,
+    window.circleSdk = new SDKConstructor({
+      appSettings: {
+        appId: appId
       }
-    );
+    });
+    return window.circleSdk;
   } catch (err) {
-    console.error("Circle Login Error:", err);
-    alert("Circle Login Error: " + err.message);
+    console.error("Failed to instantiate W3SSdk:", err);
+    return null;
   }
-}
-
-if (typeof window !== "undefined") {
-  window.addEventListener("DOMContentLoaded", () => {
-    const googleBtn = document.getElementById("circleGoogleBtn");
-    if (googleBtn) {
-      googleBtn.addEventListener("click", loginWithCircleGoogle);
-    }
-  });
 }
