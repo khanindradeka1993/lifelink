@@ -35,12 +35,7 @@ export default async function handler(req, res) {
     });
 
     const tokenData = await tokenResponse.json();
-
-    if (!tokenResponse.ok) {
-      return res.status(500).json({ 
-        error: tokenData.message || tokenData.error || 'Failed to create Circle user token' 
-      });
-    }
+console.log("Circle API Error Response:", tokenData);
 
     const userToken = tokenData.data?.userToken;
     const encryptionKey = tokenData.data?.encryptionKey;
