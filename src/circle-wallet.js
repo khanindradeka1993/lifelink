@@ -2,19 +2,27 @@ import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
 
 let circleSdkInstance = null;
 
+export function getCircleSdk() {
+  if (!circleSdkInstance) {
+    const appId = import.meta.env.VITE_CIRCLE_APP_ID || "";
+    if (!appId) {
+      console.error("VITE_CIRCLE_APP_ID is missing from environment variables.");
+    }
+    circleSdkInstance = new W3SSdk({
+      appSettings: { appId },
+    });
+  }
+  return circleSdkInstance;
+}
+
 export async function loginWithCircleGoogle() {
   try {
-    if (!circleSdkInstance) {
-      circleSdkInstance = new W3SSdk({
-        appSettings: {
-          appId: import.meta.env.VITE_CIRCLE_APP_ID || "",
-        },
-      });
-    }
+    const sdk = getCircleSdk();
 
     const response = await fetch("/api/circle-token", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: "google_user_" + Date.now() })
     });
 
     if (!response.ok) {
@@ -30,7 +38,7 @@ export async function loginWithCircleGoogle() {
 
     let deviceToken = "";
     try {
-      const deviceIdResult = await circleSdkInstance.getDeviceId();
+      const deviceIdResult = await sdk.getDeviceId();
       deviceToken = deviceIdResult?.deviceToken;
     } catch (err) {
       console.warn("getDeviceId SDK warning, fallback active:", err);
@@ -40,7 +48,7 @@ export async function loginWithCircleGoogle() {
       deviceToken = data.userToken;
     }
 
-    circleSdkInstance.performLogin(
+    sdk.performLogin(
       {
         provider: "google",
         clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
