@@ -433,12 +433,11 @@ if (!sdkInstance) {
         }, 4000);
 
         resolve(finalHash);
-      } catch (err) {
-        reject(err);
-      }
-    });
+          } catch (err) {
+      reject(err);
+    }
   });
-}
+});
 
 
 
