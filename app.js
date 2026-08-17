@@ -351,47 +351,42 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
   const encryptionKey = sessionStorage.getItem("circle_encryption_key");
 
   if (!userToken) {
-    throw new Error("Circle session expired. Please sign in again.");
+    throw new Error("Circle session required. Please sign in again.");
   }
 
   // 1. Call backend to initiate the transaction challenge
   const response = await fetch("/api/execute-circle-tx", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ 
-      userToken, 
-      functionSignature: abiFunction, 
-      contractAddress, 
-      args 
+    body: JSON.stringify({
+      userToken,
+      functionSignature: abiFunction,
+      contractAddress,
+      args
     })
   });
 
   const data = await response.json();
-  
+
   if (!response.ok || data.error) {
     throw new Error(data.error || "Failed to initialize transaction on server.");
   }
 
-  // 2. Ensure SDK instance is ready and authenticated using your working global function
-let sdkInstance;
-try {
-  sdkInstance = window.getCircleSdk();
-} catch (err) {
-  console.error("Failed to call getCircleSdk:", err);
-}
-
-if (!sdkInstance) {
-  throw new Error("Circle web SDK failed to load.");
-}
+  // 2. Ensure SDK instance is ready
+  let sdkInstance;
+  try {
+    sdkInstance = window.getCircleSdk();
+  } catch (err) {
+    console.error("Failed to call getCircleSdk:", err);
   }
 
   if (!sdkInstance) {
-    throw new Error("Circle Web SDK failed to load.");
+    throw new Error("Circle web SDK failed to load.");
   }
 
   sdkInstance.setAuthentication({
-    userToken: data.userToken || userToken,
-    encryptionKey: data.encryptionKey || encryptionKey
+    userToken: data.userToken,
+    encryptionKey: data.encryptionKey
   });
 
   const challengeId = data.challengeId || data.data?.challengeId;
@@ -410,12 +405,12 @@ if (!sdkInstance) {
         const txResponse = await fetch("/api/execute-circle-tx", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            userToken: data.userToken || userToken, 
-            functionSignature: abiFunction, 
-            contractAddress, 
-            args, 
-            skipSetup: true 
+          body: JSON.stringify({
+            userToken: data.userToken,
+            functionSignature: abiFunction,
+            contractAddress,
+            args,
+            skipSetup: true
           })
         });
 
@@ -433,11 +428,12 @@ if (!sdkInstance) {
         }, 4000);
 
         resolve(finalHash);
-          } catch (err) {
-      reject(err);
-    }
+      } catch (err) {
+        reject(err);
+      }
+    });
   });
-});
+}
 
 
 
