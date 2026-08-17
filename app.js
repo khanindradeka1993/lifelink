@@ -1,6 +1,7 @@
 import { getCircleSdk } from "./src/circle-wallet.js";
 
-import { W3SSdk } from "@circle-fin/w3s-pw-web-sdk";
+// Expose it globally for your UI event handlers
+window.getCircleSdk = getCircleSdk;
 
 // ==========================================
 // 1. CONTRACT ADDRESSES & RPC CONFIGURATION
