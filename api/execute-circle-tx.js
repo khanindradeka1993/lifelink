@@ -36,7 +36,7 @@ if (tokenData.data) {
 
  async function getWallet(token) {
   try {
-    const walletRes = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
+    const walletRes = await fetch("https://api.circle.com/v1/w3s/wallets", {
       headers: {
         "Authorization": `Bearer ${apikey}`,
         "X-User-Token": token
