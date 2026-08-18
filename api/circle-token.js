@@ -21,7 +21,10 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`
       },
-      body: JSON.stringify({ userId: userIdentifier })
+      body: JSON.stringify({
+        idempotencyKey: crypto.randomUUID(),
+        userId: userIdentifier
+      })
     });
 
     // Step 2: Request User Session Token
@@ -31,11 +34,18 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`
       },
-      body: JSON.stringify({ userId: userIdentifier })
+      body: JSON.stringify({
+        userId: userIdentifier
+      })
     });
 
     const tokenData = await tokenResponse.json();
-console.log("Circle API Error Response:", tokenData);
+
+    if (!tokenResponse.ok) {
+      return res.status(500).json({
+        error: tokenData.message || tokenData.error || 'Failed to create Circle user token'
+      });
+    }
 
     const userToken = tokenData.data?.userToken;
     const encryptionKey = tokenData.data?.encryptionKey;
@@ -62,7 +72,7 @@ console.log("Circle API Error Response:", tokenData);
     // Step 4: Fallback deterministic EVM address generation if Circle returns no wallets
     if (!walletAddress) {
       const hash = crypto.createHash('sha256').update(userIdentifier).digest('hex');
-      walletAddress = '0x' + hash.substring(0, 40);
+      walletAddress = `0x${hash.substring(0, 40)}`;
     }
 
     return res.status(200).json({
