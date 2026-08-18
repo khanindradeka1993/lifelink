@@ -91,7 +91,7 @@ export default async function handler(req, res) {
           body: JSON.stringify({
             idempotencyKey: crypto.randomUUID(),
             walletSetId: walletSetId,
-            blockchains: ["ETH-SEPOLIA"],
+            blockchains: ["ARC-TESTNET"],
             accountType: "SCA"
           })
         });
