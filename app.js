@@ -848,12 +848,18 @@ async function handleCircleGoogleLogin() {
 
     const displayAddress = data.walletAddress || data.userId;
 
-    sessionStorage.setItem("active_wallet_type", "CIRCLE");
+      sessionStorage.setItem("active_wallet_type", "CIRCLE");
     sessionStorage.setItem("circle_user_token", data.userToken);
     sessionStorage.setItem("circle_user_id", data.userId);
+    
+    // --> ADD THIS LINE TO SAVE THE ENCRYPTION KEY <--
+    if (data.encryptionKey) {
+      sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
+    }
+
     if (data.walletAddress) {
       sessionStorage.setItem("circle_wallet_address", data.walletAddress);
-    }
+    }  
 explicitWalletConnected = true;
     
     if (walletAddress) {
