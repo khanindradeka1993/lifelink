@@ -347,11 +347,11 @@ function enableWalletCopy(address) {
 }
 
 async function executeCircleTransaction(abiFunction, contractAddress, args) {
-  const userToken = sessionStorage.getItem("circle_user_token");
-  const encryptionKey = sessionStorage.getItem("circle_encryption_key");
+    const userToken = sessionStorage.getItem("circle_user_token") || sessionStorage.getItem("userToken");
+  const encryptionKey = sessionStorage.getItem("circle_encryption_key") || sessionStorage.getItem("encryptionKey");
 
-  if (!userToken) {
-    throw new Error("Circle session required. Please sign in again.");
+  if (!userToken || !encryptionKey) {
+    throw new Error("Circle session or encryption key missing. Please sign in again.");
   }
 
   // 1. Call backend to initiate the transaction challenge
