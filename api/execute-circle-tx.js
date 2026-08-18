@@ -3,7 +3,7 @@ import crypto from "crypto";
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { userToken, contractAddress, functionSignature, args, skipSetup, encryptionKey: bodyEncryptionKey } = req.body;
+  const { userToken, contractAddress, functionSignature, args, skipSetup, encryptionKey } = req.body;
   const apikey = process.env.CIRCLE_API_KEY;
 
   if (!userToken || userToken === "undefined") {
@@ -21,11 +21,11 @@ export default async function handler(req, res) {
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}` },
         body: JSON.stringify({ userToken })
       });
-            const tokenData = await tokenRes.json();
+                  const tokenData = await tokenRes.json();
       if (tokenData.data) {
         freshUserToken = tokenData.data.userToken || userToken;
-        // Fall back to the encryption key sent from the client if tokenRes doesn't return a new one
-        freshEncryptionKey = tokenData.data.encryptionKey || bodyEncryptionKey || null;
+        // Fallback to the encryption key sent directly from the frontend request body
+        freshEncryptionKey = tokenData.data.encryptionKey || encryptionKey || null;
       }
     } catch (e) {
       console.warn("Token refresh warning:", e);
