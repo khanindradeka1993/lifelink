@@ -21,8 +21,11 @@ try {
     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}` },  
     body: JSON.stringify({ userToken })  
   });  
-              const tokenData = await tokenRes.json();  
-  if (tokenData.data) {  
+  const tokenData = await tokenRes.json();
+console.log("🔎 CIRCLE TOKEN STATUS:", tokenRes.status);
+console.log("🔎 CIRCLE TOKEN DATA KEYS:", Object.keys(tokenData.data || {}));
+
+if (tokenData.data) {             
     freshUserToken = tokenData.data.userToken || userToken;  
     // Fallback to the encryption key sent directly from the frontend request body  
     freshEncryptionKey = tokenData.data.encryptionKey || encryptionKey || null;  
