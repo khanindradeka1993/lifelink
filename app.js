@@ -405,8 +405,11 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
   return new Promise((resolve, reject) => {
     sdkInstance.execute(challengeId, async (error, sdkResult) => {
       if (error) {
-        return reject(error);
-      }
+  console.error("❌ CIRCLE SDK ERROR:", error);
+  return reject(error);
+}
+
+console.log("✅ CIRCLE SDK RESULT:", sdkResult);
 
       try {
         const txResponse = await fetch("/api/execute-circle-tx", {
