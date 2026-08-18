@@ -378,12 +378,14 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
   if (data.encryptionKey) sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
 
   // 2. Ensure SDK instance is ready
-  let sdkInstance;
+    let sdkInstance;
   try {
-    sdkInstance = window.getCircleSdk();
+      sdkInstance = window.getCircleSdk();
+      console.log("SDK Instance successfully retrieved:", sdkInstance);
   } catch (err) {
-    console.error("Failed to call getCircleSdk:", err);
+      console.error("Failed to call getCircleSdk", err);
   }
+  
 
   if (!sdkInstance) {
     throw new Error("Circle web SDK failed to load.");
