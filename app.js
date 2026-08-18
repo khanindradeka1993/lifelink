@@ -411,8 +411,8 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            userToken: data.userToken || userToken,
-            encryptionKey: data.encryptionKey || encryptionKey,
+                userToken: sessionStorage.getItem("circle_user_token"),
+    encryptionKey: sessionStorage.getItem("circle_encryption_key"),
             functionSignature: abiFunction,
             contractAddress,
             args,
