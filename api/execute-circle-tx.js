@@ -31,17 +31,32 @@ try {
   console.warn("Token refresh warning:", e);  
 }  
 
-async function getWallet(token) {  
-  try {  
-    const res = await fetch("https://api.circle.com/v1/w3s/user/wallets", {  
-      headers: { "Authorization": `Bearer ${apikey}`, "X-User-Token": token }  
-    });  
-    const data = await res.json();  
-    return data.data?.wallets?.[0];  
-  } catch (err) {  
-    return null;  
-  }  
-}  
+ async function getWallet(token) {
+  try {
+    const walletRes = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
+      headers: {
+        "Authorization": `Bearer ${apikey}`,
+        "X-User-Token": token
+      }
+    });
+
+    const rawWallet = await walletRes.text();
+
+    console.log("🔎 CIRCLE WALLET STATUS:", walletRes.status);
+    console.log("🔎 CIRCLE WALLET RESPONSE:", rawWallet);
+
+    if (!walletRes.ok) {
+      return null;
+    }
+
+    const walletData = JSON.parse(rawWallet);
+    return walletData.data?.wallets?.[0] || null;
+
+  } catch (err) {
+    console.error("❌ CIRCLE WALLET ERROR:", err);
+    return null;
+  }
+ }
 
 let wallet = await getWallet(freshUserToken);  
 
