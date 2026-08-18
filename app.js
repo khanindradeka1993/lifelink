@@ -389,9 +389,9 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
     throw new Error("Circle web SDK failed to load.");
   }
 
-  sdkInstance.setAuthentication({
-    userToken: data.userToken || userToken,
-    encryptionKey: data.encryptionKey || encryptionKey
+    sdkInstance.setAuthentication({
+    userToken: sessionStorage.getItem("circle_user_token"),
+    encryptionKey: sessionStorage.getItem("circle_encryption_key")
   });
 
   const challengeId = data.challengeId || data.data?.challengeId;
