@@ -347,8 +347,8 @@ function enableWalletCopy(address) {
 }
 
 async function executeCircleTransaction(abiFunction, contractAddress, args) {
-  sessionStorage.setItem("circle_user_token", data.userToken);
-sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
+  const userToken = sessionStorage.getItem("circle_user_token");
+  const encryptionKey = sessionStorage.getItem("circle_encryption_key");
 
   if (!userToken) {
     throw new Error("Circle session required. Please sign in again.");
@@ -360,6 +360,7 @@ sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       userToken,
+      encryptionKey,
       functionSignature: abiFunction,
       contractAddress,
       args
@@ -371,6 +372,10 @@ sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
   if (!response.ok || data.error) {
     throw new Error(data.error || "Failed to initialize transaction on server.");
   }
+
+  // Update session storage if fresh tokens were returned
+  if (data.userToken) sessionStorage.setItem("circle_user_token", data.userToken);
+  if (data.encryptionKey) sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
 
   // 2. Ensure SDK instance is ready
   let sdkInstance;
@@ -385,8 +390,8 @@ sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
   }
 
   sdkInstance.setAuthentication({
-    userToken: data.userToken,
-    encryptionKey: data.encryptionKey
+    userToken: data.userToken || userToken,
+    encryptionKey: data.encryptionKey || encryptionKey
   });
 
   const challengeId = data.challengeId || data.data?.challengeId;
@@ -406,7 +411,8 @@ sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            userToken: data.userToken,
+            userToken: data.userToken || userToken,
+            encryptionKey: data.encryptionKey || encryptionKey,
             functionSignature: abiFunction,
             contractAddress,
             args,
