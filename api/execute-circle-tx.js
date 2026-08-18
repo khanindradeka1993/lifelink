@@ -34,10 +34,25 @@ export default async function handler(req, res) {
     async function getWallet(token) {
       try {
         const res = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
-          headers: { "Authorization": `Bearer ${apikey}`, "X-User-Token": token }
-        });
-        const data = await res.json();
-        return data.data?.wallets?.[0];
+  headers: {
+    "Authorization": `Bearer ${apikey}`,
+    "X-User-Token": token
+  }
+});
+
+const raw = await res.text();
+
+console.log("🩺 CIRCLE GET WALLETS STATUS:", res.status);
+console.log("🩺 CIRCLE GET WALLETS RESPONSE:", raw);
+
+let data;
+try {
+  data = JSON.parse(raw);
+} catch {
+  data = {};
+}
+
+return data.data?.wallets?.[0] || null;
       } catch (err) {
         return null;
       }
