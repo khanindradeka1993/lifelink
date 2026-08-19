@@ -419,7 +419,8 @@ console.log("✅ CIRCLE SDK RESULT:", sdkResult);
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
                 userToken: sessionStorage.getItem("circle_user_token"),
-    encryptionKey: sessionStorage.getItem("circle_encryption_key"),
+  userId: sessionStorage.getItem("circle_user_id"),
+            encryptionKey: sessionStorage.getItem("circle_encryption_key"),
             functionSignature: abiFunction,
             contractAddress,
             args,
