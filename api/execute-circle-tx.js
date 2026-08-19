@@ -3,11 +3,11 @@ import crypto from "crypto";
 export default async function handler(req, res) {
 if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-const { userToken, contractAddress, functionSignature, args, skipSetup, encryptionKey } = req.body;
+const { userToken, userId, contractAddress, functionSignature, args, skipSetup, encryptionKey } = req.body;
 const apikey = process.env.CIRCLE_API_KEY;
 
-if (!userToken || userToken === "undefined") {
-return res.status(400).json({ error: "Missing or invalid user token. Please sign in again." });
+if (!userToken || userToken === "undefined" || !userId) {
+  return res.status(400).json({ error: "Missing Circle user ID or user token. Please sign in again." });
 }
 
 try {
@@ -19,7 +19,7 @@ try {
   const tokenRes = await fetch("https://api.circle.com/v1/w3s/users/token", {  
     method: "POST",  
     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}` },  
-    body: JSON.stringify({ userToken })  
+    body: JSON.stringify({ userId })
   });  
   const tokenData = await tokenRes.json();
 console.log("🔎 CIRCLE TOKEN STATUS:", tokenRes.status);
