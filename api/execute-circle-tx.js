@@ -5,7 +5,13 @@ if (req.method !== "POST") return res.status(405).json({ error: "Method not allo
 
 const { userToken, userId, contractAddress, functionSignature, args, skipSetup, encryptionKey } = req.body;
 const apikey = process.env.CIRCLE_API_KEY;
-
+console.log("🔎 EXECUTE INPUT:", {
+  hasUserToken: !!userToken,
+  hasUserId: !!userId,
+  hasContractAddress: !!contractAddress,
+  hasFunctionSignature: !!functionSignature
+});
+  
 if (!userToken || userToken === "undefined" || !userId) {
   return res.status(400).json({ error: "Missing Circle user ID or user token. Please sign in again." });
 }
