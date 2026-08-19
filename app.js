@@ -349,7 +349,8 @@ function enableWalletCopy(address) {
 async function executeCircleTransaction(abiFunction, contractAddress, args) {
     const userToken = sessionStorage.getItem("circle_user_token") || sessionStorage.getItem("userToken");
   const encryptionKey = sessionStorage.getItem("circle_encryption_key") || sessionStorage.getItem("encryptionKey");
-
+const userId = sessionStorage.getItem("circle_user_id");
+  
   if (!userToken || !encryptionKey) {
     throw new Error("Circle session or encryption key missing. Please sign in again.");
   }
@@ -359,8 +360,9 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      userToken,
-      encryptionKey,
+  userToken,
+  userId,
+  encryptionKey,
       functionSignature: abiFunction,
       contractAddress,
       args
