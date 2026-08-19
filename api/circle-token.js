@@ -13,7 +13,8 @@ export default async function handler(req, res) {
 
     const { userId } = req.body || {};
     const userIdentifier = userId || `google_user_${Date.now()}`;
-
+console.log("🔎 CIRCLE USER ID:", userIdentifier);
+    
     // Step 1: Create or fetch User in Circle W3S
     await fetch('https://api.circle.com/v1/w3s/users', {
       method: 'POST',
