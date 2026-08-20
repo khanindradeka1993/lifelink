@@ -453,150 +453,51 @@ return new Promise((resolve, reject) => {
       console.log("🚀 EXECUTING CONTRACT CHALLENGE:", txChallengeId);
 
       // Execute the ACTUAL contract transaction challenge.
+      
+// Execute the ACTUAL contract transaction challenge.
       sdkInstance.execute(txChallengeId, async (txError, txSdkResult) => {
-  if (txError) {
-    console.error("❌ CIRCLE SDK ERROR:", txError);
-    return reject(txError);
-  }
+        if (txError) {
+          console.error("❌ CONTRACT SDK ERROR:", txError);
+          return reject(txError);
+        }
 
-  console.log("✅ CIRCLE SDK RESULT:", txSdkResult);
+        console.log("✅ CONTRACT SDK RESULT:", txSdkResult);
 
-  try {
-    // Wallet creation is still processing.
-    // Do NOT treat this as the final transaction.
-    if (
-      txSdkResult?.type === "CREATE_WALLET" &&
-      txSdkResult?.status === "IN_PROGRESS"
-    ) {
-      console.log("⏳ WALLET CREATION STILL IN PROGRESS");
+        const finalHash =
+          txSdkResult?.transactionHash ||
+          txSdkResult?.txHash ||
+          txSdkResult?.data?.transactionHash ||
+          txSdkResult?.data?.txHash ||
+          txData?.transactionHash ||
+          txData?.data?.transactionHash ||
+          "";
 
-      setTimeout(async () => {
-        try {
-          const retryResponse = await fetch("/api/execute-circle-tx", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              userToken: sessionStorage.getItem("circle_user_token"),
-              userId: sessionStorage.getItem("circle_user_id"),
-              encryptionKey: sessionStorage.getItem("circle_encryption_key"),
-              functionSignature: abiFunction,
-              contractAddress,
-              args,
-              skipSetup: true,
-              walletCreationComplete: true
-            })
-          });
+        console.log("🔎 FINAL TRANSACTION HASH:", finalHash);
 
-          const retryData = await retryResponse.json();
+        if (typeof showExplorerButton === "function" && finalHash) {
+          showExplorerButton(finalHash);
+        }
 
-          console.log(
-            "🔄 RETRY CONTRACT CHALLENGE RESPONSE:",
-            retryData
-          );
-
-          if (!retryResponse.ok) {
-            throw new Error(
-              retryData.error ||
-              "Failed to retry contract execution challenge."
-            );
+        setTimeout(async () => {
+          if (typeof loadDashboardData === "function") {
+            await loadDashboardData();
           }
 
-          const retryChallengeId =
-            retryData.challengeId ||
-            retryData.data?.challengeId;
-
-          if (!retryChallengeId) {
-            throw new Error(
-              "No retry challenge ID returned from Circle."
-            );
+          if (typeof fetchRequests === "function") {
+            await fetchRequests();
           }
+        }, 4000);
 
-          console.log(
-            "🚀 EXECUTING RETRY CHALLENGE:",
-            retryChallengeId
-          );
+        resolve(finalHash);
+      });
 
-          sdkInstance.execute(
-            retryChallengeId,
-            async (retryError, retrySdkResult) => {
-              if (retryError) {
-                console.error(
-                  "❌ RETRY SDK ERROR:",
-                  retryError
-                );
-                return reject(retryError);
-              }
-
-              console.log(
-                "✅ RETRY SDK RESULT:",
-                retrySdkResult
-              );
-
-              const finalHash =
-                retrySdkResult?.transactionHash ||
-                retrySdkResult?.txHash ||
-                retrySdkResult?.data?.transactionHash ||
-                retrySdkResult?.data?.txHash ||
-                retryData?.transactionHash ||
-                retryData?.data?.transactionHash ||
-                "";
-
-              console.log(
-                "🚀 FINAL TRANSACTION HASH:",
-                finalHash
-              );
-
-              if (
-                typeof showExplorerButton === "function" &&
-                finalHash
-              ) {
-                showExplorerButton(finalHash);
-              }
-
-              resolve(finalHash);
-            }
-          );
-        } catch (retryErr) {
-          console.error(
-            "❌ WALLET/CONTRACT RETRY FAILED:",
-            retryErr
-          );
-          reject(retryErr);
-        });
-      }, 5000);
-
-      return;
+    } catch (err) {
+      console.error("❌ CONTRACT EXECUTION FAILED:", err);
+      reject(err);
     }
-
-    const finalHash =
-      txSdkResult?.transactionHash ||
-      txSdkResult?.txHash ||
-      txSdkResult?.data?.transactionHash ||
-      txSdkResult?.data?.txHash ||
-      "";
-
-    console.log(
-      "🚀 FINAL TRANSACTION HASH:",
-      finalHash
-    );
-
-    if (
-      typeof showExplorerButton === "function" &&
-      finalHash
-    ) {
-      showExplorerButton(finalHash);
-    }
-
-    resolve(finalHash);
-
-  } catch (err) {
-    console.error("❌ CONTRACT EXECUTION FAILED:", err);
-    reject(err);
-  }
+  });
 });
-
+}
 
 function showExplorerButton(txHash) {
   txHash = typeof txHash === 'object' ? (txHash.txHash || txHash.challengeId || "") : txHash;
