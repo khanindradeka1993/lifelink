@@ -564,7 +564,7 @@ return new Promise((resolve, reject) => {
             retryErr
           );
           reject(retryErr);
-        }
+        });
       }, 5000);
 
       return;
