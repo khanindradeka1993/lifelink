@@ -89,62 +89,54 @@ if (!wallet && !skipSetup) {
   }  
 }  
 
-// 3. Ensure Wallet Set and Wallet exist  
-if (!wallet) {  
-  let walletSetId = null;  
-  const wsRes = await fetch("https://api.circle.com/v1/w3s/user/walletSets", {  
-    headers: { "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken }  
-  });  
-  const wsData = await wsRes.json();  
- console.log("🔎 CIRCLE WALLET SET STATUS:", wsRes.status);
-console.log("🔎 CIRCLE WALLET SET RESPONSE:", JSON.stringify(wsData));
-  walletSetId = wsData.data?.walletSets?.[0]?.id;  
+// 3. Ensure user wallet exists
+if (!wallet) {
+  const walletCreateRes = await fetch(
+    "https://api.circle.com/v1/w3s/user/wallets",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apikey}`,
+        "X-User-Token": freshUserToken
+      },
+      body: JSON.stringify({
+        idempotencyKey: crypto.randomUUID(),
+        blockchains: ["ARC-TESTNET"],
+        accountType: "SCA"
+      })
+    }
+  );
 
-  if (!walletSetId) {  
-    const createWsRes = await fetch("https://api.circle.com/v1/w3s/user/walletSets", {  
-      method: "POST",  
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },  
-      body: JSON.stringify({ idempotencyKey: crypto.randomUUID(), name: "LifeLink Wallet Set" })  
-    });  
-    const createWsData = await createWsRes.json();  
-    console.log("🔎 CIRCLE CREATE WALLET SET STATUS:", createWsRes.status);
-console.log("🔎 CIRCLE CREATE WALLET SET RESPONSE:", JSON.stringify(createWsData));
-    walletSetId = createWsData.data?.walletSet?.id;  
-  }  
+  const walletCreateData = await walletCreateRes.json();
 
-  if (walletSetId) {
-  const walletCreateRes = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${apikey}`,
-      "X-User-Token": freshUserToken
-    },
-    body: JSON.stringify({
-      idempotencyKey: crypto.randomUUID(),
-      walletSetId: walletSetId,
-      blockchains: ["ARC-TESTNET"],
-      accountType: "SCA"
-    })
+  console.log(
+    "🔎 CIRCLE CREATE WALLET STATUS:",
+    walletCreateRes.status
+  );
+  console.log(
+    "🔎 CIRCLE CREATE WALLET RESPONSE:",
+    JSON.stringify(walletCreateData)
+  );
+
+  if (!walletCreateRes.ok || !walletCreateData.data?.challengeId) {
+    return res.status(400).json({
+      error:
+        walletCreateData.message ||
+        walletCreateData.error ||
+        "Failed to create wallet challenge"
+    });
+  }
+
+  return res.status(200).json({
+    needsWalletCreation: true,
+    challengeId: walletCreateData.data.challengeId,
+    userToken: freshUserToken,
+    encryptionKey: freshEncryptionKey
   });
+}
 
-  const walletCreateRaw = await walletCreateRes.text();
-
-  console.log("🔎 CIRCLE CREATE WALLET STATUS:", walletCreateRes.status);
-  console.log("🔎 CIRCLE CREATE WALLET RESPONSE:", walletCreateRaw);
-  }  
-
-  let attempts = 0;  
-  while (!wallet && attempts < 6) {  
-    attempts++;  
-    await new Promise(r => setTimeout(r, 2500));  
-    wallet = await getWallet(freshUserToken);  
-  }  
-}  
-
-if (!wallet) {  
-  return res.status(400).json({ error: "Failed to create or locate user wallet. Please try again." });  
-}  
+// Wallet exists → continue to contract execution
 
 // 4. Execute contract transaction challenge  
 const txRes = await fetch(`https://api.circle.com/v1/w3s/user/transactions/contractExecution`, {  
