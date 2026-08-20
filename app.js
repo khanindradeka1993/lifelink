@@ -427,9 +427,10 @@ return new Promise((resolve, reject) => {
           encryptionKey: sessionStorage.getItem("circle_encryption_key"),
           functionSignature: abiFunction,
           contractAddress,
-          args,
-          skipSetup: true
-        })
+              args,
+    skipSetup: true,
+    walletCreationComplete: true
+})
       });
 
       const txData = await txResponse.json();
