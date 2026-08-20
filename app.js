@@ -429,7 +429,6 @@ return new Promise((resolve, reject) => {
           contractAddress,
               args,
     skipSetup: true,
-    walletCreationComplete: true
 })
       });
 
