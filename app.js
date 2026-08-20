@@ -596,8 +596,6 @@ return new Promise((resolve, reject) => {
     reject(err);
   }
 });
-}
-
 
 
 function showExplorerButton(txHash) {
