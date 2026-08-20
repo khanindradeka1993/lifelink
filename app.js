@@ -429,6 +429,8 @@ console.log("✅ CIRCLE SDK RESULT:", sdkResult);
         });
 
         const txData = await txResponse.json();
+        console.log("🔍 FINAL TX RESPONSE:", txData);
+console.log("🔍 CIRCLE SDK RESULT:", sdkResult);
         const resObj = sdkResult || {};
         const finalHash = txData.transactionHash || txData.data?.txHash || resObj.transactionHash || resObj.data?.txHash;
 
