@@ -108,17 +108,26 @@ if (!wallet) {
     walletSetId = createWsData.data?.walletSet?.id;  
   }  
 
-  if (walletSetId) {  
-    await fetch("https://api.circle.com/v1/w3s/user/wallets", {  
-      method: "POST",  
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken },  
-      body: JSON.stringify({  
-        idempotencyKey: crypto.randomUUID(),  
-        walletSetId: walletSetId,  
-        blockchains: ["ARC-TESTNET"],
-        accountType: "SCA"  
-      })  
-    });  
+  if (walletSetId) {
+  const walletCreateRes = await fetch("https://api.circle.com/v1/w3s/user/wallets", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apikey}`,
+      "X-User-Token": freshUserToken
+    },
+    body: JSON.stringify({
+      idempotencyKey: crypto.randomUUID(),
+      walletSetId: walletSetId,
+      blockchains: ["ARC-TESTNET"],
+      accountType: "SCA"
+    })
+  });
+
+  const walletCreateRaw = await walletCreateRes.text();
+
+  console.log("🔎 CIRCLE CREATE WALLET STATUS:", walletCreateRes.status);
+  console.log("🔎 CIRCLE CREATE WALLET RESPONSE:", walletCreateRaw);
   }  
 
   let attempts = 0;  
