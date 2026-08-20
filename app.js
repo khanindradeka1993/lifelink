@@ -396,59 +396,105 @@ const userId = sessionStorage.getItem("circle_user_id");
     sdkInstance.setAuthentication({
     userToken: sessionStorage.getItem("circle_user_token"),
     encryptionKey: sessionStorage.getItem("circle_encryption_key")
-  });
+  });challenge
 
   const challengeId = data.challengeId || data.data?.challengeId;
   if (!challengeId) {
     throw new Error("No challenge ID returned from Circle API.");
   }
 
-  // 3. Execute challenge via Circle SDK
-  return new Promise((resolve, reject) => {
-    sdkInstance.execute(challengeId, async (error, sdkResult) => {
-      if (error) {
-  console.error("❌ CIRCLE SDK ERROR:", error);
-  return reject(error);
-}
+  // 3. Execute the transaction challenge via Circle SDK
+return new Promise((resolve, reject) => {
+  sdkInstance.execute(challengeId, async (error, sdkResult) => {
+    if (error) {
+      console.error("❌ CIRCLE SDK ERROR:", error);
+      return reject(error);
+    }
 
-console.log("✅ CIRCLE SDK RESULT:", sdkResult);
+    console.log("✅ CIRCLE SDK RESULT:", sdkResult);
 
-      try {
-        const txResponse = await fetch("/api/execute-circle-tx", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-                userToken: sessionStorage.getItem("circle_user_token"),
-  userId: sessionStorage.getItem("circle_user_id"),
-            encryptionKey: sessionStorage.getItem("circle_encryption_key"),
-            functionSignature: abiFunction,
-            contractAddress,
-            args,
-            skipSetup: true
-          })
-        });
+    try {
+      // The first SDK execution only completes the current challenge.
+      // Now ask the backend to create the actual contract-execution challenge.
+      const txResponse = await fetch("/api/execute-circle-tx", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          userToken: sessionStorage.getItem("circle_user_token"),
+          userId: sessionStorage.getItem("circle_user_id"),
+          encryptionKey: sessionStorage.getItem("circle_encryption_key"),
+          functionSignature: abiFunction,
+          contractAddress,
+          args,
+          skipSetup: true
+        })
+      });
 
-        const txData = await txResponse.json();
-        console.log("🔍 FINAL TX RESPONSE:", txData);
-console.log("🔍 CIRCLE SDK RESULT:", sdkResult);
-        const resObj = sdkResult || {};
-        const finalHash = txData.transactionHash || txData.data?.txHash || resObj.transactionHash || resObj.data?.txHash;
+      const txData = await txResponse.json();
+
+      console.log("🔎 CONTRACT CHALLENGE RESPONSE:", txData);
+
+      if (!txResponse.ok) {
+        throw new Error(
+          txData.error || "Failed to create contract execution challenge."
+        );
+      }
+
+      const txChallengeId =
+        txData.challengeId ||
+        txData.data?.challengeId;
+
+      if (!txChallengeId) {
+        throw new Error("No contract transaction challenge ID returned.");
+      }
+
+      console.log("🚀 EXECUTING CONTRACT CHALLENGE:", txChallengeId);
+
+      // Execute the ACTUAL contract transaction challenge.
+      sdkInstance.execute(txChallengeId, async (txError, txSdkResult) => {
+        if (txError) {
+          console.error("❌ CONTRACT SDK ERROR:", txError);
+          return reject(txError);
+        }
+
+        console.log("✅ CONTRACT SDK RESULT:", txSdkResult);
+
+        const finalHash =
+          txSdkResult?.transactionHash ||
+          txSdkResult?.txHash ||
+          txSdkResult?.data?.transactionHash ||
+          txSdkResult?.data?.txHash ||
+          txData?.transactionHash ||
+          txData?.data?.transactionHash ||
+          "";
+
+        console.log("🔎 FINAL TRANSACTION HASH:", finalHash);
 
         if (typeof showExplorerButton === "function" && finalHash) {
           showExplorerButton(finalHash);
         }
 
         setTimeout(async () => {
-          if (typeof loadDashboardData === "function") await loadDashboardData();
-          if (typeof fetchRequests === "function") await fetchRequests();
+          if (typeof loadDashboardData === "function") {
+            await loadDashboardData();
+          }
+
+          if (typeof fetchRequests === "function") {
+            await fetchRequests();
+          }
         }, 4000);
 
         resolve(finalHash);
-      } catch (err) {
-        reject(err);
-      }
-    });
+      });
+
+    } catch (err) {
+      console.error("❌ CONTRACT EXECUTION FAILED:", err);
+      reject(err);
+    }
   });
+});
 }
 
 
