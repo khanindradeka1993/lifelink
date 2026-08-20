@@ -396,7 +396,7 @@ const userId = sessionStorage.getItem("circle_user_id");
     sdkInstance.setAuthentication({
     userToken: sessionStorage.getItem("circle_user_token"),
     encryptionKey: sessionStorage.getItem("circle_encryption_key")
-  });challenge
+  });
 
   const challengeId = data.challengeId || data.data?.challengeId;
   if (!challengeId) {
