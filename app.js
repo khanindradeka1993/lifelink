@@ -454,46 +454,147 @@ return new Promise((resolve, reject) => {
 
       // Execute the ACTUAL contract transaction challenge.
       sdkInstance.execute(txChallengeId, async (txError, txSdkResult) => {
-        if (txError) {
-          console.error("❌ CONTRACT SDK ERROR:", txError);
-          return reject(txError);
-        }
+  if (txError) {
+    console.error("❌ CIRCLE SDK ERROR:", txError);
+    return reject(txError);
+  }
 
-        console.log("✅ CONTRACT SDK RESULT:", txSdkResult);
+  console.log("✅ CIRCLE SDK RESULT:", txSdkResult);
 
-        const finalHash =
-          txSdkResult?.transactionHash ||
-          txSdkResult?.txHash ||
-          txSdkResult?.data?.transactionHash ||
-          txSdkResult?.data?.txHash ||
-          txData?.transactionHash ||
-          txData?.data?.transactionHash ||
-          "";
+  try {
+    // Wallet creation is still processing.
+    // Do NOT treat this as the final transaction.
+    if (
+      txSdkResult?.type === "CREATE_WALLET" &&
+      txSdkResult?.status === "IN_PROGRESS"
+    ) {
+      console.log("⏳ WALLET CREATION STILL IN PROGRESS");
 
-        console.log("🔎 FINAL TRANSACTION HASH:", finalHash);
+      setTimeout(async () => {
+        try {
+          const retryResponse = await fetch("/api/execute-circle-tx", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              userToken: sessionStorage.getItem("circle_user_token"),
+              userId: sessionStorage.getItem("circle_user_id"),
+              encryptionKey: sessionStorage.getItem("circle_encryption_key"),
+              functionSignature: abiFunction,
+              contractAddress,
+              args,
+              skipSetup: true,
+              walletCreationComplete: true
+            })
+          });
 
-        if (typeof showExplorerButton === "function" && finalHash) {
-          showExplorerButton(finalHash);
-        }
+          const retryData = await retryResponse.json();
 
-        setTimeout(async () => {
-          if (typeof loadDashboardData === "function") {
-            await loadDashboardData();
+          console.log(
+            "🔄 RETRY CONTRACT CHALLENGE RESPONSE:",
+            retryData
+          );
+
+          if (!retryResponse.ok) {
+            throw new Error(
+              retryData.error ||
+              "Failed to retry contract execution challenge."
+            );
           }
 
-          if (typeof fetchRequests === "function") {
-            await fetchRequests();
+          const retryChallengeId =
+            retryData.challengeId ||
+            retryData.data?.challengeId;
+
+          if (!retryChallengeId) {
+            throw new Error(
+              "No retry challenge ID returned from Circle."
+            );
           }
-        }, 4000);
 
-        resolve(finalHash);
-      });
+          console.log(
+            "🚀 EXECUTING RETRY CHALLENGE:",
+            retryChallengeId
+          );
 
-    } catch (err) {
-      console.error("❌ CONTRACT EXECUTION FAILED:", err);
-      reject(err);
+          sdkInstance.execute(
+            retryChallengeId,
+            async (retryError, retrySdkResult) => {
+              if (retryError) {
+                console.error(
+                  "❌ RETRY SDK ERROR:",
+                  retryError
+                );
+                return reject(retryError);
+              }
+
+              console.log(
+                "✅ RETRY SDK RESULT:",
+                retrySdkResult
+              );
+
+              const finalHash =
+                retrySdkResult?.transactionHash ||
+                retrySdkResult?.txHash ||
+                retrySdkResult?.data?.transactionHash ||
+                retrySdkResult?.data?.txHash ||
+                retryData?.transactionHash ||
+                retryData?.data?.transactionHash ||
+                "";
+
+              console.log(
+                "🚀 FINAL TRANSACTION HASH:",
+                finalHash
+              );
+
+              if (
+                typeof showExplorerButton === "function" &&
+                finalHash
+              ) {
+                showExplorerButton(finalHash);
+              }
+
+              resolve(finalHash);
+            }
+          );
+        } catch (retryErr) {
+          console.error(
+            "❌ WALLET/CONTRACT RETRY FAILED:",
+            retryErr
+          );
+          reject(retryErr);
+        }
+      }, 5000);
+
+      return;
     }
-  });
+
+    const finalHash =
+      txSdkResult?.transactionHash ||
+      txSdkResult?.txHash ||
+      txSdkResult?.data?.transactionHash ||
+      txSdkResult?.data?.txHash ||
+      "";
+
+    console.log(
+      "🚀 FINAL TRANSACTION HASH:",
+      finalHash
+    );
+
+    if (
+      typeof showExplorerButton === "function" &&
+      finalHash
+    ) {
+      showExplorerButton(finalHash);
+    }
+
+    resolve(finalHash);
+
+  } catch (err) {
+    console.error("❌ CONTRACT EXECUTION FAILED:", err);
+    reject(err);
+  }
 });
 }
 
