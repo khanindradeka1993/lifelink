@@ -96,6 +96,8 @@ if (!wallet) {
     headers: { "Authorization": `Bearer ${apikey}`, "X-User-Token": freshUserToken }  
   });  
   const wsData = await wsRes.json();  
+ console.log("🔎 CIRCLE WALLET SET STATUS:", wsRes.status);
+console.log("🔎 CIRCLE WALLET SET RESPONSE:", JSON.stringify(wsData));
   walletSetId = wsData.data?.walletSets?.[0]?.id;  
 
   if (!walletSetId) {  
@@ -105,6 +107,8 @@ if (!wallet) {
       body: JSON.stringify({ idempotencyKey: crypto.randomUUID(), name: "LifeLink Wallet Set" })  
     });  
     const createWsData = await createWsRes.json();  
+    console.log("🔎 CIRCLE CREATE WALLET SET STATUS:", createWsRes.status);
+console.log("🔎 CIRCLE CREATE WALLET SET RESPONSE:", JSON.stringify(createWsData));
     walletSetId = createWsData.data?.walletSet?.id;  
   }  
 
