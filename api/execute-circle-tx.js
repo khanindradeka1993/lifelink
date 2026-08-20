@@ -3,7 +3,7 @@ import crypto from "crypto";
 export default async function handler(req, res) {
 if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-const { userToken, userId, contractAddress, functionSignature, args, skipSetup, encryptionKey } = req.body;
+const { userToken, userId, contractAddress, functionSignature, args, skipSetup, walletCreationComplete, encryptionKey } = req.body;
 const apikey = process.env.CIRCLE_API_KEY;
 console.log("🔎 EXECUTE INPUT:", {
   hasUserToken: !!userToken,
@@ -91,49 +91,79 @@ if (!wallet && !skipSetup) {
 
 // 3. Ensure user wallet exists
 if (!wallet) {
-  const walletCreateRes = await fetch(
-    "https://api.circle.com/v1/w3s/user/wallets",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apikey}`,
-        "X-User-Token": freshUserToken
-      },
-      body: JSON.stringify({
-        idempotencyKey: crypto.randomUUID(),
-        blockchains: ["ARC-TESTNET"],
-        accountType: "SCA"
-      })
+
+  // First call: create wallet challenge
+  if (!walletCreationComplete) {
+    const walletCreateRes = await fetch(
+      "https://api.circle.com/v1/w3s/user/wallets",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apikey}`,
+          "X-User-Token": freshUserToken
+        },
+        body: JSON.stringify({
+          idempotencyKey: crypto.randomUUID(),
+          blockchains: ["ARC-TESTNET"],
+          accountType: "SCA"
+        })
+      }
+    );
+
+    const walletCreateData = await walletCreateRes.json();
+
+    console.log(
+      "🔎 CIRCLE CREATE WALLET STATUS:",
+      walletCreateRes.status
+    );
+
+    console.log(
+      "🔎 CIRCLE CREATE WALLET RESPONSE:",
+      JSON.stringify(walletCreateData)
+    );
+
+    if (!walletCreateRes.ok || !walletCreateData.data?.challengeId) {
+      return res.status(400).json({
+        error:
+          walletCreateData.message ||
+          walletCreateData.error ||
+          "Failed to create wallet challenge"
+      });
     }
-  );
 
-  const walletCreateData = await walletCreateRes.json();
-
-  console.log(
-    "🔎 CIRCLE CREATE WALLET STATUS:",
-    walletCreateRes.status
-  );
-  console.log(
-    "🔎 CIRCLE CREATE WALLET RESPONSE:",
-    JSON.stringify(walletCreateData)
-  );
-
-  if (!walletCreateRes.ok || !walletCreateData.data?.challengeId) {
-    return res.status(400).json({
-      error:
-        walletCreateData.message ||
-        walletCreateData.error ||
-        "Failed to create wallet challenge"
+    return res.status(200).json({
+      needsWalletCreation: true,
+      challengeId: walletCreateData.data.challengeId,
+      userToken: freshUserToken,
+      encryptionKey: freshEncryptionKey
     });
   }
 
-  return res.status(200).json({
-    needsWalletCreation: true,
-    challengeId: walletCreateData.data.challengeId,
-    userToken: freshUserToken,
-    encryptionKey: freshEncryptionKey
-  });
+  // Second call: wallet-creation challenge was executed.
+  // Give Circle a few seconds to make the wallet visible.
+  let attempts = 0;
+
+  while (!wallet && attempts < 6) {
+    attempts++;
+
+    await new Promise(resolve => setTimeout(resolve, 2500));
+
+    wallet = await getWallet(freshUserToken);
+
+    console.log(
+      "🔎 WALLET CHECK AFTER CREATION:",
+      attempts,
+      wallet ? "FOUND" : "NOT FOUND"
+    );
+  }
+
+  if (!wallet) {
+    return res.status(400).json({
+      error:
+        "Wallet creation challenge completed, but the wallet is not available yet. Please try again."
+    });
+  }
 }
 
 // Wallet exists → continue to contract execution
