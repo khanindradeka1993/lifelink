@@ -1,289 +1,362 @@
 import crypto from "crypto";
 
 export default async function handler(req, res) {
-if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
-const {
-action,
-userToken,
-userId,
-contractAddress,
-functionSignature,
-args,
-skipSetup,
-walletCreationComplete,
-encryptionKey
-} = req.body;
+  const {
+    action,
+    userToken,
+    userId,
+    contractAddress,
+    functionSignature,
+    args,
+    skipSetup,
+    walletCreationComplete,
+    encryptionKey
+  } = req.body;
 
-const apikey = process.env.CIRCLE_API_KEY;
-console.log("🔎 EXECUTE INPUT:", {
-hasUserToken: !!userToken,
-hasUserId: !!userId,
-hasContractAddress: !!contractAddress,
-hasFunctionSignature: !!functionSignature
-});
+  const apikey = process.env.CIRCLE_API_KEY;
 
-if (!userToken || userToken === "undefined" || !userId) {
-return res.status(400).json({ error: "Missing Circle user ID or user token. Please sign in again." });
-}
+  console.log("🔎 EXECUTE INPUT:", {
+    hasUserToken: !!userToken,
+    hasUserId: !!userId,
+    hasContractAddress: !!contractAddress,
+    hasFunctionSignature: !!functionSignature
+  });
 
-try {
-let freshUserToken = userToken;
-let freshEncryptionKey = null;
+  if (!userToken || userToken === "undefined" || !userId) {
+    return res.status(400).json({
+      error: "Missing Circle user ID or user token. Please sign in again."
+    });
+  }
 
-// 1. Always acquire a fresh user token and encryption key from Circle
-try {
-const tokenRes = await fetch("https://api.circle.com/v1/w3s/users/token", {
-method: "POST",
-headers: { "Content-Type": "application/json", "Authorization": Bearer ${apikey} },
-body: JSON.stringify({ userId })
-});
-const tokenData = await tokenRes.json();
-console.log("🔎 CIRCLE TOKEN STATUS:", tokenRes.status);
-console.log("🔎 CIRCLE TOKEN DATA KEYS:", Object.keys(tokenData.data || {}));
+  try {
+    let freshUserToken = userToken;
+    let freshEncryptionKey = null;
 
-if (tokenData.data) {
-freshUserToken = tokenData.data.userToken || userToken;
-// Fallback to the encryption key sent directly from the frontend request body
-freshEncryptionKey = tokenData.data.encryptionKey || encryptionKey || null;
-}
-} catch (e) {
-console.warn("Token refresh warning:", e);
-}
+    // 1. Always acquire a fresh user token and encryption key from Circle
+    try {
+      const tokenRes = await fetch(
+        "https://api.circle.com/v1/w3s/users/token",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apikey}`
+          },
+          body: JSON.stringify({ userId })
+        }
+      );
 
-async function getWallet(token) {
-try {
-const walletRes = await fetch("https://api.circle.com/v1/w3s/wallets", {
-headers: {
-"Authorization": Bearer ${apikey},
-"X-User-Token": token
-}
-});
+      const tokenData = await tokenRes.json();
 
-const rawWallet = await walletRes.text();  
+      console.log("🔎 CIRCLE TOKEN STATUS:", tokenRes.status);
+      console.log(
+        "🔎 CIRCLE TOKEN DATA KEYS:",
+        Object.keys(tokenData.data || {})
+      );
 
-console.log("🔎 CIRCLE WALLET STATUS:", walletRes.status);  
-console.log("🔎 CIRCLE WALLET RESPONSE:", rawWallet);  
+      if (tokenData.data) {
+        freshUserToken =
+          tokenData.data.userToken || userToken;
 
-if (!walletRes.ok) {  
-  return null;  
-}  
+        freshEncryptionKey =
+          tokenData.data.encryptionKey ||
+          encryptionKey ||
+          null;
+      }
+    } catch (e) {
+      console.warn("Token refresh warning:", e);
+    }
 
-const walletData = JSON.parse(rawWallet);  
-return walletData.data?.wallets?.[0] || null;
+    async function getWallet(token) {
+      try {
+        const walletRes = await fetch(
+          "https://api.circle.com/v1/w3s/wallets",
+          {
+            headers: {
+              "Authorization": `Bearer ${apikey}`,
+              "X-User-Token": token
+            }
+          }
+        );
 
-} catch (err) {
-console.error("❌ CIRCLE WALLET ERROR:", err);
-return null;
-}
-}
+        const rawWallet = await walletRes.text();
 
-let wallet = await getWallet(freshUserToken);
-if (action === "lookupTransaction") {
-if (!wallet?.id) {
-return res.status(400).json({
-error: "Circle wallet not available for transaction lookup."
-});
-}
+        console.log(
+          "🔎 CIRCLE WALLET STATUS:",
+          walletRes.status
+        );
 
-console.log("🔎 LOOKING UP COMPLETED CIRCLE TRANSACTION...");
+        console.log(
+          "🔎 CIRCLE WALLET RESPONSE:",
+          rawWallet
+        );
 
-for (let attempt = 1; attempt <= 6; attempt++) {
-const params = new URLSearchParams({
-walletIds: wallet.id,
-operation: "CONTRACT_EXECUTION",
-pageSize: "20",
-order: "DESC"
-});
+        if (!walletRes.ok) {
+          return null;
+        }
 
-const txLookupRes = await fetch(  
-  `https://api.circle.com/v1/w3s/transactions?${params.toString()}`,  
-  {  
-    method: "GET",  
-    headers: {  
-      "Authorization": `Bearer ${apikey}`,  
-      "X-User-Token": freshUserToken  
-    }  
-  }  
-);  
+        const walletData = JSON.parse(rawWallet);
 
-const txLookupData = await txLookupRes.json();  
+        return walletData.data?.wallets?.[0] || null;
 
-console.log(
+      } catch (err) {
+        console.error(
+          "❌ CIRCLE WALLET ERROR:",
+          err
+        );
 
-"🔎 CIRCLE TRANSACTION LOOKUP:",
-attempt,
-txLookupRes.status,
-JSON.stringify(txLookupData, null, 2)
-);
+        return null;
+      }
+    }
 
-if (txLookupRes.ok) {  
-  const transactions =  
-    txLookupData.data?.transactions || [];  
+    let wallet = await getWallet(freshUserToken);
 
-  const matchingTx = transactions.find(tx =>
+    if (action === "lookupTransaction") {
+      if (!wallet?.id) {
+        return res.status(400).json({
+          error:
+            "Circle wallet not available for transaction lookup."
+        });
+      }
 
-tx.txHash &&
-tx.contractAddress?.toLowerCase() ===
-contractAddress?.toLowerCase()
-);
+      console.log(
+        "🔎 LOOKING UP COMPLETED CIRCLE TRANSACTION..."
+      );
 
-if (matchingTx) {  
-    console.log(  
-      "✅ CIRCLE TX HASH FOUND:",  
-      matchingTx.txHash  
-    );  
+      for (let attempt = 1; attempt <= 6; attempt++) {
+        const params = new URLSearchParams({
+          walletIds: wallet.id,
+          operation: "CONTRACT_EXECUTION",
+          pageSize: "20",
+          order: "DESC"
+        });
 
-    return res.status(200).json({  
-      transactionHash: matchingTx.txHash,  
-      txHash: matchingTx.txHash,  
-      transaction: matchingTx  
-    });  
-  }  
-}  
+        const txLookupRes = await fetch(
+          `https://api.circle.com/v1/w3s/transactions?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${apikey}`,
+              "X-User-Token": freshUserToken
+            }
+          }
+        );
 
-await new Promise(resolve =>  
-  setTimeout(resolve, 2000)  
-);
+        const txLookupData = await txLookupRes.json();
 
-}
+        console.log(
+          "🔎 CIRCLE TRANSACTION LOOKUP:",
+          attempt,
+          txLookupRes.status,
+          JSON.stringify(txLookupData, null, 2)
+        );
 
-return res.status(404).json({
-error:
-"Transaction completed, but Circle has not returned the transaction hash yet."
-});
-}
+        if (txLookupRes.ok) {
+          const transactions =
+            txLookupData.data?.transactions || [];
 
-// 2. If no wallet exists and setup isn't skipped, request PIN setup
-if (!wallet && !skipSetup) {
-const pinRes = await fetch(https://api.circle.com/v1/w3s/user/pin, {
-method: "POST",
-headers: { "Content-Type": "application/json", "Authorization": Bearer ${apikey}, "X-User-Token": freshUserToken },
-body: JSON.stringify({ idempotencyKey: crypto.randomUUID() })
-});
-const pinData = await pinRes.json();
-const challengeId = pinData.data?.challengeId;
+          const matchingTx = transactions.find(
+            tx =>
+              tx.txHash &&
+              tx.contractAddress?.toLowerCase() ===
+                contractAddress?.toLowerCase()
+          );
 
-if (pinRes.ok && challengeId) {
-return res.status(200).json({
-needsWalletSetup: true,
-challengeId: challengeId,
-userToken: freshUserToken,
-encryptionKey: freshEncryptionKey
-});
-}
-}
+          if (matchingTx) {
+            console.log(
+              "✅ CIRCLE TX HASH FOUND:",
+              matchingTx.txHash
+            );
 
-// 3. Ensure user wallet exists
-if (!wallet) {
+            return res.status(200).json({
+              transactionHash: matchingTx.txHash,
+              txHash: matchingTx.txHash,
+              transaction: matchingTx
+            });
+          }
+        }
 
-// First call: create wallet challenge
-if (!walletCreationComplete) {
-const walletCreateRes = await fetch(
-"https://api.circle.com/v1/w3s/user/wallets",
-{
-method: "POST",
-headers: {
-"Content-Type": "application/json",
-"Authorization": Bearer ${apikey},
-"X-User-Token": freshUserToken
-},
-body: JSON.stringify({
-idempotencyKey: crypto.randomUUID(),
-blockchains: ["ARC-TESTNET"],
-accountType: "SCA"
-})
-}
-);
+        await new Promise(resolve =>
+          setTimeout(resolve, 2000)
+        );
+      }
 
-const walletCreateData = await walletCreateRes.json();  
+      return res.status(404).json({
+        error:
+          "Transaction completed, but Circle has not returned the transaction hash yet."
+      });
+    }
 
-console.log(  
-  "🔎 CIRCLE CREATE WALLET STATUS:",  
-  walletCreateRes.status  
-);  
+    // 2. If no wallet exists and setup isn't skipped, request PIN setup
+    if (!wallet && !skipSetup) {
+      const pinRes = await fetch(
+        "https://api.circle.com/v1/w3s/user/pin",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apikey}`,
+            "X-User-Token": freshUserToken
+          },
+          body: JSON.stringify({
+            idempotencyKey: crypto.randomUUID()
+          })
+        }
+      );
 
-console.log(  
-  "🔎 CIRCLE CREATE WALLET RESPONSE:",  
-  JSON.stringify(walletCreateData)  
-);  
+      const pinData = await pinRes.json();
 
-if (!walletCreateRes.ok || !walletCreateData.data?.challengeId) {  
-  return res.status(400).json({  
-    error:  
-      walletCreateData.message ||  
-      walletCreateData.error ||  
-      "Failed to create wallet challenge"  
-  });  
-}  
+      const challengeId =
+        pinData.data?.challengeId;
 
-return res.status(200).json({  
-  needsWalletCreation: true,  
-  challengeId: walletCreateData.data.challengeId,  
-  userToken: freshUserToken,  
-  encryptionKey: freshEncryptionKey  
-});
+      if (pinRes.ok && challengeId) {
+        return res.status(200).json({
+          needsWalletSetup: true,
+          challengeId: challengeId,
+          userToken: freshUserToken,
+          encryptionKey: freshEncryptionKey
+        });
+      }
+    }
 
-}
+    // 3. Ensure user wallet exists
+    if (!wallet) {
 
-// Second call: wallet-creation challenge was executed.
-// Give Circle a few seconds to make the wallet visible.
-let attempts = 0;
+      // First call: create wallet challenge
+      if (!walletCreationComplete) {
+        const walletCreateRes = await fetch(
+          "https://api.circle.com/v1/w3s/user/wallets",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${apikey}`,
+              "X-User-Token": freshUserToken
+            },
+            body: JSON.stringify({
+              idempotencyKey: crypto.randomUUID(),
+              blockchains: ["ARC-TESTNET"],
+              accountType: "SCA"
+            })
+          }
+        );
 
-while (!wallet && attempts < 6) {
-attempts++;
+        const walletCreateData =
+          await walletCreateRes.json();
 
-await new Promise(resolve => setTimeout(resolve, 2500));  
+        console.log(
+          "🔎 CIRCLE CREATE WALLET STATUS:",
+          walletCreateRes.status
+        );
 
-wallet = await getWallet(freshUserToken);  
+        console.log(
+          "🔎 CIRCLE CREATE WALLET RESPONSE:",
+          JSON.stringify(walletCreateData)
+        );
 
-console.log(  
-  "🔎 WALLET CHECK AFTER CREATION:",  
-  attempts,  
-  wallet ? "FOUND" : "NOT FOUND"  
-);
+        if (
+          !walletCreateRes.ok ||
+          !walletCreateData.data?.challengeId
+        ) {
+          return res.status(400).json({
+            error:
+              walletCreateData.message ||
+              walletCreateData.error ||
+              "Failed to create wallet challenge"
+          });
+        }
 
-}
+        return res.status(200).json({
+          needsWalletCreation: true,
+          challengeId:
+            walletCreateData.data.challengeId,
+          userToken: freshUserToken,
+          encryptionKey: freshEncryptionKey
+        });
+      }
 
-if (!wallet) {
-return res.status(400).json({
-error:
-"Wallet creation challenge completed, but the wallet is not available yet. Please try again."
-});
-}
-}
+      // Second call: wallet-creation challenge was executed.
+      // Give Circle a few seconds to make the wallet visible.
+      let attempts = 0;
 
-// Wallet exists → continue to contract execution
+      while (!wallet && attempts < 6) {
+        attempts++;
 
-// 4. Execute contract transaction challenge
-const txRes = await fetch(https://api.circle.com/v1/w3s/user/transactions/contractExecution, {
-method: "POST",
-headers: { "Content-Type": "application/json", "Authorization": Bearer ${apikey}, "X-User-Token": freshUserToken },
-body: JSON.stringify({
-idempotencyKey: crypto.randomUUID(),
-walletId: wallet.id,
-contractAddress: contractAddress,
-abiFunctionSignature: functionSignature,
-abiParameters: args || [],
-feeLevel: "MEDIUM"
-})
-});
+        await new Promise(resolve =>
+          setTimeout(resolve, 2500)
+        );
 
-const txData = await txRes.json();
+        wallet = await getWallet(
+          freshUserToken
+        );
 
-if (!txRes.ok || !txData.data?.challengeId) {
-return res.status(400).json({
-error: txData.message || txData.error || "Failed to execute transaction"
-});
-}
+        console.log(
+          "🔎 WALLET CHECK AFTER CREATION:",
+          attempts,
+          wallet ? "FOUND" : "NOT FOUND"
+        );
+      }
 
-return res.status(200).json({
-challengeId: txData.data.challengeId,
-userToken: freshUserToken,
-encryptionKey: freshEncryptionKey
-});
+      if (!wallet) {
+        return res.status(400).json({
+          error:
+            "Wallet creation challenge completed, but the wallet is not available yet. Please try again."
+        });
+      }
+    }
 
-} catch (err) {
-return res.status(500).json({ error: err.message || "Internal server error" });
-}
-}
+    // Wallet exists → continue to contract execution
+
+    // 4. Execute contract transaction challenge
+    const txRes = await fetch(
+      "https://api.circle.com/v1/w3s/user/transactions/contractExecution",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apikey}`,
+          "X-User-Token": freshUserToken
+        },
+        body: JSON.stringify({
+          idempotencyKey: crypto.randomUUID(),
+          walletId: wallet.id,
+          contractAddress: contractAddress,
+          abiFunctionSignature: functionSignature,
+          abiParameters: args || [],
+          feeLevel: "MEDIUM"
+        })
+      }
+    );
+
+    const txData = await txRes.json();
+
+    if (
+      !txRes.ok ||
+      !txData.data?.challengeId
+    ) {
+      return res.status(400).json({
+        error:
+          txData.message ||
+          txData.error ||
+          "Failed to execute transaction"
+      });
+    }
+
+    return res.status(200).json({
+      challengeId: txData.data.challengeId,
+      userToken: freshUserToken,
+      encryptionKey: freshEncryptionKey
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      error:
+        err.message ||
+        "Internal server error"
+    });
+  }
+        }
