@@ -3,7 +3,18 @@ import crypto from "crypto";
 export default async function handler(req, res) {
 if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-const { action, userToken, userId, contractAddress, functionSignature, args, skipSetup, walletCreationComplete, encryptionKey,
+const {
+  action,
+  userToken,
+  userId,
+  contractAddress,
+  functionSignature,
+  args,
+  skipSetup,
+  walletCreationComplete,
+  encryptionKey
+} = req.body;
+
 const apikey = process.env.CIRCLE_API_KEY;
 console.log("🔎 EXECUTE INPUT:", {
   hasUserToken: !!userToken,
