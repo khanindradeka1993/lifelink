@@ -121,34 +121,54 @@ if (action === "lookupTransaction") {
         txLookupData.data?.transactions || [];
 
       const matchingTx = transactions.find(tx =>
-  tx.txHash &&
   tx.contractAddress?.toLowerCase() ===
-    contractAddress?.toLowerCase()
+  contractAddress?.toLowerCase()
 );
 
-      if (matchingTx) {
-        console.log(
-          "✅ CIRCLE TX HASH FOUND:",
-          matchingTx.txHash
-        );
+if (matchingTx) {
+  console.log(
+    "🔎 MATCHED CIRCLE TX:",
+    JSON.stringify(matchingTx, null, 2)
+  );
 
-        return res.status(200).json({
-          transactionHash: matchingTx.txHash,
-          txHash: matchingTx.txHash,
-          transaction: matchingTx
-        });
-      }
-    }
-
-    await new Promise(resolve =>
-      setTimeout(resolve, 2000)
+  // Circle transaction failed
+  if (matchingTx.state === "FAILED") {
+    console.error(
+      "❌ CIRCLE TRANSACTION FAILED:",
+      matchingTx.errorReason,
+      matchingTx.errorDetails
     );
+
+    return res.status(400).json({
+      error:
+        matchingTx.errorDetails ||
+        matchingTx.errorReason ||
+        "Circle transaction failed.",
+      transaction: matchingTx,
+      state: matchingTx.state
+    });
   }
 
-  return res.status(404).json({
-    error:
-      "Transaction completed, but Circle has not returned the transaction hash yet."
-  });
+  // Circle transaction completed successfully
+  if (matchingTx.state === "COMPLETE" && matchingTx.txHash) {
+    console.log(
+      "✅ CIRCLE TX HASH FOUND:",
+      matchingTx.txHash
+    );
+
+    return res.status(200).json({
+      transactionHash: matchingTx.txHash,
+      txHash: matchingTx.txHash,
+      transaction: matchingTx,
+      state: matchingTx.state
+    });
+  }
+
+  // Transaction exists but is still processing
+  console.log(
+    "⏳ CIRCLE TRANSACTION STILL PROCESSING:",
+    matchingTx.state
+  );
 }
   
 // 2. If no wallet exists and setup isn't skipped, request PIN setup  
