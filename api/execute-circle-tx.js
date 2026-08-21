@@ -121,11 +121,10 @@ if (action === "lookupTransaction") {
         txLookupData.data?.transactions || [];
 
       const matchingTx = transactions.find(tx =>
-        tx.txHash &&
-        tx.contractAddress?.toLowerCase() ===
-          contractAddress?.toLowerCase() &&
-        tx.abiFunctionSignature === functionSignature
-      );
+  tx.txHash &&
+  tx.contractAddress?.toLowerCase() ===
+    contractAddress?.toLowerCase()
+);
 
       if (matchingTx) {
         console.log(
