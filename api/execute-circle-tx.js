@@ -68,7 +68,80 @@ if (tokenData.data) {
  }
 
 let wallet = await getWallet(freshUserToken);  
+if (action === "lookupTransaction") {
+  if (!wallet?.id) {
+    return res.status(400).json({
+      error: "Circle wallet not available for transaction lookup."
+    });
+  }
 
+  console.log("🔎 LOOKING UP COMPLETED CIRCLE TRANSACTION...");
+
+  for (let attempt = 1; attempt <= 6; attempt++) {
+    const params = new URLSearchParams({
+      walletIds: wallet.id,
+      operation: "CONTRACT_EXECUTION",
+      state: "COMPLETE",
+      pageSize: "20",
+      order: "DESC"
+    });
+
+    const txLookupRes = await fetch(
+      `https://api.circle.com/v1/w3s/transactions?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${apikey}`,
+          "X-User-Token": freshUserToken
+        }
+      }
+    );
+
+    const txLookupData = await txLookupRes.json();
+
+    console.log(
+      "🔎 CIRCLE TRANSACTION LOOKUP:",
+      attempt,
+      txLookupRes.status,
+      txLookupData
+    );
+
+    if (txLookupRes.ok) {
+      const transactions =
+        txLookupData.data?.transactions || [];
+
+      const matchingTx = transactions.find(tx =>
+        tx.txHash &&
+        tx.contractAddress?.toLowerCase() ===
+          contractAddress?.toLowerCase() &&
+        tx.abiFunctionSignature === functionSignature
+      );
+
+      if (matchingTx) {
+        console.log(
+          "✅ CIRCLE TX HASH FOUND:",
+          matchingTx.txHash
+        );
+
+        return res.status(200).json({
+          transactionHash: matchingTx.txHash,
+          txHash: matchingTx.txHash,
+          transaction: matchingTx
+        });
+      }
+    }
+
+    await new Promise(resolve =>
+      setTimeout(resolve, 2000)
+    );
+  }
+
+  return res.status(404).json({
+    error:
+      "Transaction completed, but Circle has not returned the transaction hash yet."
+  });
+}
+  
 // 2. If no wallet exists and setup isn't skipped, request PIN setup  
 if (!wallet && !skipSetup) {  
   const pinRes = await fetch(`https://api.circle.com/v1/w3s/user/pin`, {  
