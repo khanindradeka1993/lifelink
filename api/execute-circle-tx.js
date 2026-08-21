@@ -92,7 +92,6 @@ if (action === "lookupTransaction") {
     const params = new URLSearchParams({
       walletIds: wallet.id,
       operation: "CONTRACT_EXECUTION",
-      state: "COMPLETE",
       pageSize: "20",
       order: "DESC"
     });
