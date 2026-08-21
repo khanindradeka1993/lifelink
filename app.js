@@ -536,11 +536,15 @@ return new Promise((resolve, reject) => {
             );
 
             const finalHash =
-              retrySdkResult?.transactionHash ||
-              retrySdkResult?.txHash ||
-              retrySdkResult?.data?.transactionHash ||
-              retrySdkResult?.data?.txHash ||
-              "";
+    retryData?.transactionHash ||
+    retryData?.txHash ||
+    retryData?.transaction?.txHash ||
+    retryData?.transaction?.transactionHash ||
+    retrySdkResult?.transactionHash ||
+    retrySdkResult?.txHash ||
+    retrySdkResult?.data?.transactionHash ||
+    retrySdkResult?.data?.txHash ||
+    "";
 
             console.log(
               "🔎 FINAL TRANSACTION HASH:",
