@@ -588,7 +588,6 @@ if (!finalHash) {
             "Circle contract execution completed, but the transaction hash is not available yet."
         )
     );
-}
             }
 
             if (
