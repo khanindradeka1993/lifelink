@@ -110,11 +110,11 @@ if (action === "lookupTransaction") {
     const txLookupData = await txLookupRes.json();
 
     console.log(
-      "🔎 CIRCLE TRANSACTION LOOKUP:",
-      attempt,
-      txLookupRes.status,
-      txLookupData
-    );
+  "🔎 CIRCLE TRANSACTION LOOKUP:",
+  attempt,
+  txLookupRes.status,
+  JSON.stringify(txLookupData, null, 2)
+);
 
     if (txLookupRes.ok) {
       const transactions =
