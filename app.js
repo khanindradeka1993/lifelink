@@ -535,7 +535,7 @@ return new Promise((resolve, reject) => {
               retrySdkResult
             );
 
-            const finalHash =
+            let finalHash =
     retryData?.transactionHash ||
     retryData?.txHash ||
     retryData?.transaction?.txHash ||
@@ -546,18 +546,49 @@ return new Promise((resolve, reject) => {
     retrySdkResult?.data?.txHash ||
     "";
 
-            console.log(
-              "🔎 FINAL TRANSACTION HASH:",
-              finalHash
-            );
+if (!finalHash) {
+    console.log("🔎 No hash in SDK result. Looking up completed transaction...");
 
-            // NEVER report success without a real transaction hash.
-            if (!finalHash) {
-              return reject(
-                new Error(
-                  "Circle contract execution completed without a transaction hash."
-                )
-              );
+    try {
+        const lookupResponse = await fetch("/api/execute-circle-tx", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                action: "lookupTransaction",
+                userToken: sessionStorage.getItem("circle_user_token"),
+                userId: sessionStorage.getItem("circle_user_id"),
+                contractAddress,
+                functionSignature: abiFunction
+            })
+        });
+
+        const lookupData = await lookupResponse.json();
+
+        console.log("🔎 TRANSACTION LOOKUP RESULT:", lookupData);
+
+        if (lookupResponse.ok) {
+            finalHash =
+                lookupData.transactionHash ||
+                lookupData.txHash ||
+                lookupData.transaction?.txHash ||
+                "";
+        }
+    } catch (lookupError) {
+        console.error("❌ TRANSACTION LOOKUP FAILED:", lookupError);
+    }
+}
+
+console.log("🔎 FINAL TRANSACTION HASH:", finalHash);
+
+if (!finalHash) {
+    return reject(
+        new Error(
+            "Circle contract execution completed, but the transaction hash is not available yet."
+        )
+    );
+}
             }
 
             if (
