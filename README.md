@@ -1,127 +1,109 @@
-<div align="center">
-
 # ❤️ LifeLink
 
-### Decentralized Emergency Healthcare Network
+## Decentralized Emergency Healthcare Network
 
 **Built on Arc Testnet**
 
 Connecting **Patients • Blood Donors • Doctors • Hospitals • Emergency Responders** through blockchain technology.
 
-🌐 **Live Demo**  
-https://lifelink-q73z.vercel.app
+🌐 **Live Demo:** https://lifelink-q73z.vercel.app
 
-💻 **GitHub Repository**  
-https://github.com/khanindradeka1993/lifelink
-
-![Arc Testnet](https://img.shields.io/badge/Network-Arc%20Testnet-2563EB?style=for-the-badge)
-![Solidity](https://img.shields.io/badge/Solidity-0.8.x-363636?style=for-the-badge)
-![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?style=for-the-badge)
-![Ethers.js](https://img.shields.io/badge/Ethers.js-v5-3C3C3D?style=for-the-badge)
-![USDC](https://img.shields.io/badge/Payments-USDC-2775CA?style=for-the-badge)
-![OpenRouter AI](https://img.shields.io/badge/AI-OpenRouter-8B5CF6?style=for-the-badge)
-
-</div>
+💻 **GitHub Repository:** https://github.com/khanindradeka1993/lifelink
 
 ---
 
 ## ❤️ About LifeLink
 
-LifeLink is a decentralized emergency healthcare network built on **Arc Testnet**. It combines blockchain technology, AI-powered assistance, digital health records, emergency coordination, and USDC payments into one platform.
+LifeLink is a decentralized emergency healthcare network built on **Arc Testnet**.
 
-LifeLink enables patients, blood donors, doctors, hospitals, and emergency responders to interact through transparent smart contracts, helping improve emergency response and healthcare accessibility.
+It combines blockchain technology, AI-powered assistance, digital health records, emergency coordination, and USDC payments into one platform.
 
----
-
-# 🌍 The Problem
-
-Healthcare emergencies require immediate action, yet traditional healthcare systems often face delays due to fragmented information and disconnected services.
-
-Common challenges include:
-
-- 🩸 Difficulty finding compatible blood donors quickly
-- 🚑 Delayed emergency response coordination
-- 🏥 Limited access to patient health records
-- 💳 Slow and fragmented healthcare payment systems
-- 📄 Medical records stored across multiple platforms
-- 🔍 Limited transparency during emergency situations
+LifeLink enables patients, blood donors, doctors, hospitals, and emergency responders to interact through blockchain-based healthcare services.
 
 ---
 
-# 💡 Our Solution
-
-LifeLink connects patients, blood donors, doctors, hospitals, and emergency responders through blockchain technology on **Arc Testnet**.
-
-It provides:
-
-- 🩸 Blood donor registration and search
-- 🚨 Blockchain-powered SOS emergency requests
-- 🚑 Emergency ambulance requests
-- 🤖 AI emergency first-aid assistance
-- 👨‍⚕️ Doctor portal and patient records
-- 🩺 Health profiles
-- 💳 USDC hospital bill payments
-- 🗺️ Nearby donor map
-- 📊 Healthcare analytics
-
----
-
-# ✨ Key Features
+## ✨ Key Features
 
 | Feature | Description |
-|---------|-------------|
-| 🩸 Blood Donor Registration | Register as a blood donor on-chain. |
+|---|---|
+| 🩸 Blood Donor Registration | Register as a blood donor on the blockchain. |
 | 🔍 Donor Search | Find donors by blood group and city. |
 | 🗺️ Nearby Donor Map | View registered donor locations. |
 | 🚨 SOS Emergency Request | Create urgent blood requests on-chain. |
 | 🚑 Emergency Ambulance | Request emergency ambulance services on-chain. |
 | 🩺 Health Profile | Store and manage health information through the healthcare workflow. |
-| 👨‍⚕️ Doctor Portal | Retrieve available patient records using wallet addresses. |
+| 👨‍⚕️ Doctor Portal | Search available patient health records using wallet addresses. |
 | 🤖 AI Emergency Assistant | Receive AI-powered first-aid guidance. |
 | 💳 Hospital Bill Payment | Pay hospital bills using USDC on Arc Testnet. |
 | 📊 Analytics Dashboard | Monitor donors and emergency activity. |
 
 ---
 
-# 🧪 Demo Testing Guide
+## 📱 Application Workflow
 
-> ⚠️ **Important:** LifeLink is a testnet demonstration. Use test accounts and testnet assets only. Do not enter real medical or financial information.
-
-## 1. Open the Application
-
-🌐 **Live Demo:**  
-https://lifelink-q73z.vercel.app
-
-Open LifeLink in a supported mobile or desktop browser.
-
-## 2. Connect a Wallet
-
-### 🦊 MetaMask
-
-1. Select **Connect MetaMask**.
-2. Approve the connection.
-3. Switch to **Arc Testnet**.
-4. Approve blockchain transactions when prompted.
-
-### 🔵 Circle User-Controlled Wallet
-
-1. Select the Circle Wallet / Google login option.
-2. Sign in with Google.
-3. Complete Circle wallet setup if required.
-4. Approve wallet actions.
-5. Continue to the dashboard.
-
-Circle contract transactions are executed through the Circle Wallet SDK and LifeLink backend.
+```text
+Connect Wallet
+       │
+       ▼
+Choose a Feature
+       │
+       ├── 🩸 Register as Blood Donor
+       ├── 🔍 Search Nearby Donors
+       ├── 🚨 Create SOS Emergency Request
+       ├── 🚑 Request Emergency Ambulance
+       ├── 🩺 Create Health Profile
+       ├── 👨‍⚕️ Doctor Searches Patient Record
+       ├── 🤖 Ask AI Emergency Assistant
+       └── 💳 Pay Hospital Bill with USDC
+```
 
 ---
 
-# 🩸 3. Test Blood Donor Registration
+# 🧪 Demo Testing Guide
 
-1. Connect a wallet.
+> ⚠️ **Important:** LifeLink is currently an Arc Testnet demonstration. Use test accounts and testnet assets only. Do not enter real medical or financial information.
+
+## 1. Open LifeLink
+
+Open:
+
+https://lifelink-q73z.vercel.app
+
+---
+
+## 2. Connect a Wallet
+
+LifeLink supports:
+
+- 🦊 MetaMask
+- 🔵 Circle User-Controlled Wallet
+
+### 🦊 MetaMask
+
+1. Open LifeLink.
+2. Select **Connect MetaMask**.
+3. Approve the connection.
+4. Switch to **Arc Testnet**.
+5. Approve blockchain transactions when prompted.
+
+### 🔵 Circle User-Controlled Wallet
+
+1. Open LifeLink.
+2. Select the Circle Wallet / Google login option.
+3. Sign in with Google.
+4. Complete Circle wallet setup if required.
+5. Approve wallet actions.
+6. Continue to the LifeLink dashboard.
+
+---
+
+## 3. 🩸 Test Blood Donor Registration
+
+1. Connect your wallet.
 2. Open **Blood Donor Registration**.
-3. Enter name, blood group, city, phone and location.
-4. Submit the registration.
-5. Approve the transaction.
+3. Enter name, blood group, city, phone number and location.
+4. Select **Register as Donor**.
+5. Approve the blockchain transaction.
 6. Wait for confirmation.
 7. Reload the donor section.
 
@@ -129,62 +111,63 @@ Circle contract transactions are executed through the Circle Wallet SDK and Life
 
 ---
 
-# 🔍 4. Test Donor Search & Map
+## 4. 🔍 Test Donor Search
 
 1. Open **Search Donors**.
-2. Select the required blood group.
-3. Select or enter the city.
-4. Search.
-5. Open the nearby donor map if needed.
+2. Select a blood group.
+3. Enter/select a city.
+4. Select **Find Nearby Donors**.
 
-**Expected result:** Matching donor data is loaded from the blockchain.
+**Expected result:** Matching donors are retrieved from the blockchain and displayed.
+
+The **Nearby Donor Map** can also show registered donor locations.
 
 ---
 
-# 🚨 5. Test SOS Blood Request
+## 5. 🚨 Test SOS Emergency Request
 
-1. Open **SOS Emergency**.
-2. Enter patient name, blood group, hospital, city and contact.
-3. Submit the request.
+1. Open **SOS Emergency Request**.
+2. Enter patient name, blood group, hospital, city and contact number.
+3. Select **Send Emergency SOS**.
 4. Approve the transaction.
-5. Wait for confirmation.
+5. Wait for blockchain confirmation.
 
-**Expected result:** A new emergency blood request appears in the SOS section.
-
----
-
-# 🩸 6. Test Donor Response
-
-If the testing wallet has an eligible registered donor record:
-
-1. Open an active SOS request.
-2. Select **I'm Coming to Donate**.
-3. Approve the transaction.
-4. Wait for confirmation.
-
-**Expected result:** The request becomes fulfilled on-chain.
-
-> **Important:** The current donor contract associates a donor with the wallet address used during donor registration. The responding wallet therefore needs to satisfy the contract's donor authorization rules.
+**Expected result:** The SOS request is recorded on-chain and becomes visible in the emergency request section.
 
 ---
 
-# 🚑 7. Test Emergency Ambulance
+## 6. 🩸 Test Donor Response
+
+1. Register a donor using the testing wallet.
+2. Create an SOS request.
+3. Open the active request.
+4. Select **I'm Coming to Donate**.
+5. Approve the transaction.
+6. Wait for confirmation.
+
+**Expected result:** The request is processed according to the donor/request rules implemented by the smart contract.
+
+> **Important:** The donor contract associates a donor with the wallet address used during donor registration.
+
+---
+
+## 7. 🚑 Test Emergency Ambulance
 
 1. Open **Emergency Ambulance**.
-2. Enter the required information.
-3. Submit.
+2. Enter the emergency information.
+3. Select **Request Emergency Ambulance**.
 4. Approve the transaction.
 5. Wait for confirmation.
 
-**Expected result:** The ambulance request is stored on-chain and the application refreshes the emergency data.
+**Expected result:** The ambulance request is recorded on Arc Testnet and appears in the live ambulance request section.
 
 ---
 
-# 🩺 8. Test Health Profile
+## 8. 🩺 Test Health Profile
 
 1. Open **Health Profile**.
-2. Enter the available health information.
-3. Save the profile.
+2. Enter the available profile information.
+3. Select **Save Health Profile**.
 4. Approve the transaction if requested.
 5. Wait for confirmation.
 
@@ -192,36 +175,36 @@ If the testing wallet has an eligible registered donor record:
 
 ---
 
-# 👨‍⚕️ 9. Test Doctor Portal
+## 9. 👨‍⚕️ Test Doctor Portal
 
 1. Open **Doctor Portal**.
-2. Enter the patient's wallet address.
-3. Search.
-4. Review the available health information.
+2. Enter a patient's wallet address.
+3. Select **Search Patient Record**.
+4. Review the available patient information.
 
-**Expected result:** Available patient information is retrieved from the healthcare contract.
+**Expected result:** The application queries the healthcare functionality and displays available patient information.
 
 ---
 
-# 🤖 10. Test AI Emergency Assistant
+## 10. 🤖 Test AI Emergency Assistant
 
 1. Open **AI Emergency Assistant**.
-2. Enter an emergency-related question.
-3. Submit.
+2. Describe the emergency.
+3. Select **Ask AI Assistant**.
 4. Wait for the response.
 
-**Expected result:** The assistant provides concise first-aid guidance.
+**Expected result:** The AI assistant provides concise first-aid guidance.
 
-> ⚠️ This is a demonstration tool and does not replace professional medical care or emergency services.
+> ⚠️ The AI assistant is a demonstration/information tool and does not replace professional medical care or emergency services.
 
 ---
 
-# 💳 11. Test Hospital Bill Payment
+## 11. 💳 Test Hospital Bill Payment
 
-1. Open **Hospital Bill Payment**.
+1. Open the hospital payment section.
 2. Enter the required payment information.
 3. Use testnet USDC where required.
-4. Submit.
+4. Submit the payment.
 5. Approve the transaction.
 6. Wait for confirmation.
 
@@ -229,95 +212,111 @@ If the testing wallet has an eligible registered donor record:
 
 ---
 
-# 🔄 Blockchain Data Architecture
+# 🔵 Circle Wallet Integration
+
+LifeLink integrates **Circle User-Controlled Wallet infrastructure** through the Circle W3S SDK.
+
+The Circle Wallet implementation is located at:
 
 ```text
-                 LifeLink
-                    │
-          ┌─────────┴─────────┐
-          │                   │
-      MetaMask          Circle Wallet
-          │                   │
-          └─────────┬─────────┘
-                    │
-              Arc Testnet
-                    │
-              Smart Contracts
-                    │
-       ┌────────────┼────────────┐
-       │            │            │
-    Donors       Requests    Healthcare
-       │            │            │
-       └────────────┼────────────┘
-                    │
-                LifeLink UI
+src/
+└── circle-wallet.js
 ```
 
-Both wallet modes interact with the same LifeLink smart contracts and blockchain-backed application data.
+The Circle Wallet module handles the application's Circle wallet integration and SDK interaction.
 
----
+The architecture includes:
 
-# 🔐 Circle Wallet & Transaction Architecture
+- 🔐 Google-based user authentication
+- 👛 Circle User-Controlled Wallet
+- 🔑 Wallet authorization
+- 🧾 Transaction challenges
+- ⛓️ Arc Testnet smart-contract transactions
+
+### Circle Wallet Transaction Flow
 
 ```text
 Google Login
-     ↓
+      ↓
 Circle User
-     ↓
-Circle Wallet
-     ↓
-Transaction Challenge
-     ↓
-User Authorization
-     ↓
-Circle
-     ↓
+      ↓
+src/circle-wallet.js
+      ↓
+Circle W3S SDK
+      ↓
+Transaction Authorization
+      ↓
+LifeLink Backend
+      ↓
 Arc Testnet
-     ↓
+      ↓
 LifeLink Smart Contract
 ```
 
-Circle API credentials are handled through the LifeLink backend rather than exposed in frontend code.
+---
+
+# 🔄 Blockchain Data Architecture
+
+Both MetaMask and Circle Wallet interact with the same LifeLink blockchain infrastructure.
+
+```text
+                  LifeLink
+                     │
+           ┌─────────┴─────────┐
+           │                   │
+       MetaMask          Circle Wallet
+           │                   │
+           └─────────┬─────────┘
+                     │
+               Arc Testnet
+                     │
+             LifeLink Contracts
+                     │
+        ┌────────────┼────────────┐
+        │            │            │
+      Donors      Requests    Healthcare
+        │            │            │
+        └────────────┼────────────┘
+                     │
+                 LifeLink UI
+```
+
+The application reads blockchain-backed data from Arc Testnet while transactions are authorized through the connected wallet.
 
 ---
 
-# 📸 Application Screenshots
+# 🔐 Circle Backend Architecture
 
-### 🏠 Home Dashboard
-![Home Dashboard](screenshots/Screenshot_20260806-154716~2.jpg)
+Circle-related API operations that require backend handling are routed through Vercel serverless functions.
 
-### 🩸 Blood Donor Registration
-![Blood Donor Registration](screenshots/Screenshot_20260806-154753~2.jpg)
+```text
+LifeLink Frontend
+       │
+       ▼
+Circle Wallet SDK
+       │
+       ▼
+LifeLink API
+       │
+       ├── circle-token.js
+       │
+       └── execute-circle-tx.js
+       │
+       ▼
+Circle API
+       │
+       ▼
+Arc Testnet
+```
 
-### 🔍 Search Donors & Nearby Donor Map
-![Search Donors](screenshots/Screenshot_20260806-154810~3.jpg)
-
-![Nearby Donor Map](screenshots/Screenshot_20260806-201935~2.jpg)
-
-### 🚨 SOS Emergency Request
-![SOS Emergency](screenshots/Screenshot_20260806-154824~2.jpg)
-
-### 🚑 Emergency Ambulance
-![Emergency Ambulance](screenshots/Screenshot_20260806-154855~2.jpg)
-
-### 🩺 Health Profile
-![Health Profile](screenshots/Screenshot_20260806-154850~2.jpg)
-
-### 👨‍⚕️ Doctor Portal
-![Doctor Portal](screenshots/Screenshot_20260806-154902~2.jpg)
-
-### 🤖 AI Emergency Assistant
-![AI Assistant](screenshots/Screenshot_20260806-154841~2.jpg)
-
-### 💳 Hospital Bill Payment
-![Hospital Bill Payment](screenshots/Screenshot_20260806-154845~2.jpg)
+This architecture keeps sensitive server-side credentials out of the frontend.
 
 ---
 
 # 🛠️ Tech Stack
 
 | Category | Technology |
-|----------|------------|
+|---|---|
 | Blockchain | Arc Testnet |
 | Smart Contracts | Solidity |
 | Wallets | MetaMask + Circle User-Controlled Wallet |
@@ -335,11 +334,13 @@ Circle API credentials are handled through the LifeLink backend rather than expo
 
 # 📜 Smart Contracts
 
+LifeLink uses smart-contract functionality deployed on **Arc Testnet**.
+
 | Contract | Purpose |
-|----------|---------|
+|---|---|
 | 🩸 Blood Donor Contract | Blood donor registration and emergency blood requests |
-| 🩺 Healthcare Contract | On-chain patient health profiles |
-| 🚑 Emergency Contract | Ambulance requests and emergency coordination |
+| 🩺 Healthcare Contract | Patient health profile functionality |
+| 🚑 Emergency Contract | Emergency ambulance and coordination functionality |
 | 💳 Payment Contract | USDC hospital bill payments |
 
 ---
@@ -348,16 +349,24 @@ Circle API credentials are handled through the LifeLink backend rather than expo
 
 ```text
 LifeLink/
-│── index.html
-│── style.css
-│── app.js
-│── health-profile.js
-│── README.md
-│── api/
+│
+├── index.html
+├── style.css
+├── app.js
+├── health-profile.js
+├── package.json
+├── vite.config.js
+├── README.md
+│
+├── src/
+│   └── circle-wallet.js
+│
+├── api/
 │   ├── emergency-ai.js
 │   ├── circle-token.js
 │   └── execute-circle-tx.js
-│── screenshots/
+│
+└── screenshots/
 ```
 
 ---
@@ -369,9 +378,9 @@ LifeLink/
 ☐ Connect MetaMask or Circle Wallet
 ☐ Register a blood donor
 ☐ Search for the donor
-☐ View donor on the map
+☐ View the donor map
 ☐ Create an SOS blood request
-☐ Respond using an eligible donor wallet
+☐ Test donor response
 ☐ Create an ambulance request
 ☐ Create/save a Health Profile
 ☐ Test Doctor Portal
@@ -390,6 +399,7 @@ LifeLink/
 - Wallet addresses are blockchain identities.
 - Do not use real medical information for testing.
 - Do not use real funds.
+- Testnet behavior may change as the Arc ecosystem evolves.
 
 ---
 
@@ -409,8 +419,8 @@ LifeLink/
 
 Passionate Web3 builder creating decentralized healthcare solutions on **Arc Testnet**.
 
-- **GitHub:** https://github.com/khanindradeka1993
-- **X (Twitter):** https://x.com/khanindradeka20
+- GitHub: https://github.com/khanindradeka1993
+- X: https://x.com/khanindradeka20
 
 ---
 
