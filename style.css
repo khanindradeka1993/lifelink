@@ -1,617 +1,279 @@
-/* LifeLink Desktop-First Responsive UI
-   Keeps existing IDs/classes and does not change app.js behavior.
+/*
+=========================================================
+LifeLink — Permanent Desktop Dashboard Layout
+=========================================================
+Load this file AFTER the existing style.css.
+
+Purpose:
+- Stable two-column desktop dashboard
+- Fixed card heights on desktop
+- Dynamic donor/SOS/ambulance lists scroll INSIDE cards
+- No card growth when blockchain data increases
+- No masonry/growing-gap effect
+- Mobile/tablet layout remains natural and one-by-one
+- Does NOT touch app.js, Circle SDK, contracts, or HTML logic
+=========================================================
 */
 
-/* ---------- Base ---------- */
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Arial, sans-serif;
-}
-
-html{
-  scroll-behavior:smooth;
-}
-
-body{
-  width:100%;
-  min-height:100vh;
-  background:#0B1220;
-  color:#fff;
-  padding:24px;
-  overflow-x:hidden;
-}
-
-.container{
-  width:100% !important;
-  max-width:1800px !important;
-  margin:0 auto !important;
-  padding:0 0 50px !important;
-}
-
-.hero{
-  width:100% !important;
-  max-width:none !important;
-  margin:0 auto 30px !important;
-  text-align:center;
-}
-
-.hero-logo{
-  width:110px;
-  height:110px;
-  object-fit:contain;
-  display:block;
-  margin:0 auto 12px;
-}
-
-.hero h1{
-  font-size:48px;
-  font-weight:800;
-  color:#ef4444;
-  margin:8px 0;
-}
-
-.hero h3{
-  color:#fff !important;
-  font-size:21px;
-  margin:0 0 6px;
-}
-
-.hero > p{
-  color:#93c5fd !important;
-  font-size:16px;
-}
-
-.heroCard{
-  width:100% !important;
-  margin:24px 0 18px !important;
-  padding:24px 30px !important;
-  display:flex !important;
-  justify-content:space-between;
-  align-items:center;
-  gap:30px;
-  background:#1E293B !important;
-  border-radius:20px;
-}
-
-.heroLeft{
-  text-align:left;
-  flex:1;
-}
-
-.heroLeft h2{
-  color:#fff !important;
-  font-size:28px;
-  margin-bottom:8px;
-}
-
-.heroLeft p{
-  color:#CBD5E1 !important;
-  text-align:left;
-}
-
-.heroRight{
-  font-size:64px;
-  flex:0 0 auto;
-}
-
-/* ---------- Header controls ---------- */
-#connectBtn,
-#googleLoginBtn{
-  width:100%;
-  margin:7px 0;
-  padding:14px 18px;
-  border:0;
-  border-radius:12px;
-  color:#fff;
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-}
-
-#connectBtn{
-  background:linear-gradient(135deg,#2563eb,#3b82f6);
-}
-
-#googleLoginBtn{
-  background:linear-gradient(135deg,#16a34a,#22c55e);
-}
-
-#walletAddress{
-  width:100%;
-  word-break:break-all;
-}
-
-#txCard{
-  width:100%;
-}
-
-/* ---------- Top statistics ---------- */
-#dashboard{
-  width:100% !important;
-  display:grid !important;
-  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-  gap:20px !important;
-  margin:22px 0 !important;
-}
-
-#dashboard > div{
-  width:100% !important;
-  min-width:0;
-}
-
-/* ---------- Quick actions ----------
-   The HTML uses an inline grid, so keep it fluid.
-*/
-.quick-action{
-  min-width:0;
-  transition:.2s ease;
-}
-
-.quick-action:hover{
-  transform:translateY(-3px);
-}
-
-/* ---------- Main desktop dashboard ---------- */
-.desktop-dashboard{
-  width:100% !important;
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
-  gap:28px !important;
-  align-items:start !important;
-}
-
-.left-column,
-.right-column{
-  width:100% !important;
-  min-width:0 !important;
-  display:flex !important;
-  flex-direction:column !important;
-  gap:28px !important;
-}
-
-.left-column > *,
-.right-column > *{
-  width:100% !important;
-  min-width:0 !important;
-  margin-top:0 !important;
-  margin-bottom:0 !important;
-}
-
-.card{
-  width:100% !important;
-  min-width:0 !important;
-  padding:24px !important;
-  margin:0 !important;
-  background:#1E293B !important;
-  color:#fff !important;
-  border-radius:20px;
-  border-top:4px solid #2563eb;
-  box-shadow:0 10px 28px rgba(0,0,0,.22);
-  overflow:hidden;
-}
-
-.card:hover{
-  transform:none;
-}
-
-.card h2,
-.card h3,
-.card h4{
-  color:#fff !important;
-}
-
-.card p{
-  color:#CBD5E1 !important;
-}
-
-.card span{
-  color:#fff !important;
-}
-
-/* Inputs and forms */
-input,
-select,
-textarea{
-  width:100% !important;
-  max-width:100% !important;
-  background:#334155 !important;
-  color:#fff !important;
-  border:1px solid #64748B !important;
-  border-radius:12px !important;
-  padding:14px !important;
-  font-size:16px !important;
-  margin-bottom:14px;
-}
-
-textarea{
-  resize:vertical;
-}
-
-input::placeholder,
-textarea::placeholder{
-  color:#AAB4C5 !important;
-}
-
-button{
-  max-width:100%;
-}
-
-/* Map */
-#map{
-  width:100% !important;
-  height:500px !important;
-  margin-top:10px;
-  border-radius:15px;
-  border:2px solid #2563eb;
-}
-
-/* Footer */
-footer{
-  width:100% !important;
-  max-width:none !important;
-}
-
-/* =========================================================
-
-/* =========================================================
-   LIFELINK — CLEAN RESPONSIVE DASHBOARD
-   Uses the existing HTML:
-   .desktop-dashboard
-     ├── .left-column
-     └── .right-column
-
-   Desktop: two independent vertical columns.
-   Mobile/tablet: one column.
-   ========================================================= */
-
-/* ---------- Desktop ---------- */
+/* ---------- Desktop only ---------- */
 @media (min-width: 900px) {
 
-  html,
-  body {
-    width: 100%;
-    min-width: 0;
-    overflow-x: hidden;
-  }
-
-  body {
-    margin: 0 !important;
-    padding: 24px !important;
-  }
-
-  .container {
-    width: 100% !important;
-    max-width: 1800px !important;
-    margin: 0 auto !important;
-    padding: 0 0 50px !important;
-  }
-
-  .hero {
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 auto 30px !important;
-  }
-
-  /* Top statistics */
-  #dashboard {
-    width: 100% !important;
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 20px !important;
-    margin: 22px 0 !important;
-  }
-
-  #dashboard > div {
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  /* Main dashboard:
-     left and right remain independent vertical columns. */
   .desktop-dashboard {
-    width: 100% !important;
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-    column-gap: 28px !important;
+    column-gap: 24px !important;
     align-items: start !important;
+    width: 100% !important;
   }
 
   .desktop-dashboard > .left-column,
   .desktop-dashboard > .right-column {
-    width: 100% !important;
-    min-width: 0 !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 28px !important;
+    gap: 24px !important;
+    width: 100% !important;
+    min-width: 0 !important;
     align-self: start !important;
   }
 
-  .desktop-dashboard > .left-column > *,
-  .desktop-dashboard > .right-column > * {
+  .desktop-dashboard .card {
     width: 100% !important;
     min-width: 0 !important;
     margin: 0 !important;
     box-sizing: border-box !important;
+    overflow: hidden !important;
+    flex: 0 0 auto !important;
   }
 
-  .desktop-dashboard .card {
-    width: 100% !important;
-    min-width: 0 !important;
+  /*
+  -------------------------------------------------------
+  FIXED CARD PLAN
+  -------------------------------------------------------
+  Large:  register, SOS, map, ambulance, health
+  Small:  search, hospital, analytics, AI, doctor
+  -------------------------------------------------------
+  */
+
+  #registerSection,
+  #sosSection,
+  #mapSection,
+  #ambulanceSection,
+  #healthSection {
+    height: 560px !important;
+    min-height: 560px !important;
+    max-height: 560px !important;
+  }
+
+  #searchSection,
+  #hospitalSection,
+  #analyticsSection,
+  #aiSection,
+  #doctorSection {
+    height: 280px !important;
+    min-height: 280px !important;
+    max-height: 280px !important;
+  }
+
+  /*
+  -------------------------------------------------------
+  DONOR REGISTRATION
+  -------------------------------------------------------
+  Header + form stay fixed.
+  Only the registered donor list scrolls.
+  */
+  #registerSection {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+  }
+
+  #registeredDonorsList,
+  #registeredDonorList {
+    flex: 1 1 auto !important;
     height: auto !important;
     min-height: 0 !important;
-    margin: 0 !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 4px 8px 4px 0 !important;
     box-sizing: border-box !important;
   }
 
-   #hospitalSection,
-#hospitalSection + .card,
-#aiSection {
-  height: 217px !important;
-  min-height: 217px !important;
-  box-sizing: border-box !important;
-}
-
-   /* Map */
-  #map {
-    width: 100% !important;
-    height: 460px !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Keep the existing 3-column Quick Actions layout on desktop. */
-  .quick-action {
-    min-width: 0 !important;
-  }
-
-  /* Forms */
-  .desktop-dashboard input,
-  .desktop-dashboard select,
-  .desktop-dashboard textarea,
-  .desktop-dashboard button {
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  footer {
-  width: 100% !important;
-  max-width: none !important;
-  margin-top: 40px !important;
-  grid-column: 1 / -1 !important;
-  box-sizing: border-box !important;
-  }
-}
-
-/* ---------- Tablet ---------- */
-@media (min-width: 600px) and (max-width: 899px) {
-
-  body {
-    padding: 18px !important;
-  }
-
-  .container {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  .desktop-dashboard {
-    width: 100% !important;
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 20px !important;
-  }
-
-  .desktop-dashboard > .left-column,
-  .desktop-dashboard > .right-column {
-    width: 100% !important;
+  /*
+  -------------------------------------------------------
+  SOS
+  -------------------------------------------------------
+  The request list receives the remaining card space.
+  */
+  #sosSection {
     display: flex !important;
     flex-direction: column !important;
-    gap: 20px !important;
+    min-height: 0 !important;
   }
 
-  .desktop-dashboard .card {
-    width: 100% !important;
+  #requestList {
+    flex: 1 1 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 4px 8px 4px 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /*
+  -------------------------------------------------------
+  NEARBY DONOR MAP
+  -------------------------------------------------------
+  Map stays inside the fixed map card.
+  */
+  #mapSection {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
   }
 
   #map {
-    height: 420px !important;
+    width: 100% !important;
+    height: 470px !important;
+    min-height: 0 !important;
+    max-height: 470px !important;
+    flex: 0 0 470px !important;
+    box-sizing: border-box !important;
+  }
+
+  /*
+  -------------------------------------------------------
+  AMBULANCE
+  -------------------------------------------------------
+  Request list scrolls inside the card.
+  */
+  #ambulanceSection {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+  }
+
+  #ambulanceList {
+    flex: 1 1 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 4px 8px 4px 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /*
+  -------------------------------------------------------
+  AI
+  -------------------------------------------------------
+  AI output/chat cannot stretch the small card.
+  */
+  #aiSection {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+  }
+
+  #chatBox,
+  #aiResponse {
+    min-height: 0 !important;
+    max-height: 90px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  /*
+  -------------------------------------------------------
+  HEALTH PROFILE
+  -------------------------------------------------------
+  Keep the card fixed. Internal content is scrollable only
+  if a browser/viewport makes it necessary.
+  */
+  #healthSection {
+    min-height: 0 !important;
+  }
+
+  /*
+  -------------------------------------------------------
+  SCROLLBAR
+  -------------------------------------------------------
+  Same subtle scrollbar for all dynamic lists.
+  */
+  #registeredDonorsList::-webkit-scrollbar,
+  #registeredDonorList::-webkit-scrollbar,
+  #requestList::-webkit-scrollbar,
+  #ambulanceList::-webkit-scrollbar,
+  #chatBox::-webkit-scrollbar,
+  #aiResponse::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  #registeredDonorsList::-webkit-scrollbar-thumb,
+  #registeredDonorList::-webkit-scrollbar-thumb,
+  #requestList::-webkit-scrollbar-thumb,
+  #ambulanceList::-webkit-scrollbar-thumb,
+  #chatBox::-webkit-scrollbar-thumb,
+  #aiResponse::-webkit-scrollbar-thumb {
+    background: #64748b;
+    border-radius: 10px;
+  }
+
+  /* Prevent long blockchain strings from breaking the layout */
+  .desktop-dashboard .card * {
+    max-width: 100%;
+    box-sizing: border-box;
   }
 }
 
-/* ---------- Phone ---------- */
-@media (max-width: 599px) {
 
-  body {
-    padding: 12px !important;
-  }
+/* =========================================================
+   MOBILE / TABLET SAFETY
+   =========================================================
+   IMPORTANT: Do not impose desktop fixed heights on phones.
+   The existing one-by-one mobile dashboard remains intact.
+========================================================= */
 
-  .container {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding-bottom: 35px !important;
-  }
-
-  .hero-logo {
-    width: 90px;
-    height: 90px;
-  }
-
-  .hero h1 {
-    font-size: 36px;
-  }
-
-  .hero h3 {
-    font-size: 18px;
-  }
-
-  .heroCard {
-    padding: 18px !important;
-  }
-
-  .heroRight {
-    font-size: 45px;
-  }
-
-  #dashboard {
-    grid-template-columns: 1fr !important;
-  }
+@media (max-width: 899px) {
 
   .desktop-dashboard {
     width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 20px !important;
   }
 
-  .desktop-dashboard > .left-column,
-  .desktop-dashboard > .right-column {
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 20px !important;
+  .desktop-dashboard .card,
+  #registerSection,
+  #searchSection,
+  #sosSection,
+  #mapSection,
+  #ambulanceSection,
+  #hospitalSection,
+  #analyticsSection,
+  #aiSection,
+  #doctorSection,
+  #healthSection {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
   }
 
-  .desktop-dashboard .card {
-    width: 100% !important;
-    padding: 18px !important;
+  #registeredDonorsList,
+  #registeredDonorList,
+  #requestList,
+  #ambulanceList,
+  #chatBox,
+  #aiResponse {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
   }
 
   #map {
     height: 340px !important;
-  }
-}
-
-/* Registered Donors - fixed scrollable list */
-#registeredDonorsList {
-  max-height: 520px !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  padding-right: 6px;
-}
-
-@media (max-width: 768px) {
-  .container {
-    grid-template-columns: 1fr !important;
-  }
-
-  .left-column,
-  .right-column {
-    width: 100%;
-  }
-}
-
-/* Scrollable emergency request lists */
-#requestList {
-  max-height: 160px !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  padding-right: 6px !important;
-}
-
-/* Scrollable ambulance request lists */
-#ambulanceList {
-  max-height: 180px !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  padding-right: 6px !important;
-}
-
-/* Scrollable registered donor list */
-#registeredDonorList {
-  max-height: 160px !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  padding-right: 6px !important;
-}
-
-
-/* =========================================================
-   DESKTOP FIX v2 — KEEP DYNAMIC LISTS INSIDE THEIR CARDS
-   ---------------------------------------------------------
-   The previous fixed card heights are kept.
-   SOS and Ambulance cards now use flex layout so their
-   dynamic request lists receive the remaining card space
-   instead of being clipped/buried at the bottom.
-   Mobile layout remains unchanged.
-   ========================================================= */
-
-@media (min-width: 900px) {
-
-  /* SOS Emergency Request card */
-  .left-column > .card:nth-child(3) {
-    display: flex !important;
-    flex-direction: column !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-  }
-
-  /* Emergency Ambulance card */
-  .right-column > .card:nth-child(2) {
-    display: flex !important;
-    flex-direction: column !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-  }
-
-  /* Dynamic SOS requests: occupy remaining card space */
-  .left-column > .card:nth-child(3) #requestList {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    height: auto !important;
     max-height: none !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    padding-right: 8px !important;
-  }
-
-  /* Dynamic ambulance requests: occupy remaining card space */
-  .right-column > .card:nth-child(2) #ambulanceList {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    height: auto !important;
-    max-height: none !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    padding-right: 8px !important;
-  }
-
-  /* Don't allow individual request cards to force the parent taller */
-  .left-column > .card:nth-child(3) #requestList > *,
-  .right-column > .card:nth-child(2) #ambulanceList > * {
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Clean scrollbars */
-  .left-column > .card:nth-child(3) #requestList::-webkit-scrollbar,
-  .right-column > .card:nth-child(2) #ambulanceList::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .left-column > .card:nth-child(3) #requestList::-webkit-scrollbar-thumb,
-  .right-column > .card:nth-child(2) #ambulanceList::-webkit-scrollbar-thumb {
-    background: #64748B;
-    border-radius: 10px;
   }
 }
-
-/* Mobile: preserve the existing one-by-one natural-height layout */
-@media (max-width: 899px) {
-  .left-column > .card:nth-child(3),
-  .right-column > .card:nth-child(2) {
-    display: block !important;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    overflow: visible !important;
-  }
-
-  .left-column > .card:nth-child(3) #requestList,
-  .right-column > .card:nth-child(2) #ambulanceList {
-    height: auto !important;
-    max-height: none !important;
-    overflow: visible !important;
-  }
-}
-
