@@ -357,7 +357,7 @@ This architecture keeps sensitive server-side credentials out of the frontend.
 | Smart Contracts | Solidity |
 | Wallets | MetaMask + Circle User-Controlled Wallet |
 | Circle Integration | Circle W3S SDK |
-| Frontend | HTML5, CSS3, JavaScript |
+| Frontend | HTML5, CSS3, JavaScript, Vite |
 | Web3 Library | Ethers.js |
 | Maps | Leaflet.js + OpenStreetMap |
 | AI Assistant | OpenRouter AI API |
