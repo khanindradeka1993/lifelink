@@ -313,6 +313,42 @@ This architecture keeps sensitive server-side credentials out of the frontend.
 
 ---
 
+
+# 📸 Application Screenshots
+
+> Below are screenshots showcasing the LifeLink application interface and core features.
+
+### 🏠 Home Dashboard
+![Home Dashboard](screenshots/Screenshot_20260806-154716~2.jpg)
+
+### 🩸 Blood Donor Registration
+![Blood Donor Registration](screenshots/Screenshot_20260806-154753~2.jpg)
+
+### 🔍 Search Donors & Nearby Donor Map
+![Search Donors](screenshots/Screenshot_20260806-154810~3.jpg)
+
+![Nearby Donor Map](screenshots/Screenshot_20260806-201935~2.jpg)
+
+### 🚨 SOS Emergency Request
+![SOS Emergency](screenshots/Screenshot_20260806-154824~2.jpg)
+
+### 🚑 Emergency Ambulance
+![Emergency Ambulance](screenshots/Screenshot_20260806-154855~2.jpg)
+
+### 🩺 Health Profile
+![Health Profile](screenshots/Screenshot_20260806-154850~2.jpg)
+
+### 👨‍⚕️ Doctor Portal
+![Doctor Portal](screenshots/Screenshot_20260806-154902~2.jpg)
+
+### 🤖 AI Emergency Assistant
+![AI Assistant](screenshots/Screenshot_20260806-154841~2.jpg)
+
+### 💳 Hospital Bill Payment
+![Hospital Bill Payment](screenshots/Screenshot_20260806-154845~2.jpg)
+
+---
+
 # 🛠️ Tech Stack
 
 | Category | Technology |
