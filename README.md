@@ -319,7 +319,7 @@ This architecture keeps sensitive server-side credentials out of the frontend.
 > Below are screenshots showcasing the LifeLink application interface and core features.
 
 ### 🏠 Home Dashboard
-![Home Dashboard](screenshots/Screenshot_20260806-154716~2.jpg)
+![Home Dashboard](screenshots/LifeLink_Home_Dashboard_Google.jpg)
 
 ### 🩸 Blood Donor Registration
 ![Blood Donor Registration](screenshots/Screenshot_20260806-154753~2.jpg)
