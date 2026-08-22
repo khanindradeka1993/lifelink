@@ -368,16 +368,16 @@ This architecture keeps sensitive server-side credentials out of the frontend.
 
 ---
 
-# 📜 Smart Contracts
+## 📜 Smart Contracts
 
 LifeLink uses smart-contract functionality deployed on **Arc Testnet**.
 
-| Contract | Purpose |
-|---|---|
-| 🩸 Blood Donor Contract | Blood donor registration and emergency blood requests |
-| 🩺 Healthcare Contract | Patient health profile functionality |
-| 🚑 Emergency Contract | Emergency ambulance and coordination functionality |
-| 💳 Payment Contract | USDC hospital bill payments |
+| Contract | Purpose | Contract Address |
+|---|---|---|
+| 🩸 Blood Donor Contract | Blood donor registration and emergency blood requests | `0x80C0E143602DfDaD980adF1ae3cfF9B9153Aa2b7` |
+| 🩺 Healthcare Contract | Patient health profile functionality | `0xE32313e236784f57a7479a830E4a9c0ce22d0761` |
+| 🚑 Emergency Contract | Emergency ambulance and coordination functionality | `0x8d1183f802b5688e5244a493Ea965e856150c2Ef` |
+| 💳 Payment Contract | USDC hospital bill payments | `0x0CA164a6FE7FfEA47945761748D77cd0aa16Afb1` |
 
 ---
 
@@ -443,7 +443,7 @@ LifeLink/
 
 - 🌐 Deploy LifeLink on Arc Mainnet when ready.
 - 🔐 Improve persistent Circle User-Controlled Wallet account handling.
-- 📱 Continue improving mobile experience and application performance.
+- 📱 Continue user experience improvement.
 - 🏥 Expand LifeLink adoption among hospitals, doctors, blood donors, and emergency responders.
 - 🌍 Make decentralized emergency healthcare accessible to communities worldwide.
 
