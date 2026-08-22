@@ -725,6 +725,8 @@ textarea::placeholder{
   border:1px solid var(--border);
   border-radius:10px;
 }
+.ai-output > *{width:100%;}
+#askAIBtn{width:70%;display:block;margin:12px auto;}
 
 /* =========================================================
    HEALTH PROFILE
