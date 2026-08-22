@@ -498,7 +498,7 @@ return new Promise((resolve, reject) => {
         );
 
         if (!retryResponse.ok) {
-          throw new Error(
+                    throw new Error(
             retryData.error ||
             "Wallet is still being created. Please try again."
           );
@@ -781,7 +781,7 @@ async function loadDonors() {
   }
 
   try {
-    const activeContract = contract || readOnlyContract;
+    const activeContract = readOnlyContract;
     if (!activeContract) return;
 
     const donors = await activeContract.getDonors();
@@ -844,7 +844,7 @@ async function loadRequests() {
   }
 
   try {
-    const activeContract = contract || readOnlyContract;
+    const activeContract = readOnlyContract;
     if (!activeContract) return;
 
     const requests = await activeContract.getRequests();
@@ -935,7 +935,7 @@ async function loadAmbulanceRequests() {
   }
 
   try {
-    const activeEmergency = window.emergencyContract || readOnlyEmergency;
+    const activeEmergency = readOnlyEmergency;
     if (!activeEmergency) return;
 
     const requests = await activeEmergency.getAmbulanceRequests();
@@ -998,7 +998,7 @@ if (connectBtn) {
         try {
           await window.ethereum.request({
             method: "wallet_switchEthereumChain",
-            params: [{ chainId: ARC_CHAIN_ID }]
+                        params: [{ chainId: ARC_CHAIN_ID }]
           });
         } catch (error) {
           if (error.code === 4902) {
@@ -1202,7 +1202,7 @@ if (searchBtn) {
       return;
     }
 
-    const activeContract = contract || readOnlyContract;
+    const activeContract = readOnlyContract;
     const bloodGroup = document.getElementById("searchBloodGroup").value;
     const city = document.getElementById("searchCity").value.toLowerCase();
 
@@ -1498,7 +1498,7 @@ window.completeAmbulance = async function(id) {
     const tx = await window.emergencyContract.completeRequest(id);
     await tx.wait();
 
-    if (ambulanceStatus) ambulanceStatus.innerHTML = "✅ Request completed.";
+      if (ambulanceStatus) ambulanceStatus.innerHTML = "✅ Request completed.";
     await loadAmbulanceRequests();
   } catch (err) {
     console.error(err);
@@ -1514,7 +1514,7 @@ if (searchPatientBtn) {
       return;
     }
 
-    const activeHealthcare = window.healthcareContract || readOnlyHealthcare;
+    const activeHealthcare = readOnlyHealthcare;
     const wallet = doctorWallet ? doctorWallet.value.trim() : "";
 
     if (!ethers.utils.isAddress(wallet)) {
@@ -1601,4 +1601,4 @@ document.querySelectorAll(".quick-action").forEach(button => {
     }
   });
 });
-        
+
