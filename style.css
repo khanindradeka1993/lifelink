@@ -527,174 +527,91 @@ footer{
 
 
 /* =========================================================
-   LIFELINK DESKTOP CARD LAYOUT FIX
+   DESKTOP FIX v2 — KEEP DYNAMIC LISTS INSIDE THEIR CARDS
    ---------------------------------------------------------
-   Desktop:
-   - 5 large cards use a stable height
-   - 5 smaller cards use a stable height
-   - Dynamic donor/SOS/ambulance lists scroll INSIDE cards
-   - Prevents cards from growing downward
-   Mobile/tablet:
-   - Existing responsive/mobile layout is preserved
+   The previous fixed card heights are kept.
+   SOS and Ambulance cards now use flex layout so their
+   dynamic request lists receive the remaining card space
+   instead of being clipped/buried at the bottom.
+   Mobile layout remains unchanged.
    ========================================================= */
+
 @media (min-width: 900px) {
 
-  /* Keep the two-column desktop dashboard */
-  .desktop-dashboard {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-    gap: 28px !important;
-    align-items: start !important;
-  }
-
-  .left-column,
-  .right-column {
+  /* SOS Emergency Request card */
+  .left-column > .card:nth-child(3) {
     display: flex !important;
     flex-direction: column !important;
-    gap: 28px !important;
-    min-width: 0 !important;
-  }
-
-  /* Every dashboard card gets a predictable box */
-  .desktop-dashboard .card {
-    width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-    margin: 0 !important;
+    min-height: 0 !important;
     overflow: hidden !important;
-    flex: 0 0 auto !important;
   }
 
-  /*
-     LARGE CARDS
-     1. Blood Donor Registration
-     2. SOS Emergency Request
-     3. Nearby Donor Map
-     4. Emergency Ambulance
-     5. Health Profile
-  */
-  .left-column > .card:nth-child(1),
-  .left-column > .card:nth-child(3),
-  .right-column > .card:nth-child(1),
-  .right-column > .card:nth-child(2),
-  .right-column > .card:nth-child(4) {
-    height: 560px !important;
-    min-height: 560px !important;
-    max-height: 560px !important;
+  /* Emergency Ambulance card */
+  .right-column > .card:nth-child(2) {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
   }
 
-  /*
-     SMALL CARDS
-     Search Donors, Hospital Dashboard, Analytics Dashboard,
-     AI Emergency Assistant and Doctor Portal.
-  */
-  .left-column > .card:nth-child(2),
-  .left-column > .card:nth-child(4),
-  .left-column > .card:nth-child(5),
-  .left-column > .card:nth-child(6),
-  .right-column > .card:nth-child(3) {
-    height: 280px !important;
-    min-height: 280px !important;
-    max-height: 280px !important;
-  }
-
-  /* Nearby map must fit inside its fixed card */
-  #map {
-    width: 100% !important;
-    height: 470px !important;
-    max-height: 470px !important;
-    box-sizing: border-box !important;
-  }
-
-  /*
-     Dynamic lists scroll internally.
-     The outer card therefore never grows when more records arrive.
-  */
-  #registeredDonorsList,
-  #registeredDonorList {
-    max-height: 185px !important;
-    height: 185px !important;
+  /* Dynamic SOS requests: occupy remaining card space */
+  .left-column > .card:nth-child(3) #requestList {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     padding-right: 8px !important;
-    box-sizing: border-box !important;
   }
 
-  #requestList {
-    max-height: 145px !important;
-    height: 145px !important;
+  /* Dynamic ambulance requests: occupy remaining card space */
+  .right-column > .card:nth-child(2) #ambulanceList {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     padding-right: 8px !important;
+  }
+
+  /* Don't allow individual request cards to force the parent taller */
+  .left-column > .card:nth-child(3) #requestList > *,
+  .right-column > .card:nth-child(2) #ambulanceList > * {
+    max-width: 100% !important;
     box-sizing: border-box !important;
   }
 
-  #ambulanceList {
-    max-height: 155px !important;
-    height: 155px !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    padding-right: 8px !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Make scrolling visually clean */
-  #registeredDonorsList::-webkit-scrollbar,
-  #registeredDonorList::-webkit-scrollbar,
-  #requestList::-webkit-scrollbar,
-  #ambulanceList::-webkit-scrollbar {
+  /* Clean scrollbars */
+  .left-column > .card:nth-child(3) #requestList::-webkit-scrollbar,
+  .right-column > .card:nth-child(2) #ambulanceList::-webkit-scrollbar {
     width: 6px;
   }
 
-  #registeredDonorsList::-webkit-scrollbar-thumb,
-  #registeredDonorList::-webkit-scrollbar-thumb,
-  #requestList::-webkit-scrollbar-thumb,
-  #ambulanceList::-webkit-scrollbar-thumb {
-    border-radius: 10px;
+  .left-column > .card:nth-child(3) #requestList::-webkit-scrollbar-thumb,
+  .right-column > .card:nth-child(2) #ambulanceList::-webkit-scrollbar-thumb {
     background: #64748B;
-  }
-
-  /* AI output should scroll instead of stretching the card */
-  #aiResponse {
-    max-height: 100px !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
+    border-radius: 10px;
   }
 }
 
-
-/* =========================================================
-   MOBILE SAFETY
-   ---------------------------------------------------------
-   Do NOT force fixed desktop card heights on phones.
-   The mobile dashboard remains one card after another and
-   dynamic content can use its natural height.
-   ========================================================= */
-
+/* Mobile: preserve the existing one-by-one natural-height layout */
 @media (max-width: 899px) {
-
-  .desktop-dashboard .card {
+  .left-column > .card:nth-child(3),
+  .right-column > .card:nth-child(2) {
+    display: block !important;
     height: auto !important;
     min-height: 0 !important;
     max-height: none !important;
     overflow: visible !important;
   }
 
-  #map {
-    max-height: none !important;
-  }
-
-  #registeredDonorsList,
-  #registeredDonorList,
-  #requestList,
-  #ambulanceList {
+  .left-column > .card:nth-child(3) #requestList,
+  .right-column > .card:nth-child(2) #ambulanceList {
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
   }
-
-  #aiResponse {
-    max-height: none !important;
-    overflow: visible !important;
-  }
 }
+
