@@ -1,25 +1,35 @@
 /* =========================================================
-   LIFELINK — CLEAN UI REDESIGN
-   Inspired by the clean, spacious dashboard style shown by
-   the user. Visual layer only: existing HTML IDs/classes,
-   wallet, Google login, maps and JavaScript are preserved.
+   LIFELINK — CLEAN DESKTOP DASHBOARD
+   Locked card architecture:
+   1 full
+   2 small + small
+   3 full
+   4 full
+   5 small + small
+   6 full
+   7 full
+   8 full
+   9 full footer
+
+   Visual layer only. Existing blockchain/app IDs are preserved.
    ========================================================= */
 
 :root{
   --bg:#f5f7f4;
   --surface:#ffffff;
   --surface-soft:#fafcf9;
-  --border:#e3e8e2;
-  --text:#18211c;
-  --muted:#6d776f;
+  --border:#e2e8e2;
+  --text:#172019;
+  --muted:#6b756d;
   --accent:#c92535;
-  --accent-soft:#fff1f2;
-  --blue:#2563eb;
-  --green:#b9ff2c;
+  --accent-soft:#fff2f3;
+  --green:#b8ff2a;
+  --green-border:#9ddd16;
   --green-dark:#172019;
-  --danger:#c92535;
-  --shadow:0 8px 28px rgba(23,32,25,.06);
-  --radius:18px;
+  --blue:#2563eb;
+  --shadow:0 8px 28px rgba(23,32,25,.07);
+  --shadow-hover:0 12px 34px rgba(23,32,25,.10);
+  --radius:20px;
   --gap:20px;
 }
 
@@ -32,80 +42,98 @@ html{
 }
 
 body{
-  margin:0 !important;
-  padding:0 !important;
-  width:100%;
+  margin:0;
+  padding:0;
   min-height:100vh;
   overflow-x:hidden;
-  background:var(--bg) !important;
-  color:var(--text) !important;
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif !important;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
   line-height:1.45;
 }
 
-.container{
-  width:min(1380px,calc(100% - 40px)) !important;
-  max-width:1380px !important;
-  margin:0 auto !important;
-  padding:28px 0 48px !important;
+button,
+input,
+select,
+textarea{
+  font:inherit;
 }
 
-/* ---------------- Header / hero ---------------- */
+button{
+  cursor:pointer;
+}
+
+img{
+  max-width:100%;
+}
+
+/* =========================================================
+   PAGE CONTAINER
+   ========================================================= */
+
+.container{
+  width:min(1380px,calc(100% - 48px));
+  max-width:1380px;
+  margin:0 auto;
+  padding:30px 0 50px;
+}
+
+/* =========================================================
+   HERO / HEADER
+   ========================================================= */
 
 .hero{
-  width:100% !important;
-  max-width:none !important;
-  margin:0 0 30px !important;
+  width:100%;
+  margin:0 0 28px;
   text-align:center;
 }
 
 .hero-logo{
-  width:72px !important;
-  height:72px !important;
+  width:72px;
+  height:72px;
   object-fit:contain;
   display:block;
-  margin:0 auto 14px !important;
+  margin:0 auto 12px;
 }
 
 .hero h1{
-  margin:0 0 4px !important;
-  color:var(--accent) !important;
-  font-size:clamp(34px,5vw,52px) !important;
-  line-height:1.05;
-  font-weight:800 !important;
-  letter-spacing:-1.8px;
+  margin:0 0 4px;
+  color:var(--accent);
+  font-size:clamp(36px,5vw,54px);
+  line-height:1;
+  font-weight:850;
+  letter-spacing:-2px;
 }
 
 .hero h3{
-  margin:0 !important;
-  color:var(--text) !important;
-  font-size:clamp(19px,2.5vw,27px) !important;
-  font-weight:700 !important;
+  margin:0;
+  color:var(--text);
+  font-size:clamp(19px,2.5vw,27px);
+  font-weight:750;
 }
 
 .hero > p{
-  margin:7px 0 24px !important;
-  color:#6a8fca !important;
-  font-size:15px !important;
-  font-weight:600;
+  margin:7px 0 22px;
+  color:#6689bd;
+  font-size:14px;
+  font-weight:650;
 }
 
-/* Intro card */
-
+/* Intro */
 .heroCard{
-  width:100% !important;
-  min-height:120px;
-  margin:0 0 16px !important;
-  padding:24px 28px !important;
-  display:flex !important;
+  width:100%;
+  min-height:116px;
+  margin:0 0 16px;
+  padding:24px 28px;
+  display:flex;
   align-items:center;
   justify-content:space-between;
   gap:20px;
   text-align:left;
-  background:var(--surface) !important;
-  border:1px solid var(--border) !important;
-  border-radius:var(--radius) !important;
-  box-shadow:var(--shadow) !important;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
 }
 
 .heroLeft{
@@ -113,417 +141,517 @@ body{
 }
 
 .heroLeft h2{
-  margin:0 0 5px !important;
-  color:var(--text) !important;
-  font-size:22px !important;
-  font-weight:750 !important;
+  margin:0 0 5px;
+  color:var(--text);
+  font-size:22px;
+  font-weight:750;
 }
 
 .heroLeft p{
-  margin:2px 0 !important;
-  color:var(--muted) !important;
-  font-size:14px !important;
+  margin:2px 0;
+  color:var(--muted);
+  font-size:14px;
 }
 
 .heroRight{
   flex:0 0 auto;
-  font-size:46px !important;
+  font-size:46px;
 }
 
-/* ---------------- Wallet / auth ---------------- */
+/* Wallet */
+.wallet-section-card{
+  width:100%;
+  padding:16px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
 
-#connectBtn,
-#googleLoginBtn{
-  width:100% !important;
+.wallet-btn-group{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.action-btn{
+  width:100%;
   min-height:46px;
-  margin:6px 0 !important;
-  padding:12px 18px !important;
-  border-radius:12px !important;
-  font:inherit !important;
-  font-size:14px !important;
-  font-weight:700 !important;
-  cursor:pointer;
-  transition:transform .18s ease,box-shadow .18s ease,opacity .18s ease;
+  padding:11px 16px;
+  border-radius:11px;
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--text);
+  font-weight:750;
 }
 
-#connectBtn{
-  background:var(--green) !important;
-  color:var(--green-dark) !important;
-  border:1px solid #9bd91c !important;
-  box-shadow:none !important;
+.primary-btn{
+  background:var(--green);
+  border-color:var(--green-border);
+  color:var(--green-dark);
 }
 
-#googleLoginBtn{
-  background:#fff !important;
-  color:var(--text) !important;
-  border:1px solid var(--border) !important;
-  box-shadow:none !important;
+.google-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
 }
 
-#connectBtn:hover,
-#googleLoginBtn:hover{
-  transform:translateY(-1px);
-  box-shadow:0 5px 14px rgba(23,32,25,.08) !important;
+.status-badge{
+  margin-top:10px;
+  padding:9px 12px;
+  border-radius:10px;
+  background:#effaf1;
+  border:1px solid #cde7d0;
+  color:#277b61;
+  font-size:13px;
+  font-weight:700;
+}
+
+.address-box{
+  width:100%;
+  margin-top:10px;
+  padding:10px 12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:var(--surface-soft);
+  border:1px solid var(--border);
+  border-radius:11px;
 }
 
 #walletAddress{
-  width:100% !important;
-  margin:8px 0 !important;
-  padding:11px 14px !important;
-  background:var(--surface) !important;
-  color:#277b61 !important;
-  border:1px solid var(--border) !important;
-  border-radius:12px !important;
+  flex:1;
+  min-width:0;
+  color:#277b61;
   font-size:13px !important;
-  font-weight:650 !important;
+  font-weight:700 !important;
+  word-break:break-all;
+}
+
+.copy-btn{
+  flex:0 0 auto;
+  min-height:34px;
+  padding:6px 10px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+  color:var(--text);
+  font-size:12px;
+  font-weight:700;
+}
+
+.disconnect-btn{
+  display:block;
+  width:fit-content;
+  min-width:170px;
+  margin:10px auto 0;
+  padding:9px 15px;
+  border:0;
+  border-radius:10px;
+  background:#dc2626;
+  color:#fff;
+  font-size:13px;
+  font-weight:750;
 }
 
 #txCard{
-  width:100% !important;
-  margin:10px 0 !important;
+  width:100%;
+  margin-top:12px;
 }
 
-/* ---------------- Top stats ---------------- */
+/* =========================================================
+   TOP STATS
+   ========================================================= */
 
 #dashboard{
-  width:100% !important;
-  display:grid !important;
-  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-  gap:var(--gap) !important;
-  margin:20px 0 !important;
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:var(--gap);
+  margin:18px 0 0;
 }
 
-#dashboard > div{
-  min-width:0 !important;
-  min-height:120px !important;
-  padding:22px !important;
-  display:flex !important;
+.stat-card{
+  min-width:0;
+  min-height:122px;
+  padding:20px;
+  display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  background:var(--surface) !important;
-  color:var(--text) !important;
-  border:1px solid var(--border) !important;
-  border-radius:var(--radius) !important;
-  box-shadow:var(--shadow) !important;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
 }
 
-#dashboard > div h1,
-#dashboard > div h2,
-#dashboard > div h3{
-  color:var(--text) !important;
+.stat-icon{
+  font-size:28px;
+  line-height:1;
 }
 
-/* ---------------- Quick actions ---------------- */
+.stat-label{
+  margin-top:7px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:600;
+}
 
-.hero > h2{
-  margin:28px 0 12px !important;
-  color:var(--text) !important;
-  font-size:18px !important;
-  font-weight:750 !important;
+.stat-card h1{
+  margin:3px 0 0;
+  color:var(--text);
+  font-size:32px;
+  line-height:1;
+}
+
+/* =========================================================
+   QUICK ACTIONS
+   ========================================================= */
+
+.quick-title{
+  margin:26px 0 10px;
   text-align:left;
+  color:var(--text);
+  font-size:18px;
+  font-weight:800;
 }
 
-.hero > h2 + div{
-  display:grid !important;
-  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-  gap:12px !important;
-  margin-bottom:28px !important;
+.quick-actions{
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:24px;
 }
 
 .quick-action{
-  min-height:76px !important;
-  padding:13px 10px !important;
-  display:flex !important;
+  min-width:0;
+  min-height:72px;
+  padding:11px 8px;
+  display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:3px;
-  background:var(--surface) !important;
-  color:var(--text) !important;
-  border:1px solid var(--border) !important;
-  border-radius:14px !important;
-  box-shadow:none !important;
-  font-size:22px !important;
-  cursor:pointer;
-  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+  gap:4px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  color:var(--text);
+  font-size:21px;
+  box-shadow:none;
+  transition:transform .18s ease,box-shadow .18s ease;
 }
 
 .quick-action small{
-  color:var(--text) !important;
-  font-size:13px !important;
-  font-weight:700 !important;
+  color:var(--text);
+  font-size:12px;
+  font-weight:750;
 }
 
-.quick-action:nth-child(1){border-top:3px solid #8b5cf6 !important;}
-.quick-action:nth-child(2){border-top:3px solid #2563eb !important;}
-.quick-action:nth-child(3){border-top:3px solid #f97316 !important;}
-.quick-action:nth-child(4){border-top:3px solid #10b981 !important;}
-.quick-action:nth-child(5){border-top:3px solid #db2777 !important;}
-.quick-action:nth-child(6){border-top:3px solid #dc2626 !important;}
+.quick-action:nth-child(1){border-top:3px solid #8b5cf6;}
+.quick-action:nth-child(2){border-top:3px solid #2563eb;}
+.quick-action:nth-child(3){border-top:3px solid #f97316;}
+.quick-action:nth-child(4){border-top:3px solid #10b981;}
+.quick-action:nth-child(5){border-top:3px solid #db2777;}
+.quick-action:nth-child(6){border-top:3px solid #dc2626;}
 
 .quick-action:hover{
   transform:translateY(-2px);
-  box-shadow:var(--shadow) !important;
+  box-shadow:var(--shadow);
 }
 
-/* ---------------- Main dashboard ---------------- */
+/* =========================================================
+   LOCKED DASHBOARD ARCHITECTURE
+   ========================================================= */
 
-.desktop-dashboard{
-  width:100% !important;
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
-  gap:var(--gap) !important;
-  align-items:start !important;
+.dashboard-stack{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:var(--gap);
 }
 
-.left-column,
-.right-column{
-  width:100% !important;
-  min-width:0 !important;
-  display:flex !important;
-  flex-direction:column !important;
-  gap:var(--gap) !important;
+.pair-row{
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:var(--gap);
+  align-items:stretch;
 }
-
-.left-column > *,
-.right-column > *{
-  width:100% !important;
-  min-width:0 !important;
-  margin:0 !important;
-}
-
-/* ---------------- Cards ---------------- */
 
 .card{
-  width:100% !important;
-  min-width:0 !important;
-  margin:0 !important;
-  padding:22px !important;
-  background:var(--surface) !important;
-  color:var(--text) !important;
-  border:1px solid var(--border) !important;
-  border-top:3px solid #dbe4dc !important;
-  border-radius:var(--radius) !important;
-  box-shadow:var(--shadow) !important;
+  width:100%;
+  min-width:0;
+  margin:0;
+  padding:24px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-top:3px solid #dce5dd;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
   overflow:hidden;
+  transition:box-shadow .18s ease,transform .18s ease;
 }
 
 .card:hover{
-  transform:none !important;
+  box-shadow:var(--shadow-hover);
 }
 
-.card h2{
-  margin:0 0 4px !important;
-  color:var(--text) !important;
-  font-size:19px !important;
-  line-height:1.2 !important;
-  font-weight:750 !important;
-  letter-spacing:-.25px;
+.large-card{
+  width:100%;
 }
 
-.card h3{
-  margin:16px 0 8px !important;
-  color:var(--text) !important;
-  font-size:14px !important;
-  font-weight:750 !important;
+.small-card{
+  min-width:0;
 }
 
-.card p{
-  margin:0 0 12px !important;
-  color:var(--muted) !important;
-  font-size:13px !important;
+.card-heading{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:16px;
 }
 
-.card span{
-  color:inherit;
+.card-heading h2{
+  margin:0 0 4px;
+  color:var(--text);
+  font-size:20px;
+  line-height:1.25;
+  font-weight:800;
 }
 
-/* subtle card accents */
+.card-heading p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+}
 
-#registerSection,
-#searchSection,
-#hospitalSection,
-#aiSection{
-  border-top-color:#dbe4dc !important;
+.section-badge{
+  flex:0 0 auto;
+  padding:6px 9px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:#f7faf7;
+  color:#657169;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.5px;
+}
+
+.danger-badge{
+  background:var(--accent-soft);
+  border-color:#efc8cc;
+  color:#a51f2c;
+}
+
+.ambulance-badge{
+  background:#effaf3;
+  border-color:#cde7d5;
+  color:#23704d;
+}
+
+.doctor-badge{
+  background:#f1f5ff;
+  border-color:#ced8f1;
+  color:#3459a5;
+}
+
+#registerSection{
+  border-top-color:#d9e2db;
 }
 
 #sosSection{
-  border-top-color:#efb2b7 !important;
+  border-top-color:#efb2b7;
 }
 
 #ambulanceSection{
-  border-top-color:#b7d8c8 !important;
+  border-top-color:#b9dbc8;
 }
 
 #doctorSection{
-  border-top-color:#b9cbee !important;
+  border-top-color:#b9c9ea;
 }
 
-/* ---------------- Forms ---------------- */
+/* =========================================================
+   FORMS
+   ========================================================= */
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.form-grid input,
+.form-grid select{
+  min-width:0;
+}
 
 input,
 select,
 textarea{
-  width:100% !important;
-  max-width:100% !important;
+  width:100%;
+  max-width:100%;
   min-height:42px;
-  margin:0 0 10px !important;
-  padding:10px 12px !important;
-  background:#fbfcfb !important;
-  color:var(--text) !important;
-  border:1px solid #d8dfd9 !important;
-  border-radius:10px !important;
+  margin:0 0 10px;
+  padding:10px 12px;
+  background:#fbfcfb;
+  color:var(--text);
+  border:1px solid #d8dfd9;
+  border-radius:10px;
   outline:none;
-  font:inherit !important;
-  font-size:13px !important;
-  box-shadow:none !important;
+  font-size:13px;
+  box-shadow:none;
 }
 
 textarea{
-  min-height:92px !important;
+  min-height:100px;
   resize:vertical;
 }
 
 input:focus,
 select:focus,
 textarea:focus{
-  border-color:#a9b7ac !important;
-  box-shadow:0 0 0 3px rgba(37,99,235,.06) !important;
+  border-color:#9fb1a2;
+  box-shadow:0 0 0 3px rgba(37,99,235,.06);
 }
 
 input::placeholder,
 textarea::placeholder{
-  color:#9aa39c !important;
+  color:#9aa39c;
 }
 
-button{
-  max-width:100%;
-  font:inherit !important;
-  cursor:pointer;
+.primary-action,
+.danger-action{
+  width:100%;
+  min-height:42px;
+  padding:10px 14px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:800;
+  transition:transform .16s ease,box-shadow .16s ease;
 }
 
-/* Standard action buttons */
-
-.card button{
-  min-height:38px;
-  padding:9px 14px !important;
-  border:1px solid #d5ddd6 !important;
-  border-radius:9px !important;
-  background:#ffffff !important;
-  color:var(--text) !important;
-  font-size:12px !important;
-  font-weight:700 !important;
-  box-shadow:none !important;
-  transition:transform .16s ease,box-shadow .16s ease,background .16s ease;
+.primary-action{
+  background:var(--green);
+  color:var(--green-dark);
+  border:1px solid var(--green-border);
 }
 
-.card button:hover{
+.danger-action{
+  background:#fff0f1;
+  color:#a51f2c;
+  border:1px solid #efc3c8;
+}
+
+.primary-action:hover,
+.danger-action:hover{
   transform:translateY(-1px);
-  background:#f7faf7 !important;
-  box-shadow:0 4px 12px rgba(23,32,25,.07) !important;
+  box-shadow:0 5px 14px rgba(23,32,25,.08);
 }
 
-/* Primary actions */
-
-#registerBtn,
-#requestBtn,
-#ambulanceBtn,
-#saveProfileBtn,
-#payBillBtn,
-#searchPatientBtn,
-#searchBtn,
-#askAIBtn{
-  width:100% !important;
-  background:var(--green) !important;
-  color:var(--green-dark) !important;
-  border-color:#9bd91c !important;
+/* Make donor registration button span the form row */
+.donor-form .primary-action{
+  grid-column:1 / -1;
 }
 
-/* SOS is intentionally red */
+/* =========================================================
+   LIST CONTAINMENT — PERMANENT
+   Lists never push the next card down.
+   ========================================================= */
 
-#requestBtn{
-  background:#fff0f1 !important;
-  color:#a51f2c !important;
-  border-color:#f1c3c7 !important;
-}
-
-/* ---------------- Dashboard mini blocks ---------------- */
-
-.dashboard-card{
-  margin:7px 0 !important;
-  padding:10px 12px !important;
-  background:#fafcf9 !important;
-  border:1px solid var(--border) !important;
-  border-radius:10px !important;
-  color:var(--text) !important;
-  font-size:12px !important;
-}
-
-.dashboard-card span{
-  font-weight:750 !important;
-}
-
-/* ---------------- Donor / request lists ---------------- */
-
-/* These are the important permanent containment rules.
-   Lists scroll INSIDE their card and cannot push the next
-   card downward. */
-
-#registeredDonorsList,
-#requestList,
-#ambulanceList,
-#searchResults{
-  width:100% !important;
-  max-width:100% !important;
-  overflow-y:auto !important;
-  overflow-x:hidden !important;
+.inner-scroll{
+  width:100%;
+  max-width:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
   overscroll-behavior:contain;
   scrollbar-width:thin;
   scrollbar-color:#b8c1ba transparent;
+  padding-right:2px;
 }
 
-#registeredDonorsList{
-  max-height:220px !important;
+.inner-scroll::-webkit-scrollbar{
+  width:7px;
 }
 
-#requestList{
-  max-height:220px !important;
+.inner-scroll::-webkit-scrollbar-thumb{
+  background:#c4ccc5;
+  border-radius:20px;
 }
 
-#ambulanceList{
-  max-height:190px !important;
+.donor-list{
+  height:250px;
+  max-height:250px;
 }
 
-#searchResults{
-  max-height:180px !important;
+.request-list{
+  height:260px;
+  max-height:260px;
 }
 
-#registeredDonorsList > div,
-#requestList > div,
-#ambulanceList > div,
-#searchResults > div{
-  width:100% !important;
-  margin:7px 0 !important;
-  padding:10px !important;
-  background:#fafcfb !important;
-  color:var(--text) !important;
-  border:1px solid var(--border) !important;
-  border-radius:10px !important;
-  box-shadow:none !important;
+.ambulance-list{
+  height:260px;
+  max-height:260px;
 }
 
-/* ---------------- Map ---------------- */
+.compact-scroll{
+  max-height:150px;
+}
 
-#map{
-  width:100% !important;
-  height:380px !important;
-  min-height:380px !important;
-  margin:10px 0 0 !important;
-  border:1px solid var(--border) !important;
-  border-radius:12px !important;
+.inner-scroll > div{
+  width:100%;
+  margin:7px 0;
+  padding:11px;
+  background:var(--surface-soft);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:11px;
+  box-shadow:none;
+}
+
+.empty-state{
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+}
+
+.list-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:4px 0 7px;
+}
+
+.list-header h3{
+  margin:0;
+  color:var(--text);
+  font-size:14px;
+}
+
+.list-header span{
+  color:#8a948d;
+  font-size:10px;
+  font-weight:650;
+}
+
+/* =========================================================
+   MAP
+   ========================================================= */
+
+.map-card #map{
+  width:100%;
+  height:480px;
+  min-height:480px;
+  margin:0;
+  border:1px solid var(--border);
+  border-radius:14px;
   overflow:hidden;
-  box-shadow:none !important;
+  box-shadow:none;
 }
 
 .leaflet-container{
@@ -531,375 +659,441 @@ button{
   max-width:100% !important;
 }
 
-/* ---------------- AI output ---------------- */
+/* =========================================================
+   SOS / AMBULANCE
+   ========================================================= */
 
-#chatBox{
-  max-height:220px !important;
-  overflow-y:auto !important;
-  background:#fafcfb !important;
-  color:var(--text) !important;
-  border:1px solid var(--border) !important;
+.emergency-notice{
+  margin:2px 0 14px;
+  padding:12px 14px;
+  background:#fff4f4;
+  border:1px solid #f1d0d3;
+  border-left:4px solid var(--accent);
+  border-radius:10px;
+  color:#9d303a;
+  font-size:12px;
+  font-weight:700;
 }
 
-/* ---------------- Footer ---------------- */
-
-footer{
-  width:100% !important;
-  max-width:none !important;
-  margin:28px 0 0 !important;
-  padding:32px 24px !important;
-  background:var(--surface) !important;
-  color:var(--text) !important;
-  border:1px solid var(--border) !important;
-  border-radius:var(--radius) !important;
-  box-shadow:var(--shadow) !important;
+.status-line{
+  min-height:0;
+  margin:2px 0 8px;
+  color:#5d6961;
+  font-size:12px;
 }
 
-footer h2{
-  color:var(--text) !important;
-  font-size:30px !important;
-  text-shadow:none !important;
+.sos-form .danger-action,
+.ambulance-form .primary-action{
+  grid-column:1 / -1;
 }
 
-footer p{
-  color:var(--muted) !important;
+/* =========================================================
+   DASHBOARD MINI BLOCKS
+   ========================================================= */
+
+.dashboard-card{
+  margin:8px 0;
+  padding:11px 12px;
+  background:#fafcf9;
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--text);
+  font-size:12px;
 }
 
-footer p:last-child{
-  color:var(--text) !important;
+.dashboard-card span{
+  font-weight:800;
 }
 
-footer hr{
-  background:var(--border) !important;
+/* =========================================================
+   AI
+   ========================================================= */
+
+#aiQuestion{
+  min-height:105px;
 }
 
-/* ---------------- Desktop / mobile layout ---------------- */
-
-@media (min-width:900px){
-
-  .container{
-    width:min(1380px,calc(100% - 56px)) !important;
-    padding-top:34px !important;
-  }
-
-  .hero > h2 + div{
-    grid-template-columns:repeat(6,minmax(0,1fr)) !important;
-  }
-
-  .quick-action{
-    min-height:82px !important;
-  }
-
-  /*
-    Desktop dashboard:
-    each column owns its own vertical flow.
-    This gives the clean "Register | Map", "Search | Ambulance",
-    "SOS | Doctor", "Hospital | Health Profile" structure.
-  */
-  .desktop-dashboard{
-    display:grid !important;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
-    gap:20px !important;
-    align-items:start !important;
-  }
-
-  .left-column,
-  .right-column{
-    display:flex !important;
-    flex-direction:column !important;
-    gap:20px !important;
-    align-items:stretch !important;
-    min-width:0 !important;
-  }
-
-  .left-column > .card,
-  .right-column > .card{
-    width:100% !important;
-    margin:0 !important;
-    min-width:0 !important;
-    align-self:stretch !important;
-  }
-
-  /* First row: donor registration + map */
-  #registerSection,
-  .right-column > .card:first-child{
-    height:430px !important;
-    min-height:430px !important;
-  }
-
-  #registerSection{
-    display:flex !important;
-    flex-direction:column !important;
-  }
-
-  #registeredDonorsList{
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    max-height:165px !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-    margin-top:2px !important;
-  }
-
-  .right-column > .card:first-child{
-    display:flex !important;
-    flex-direction:column !important;
-  }
-
-  .right-column > .card:first-child #map{
-    flex:1 1 auto !important;
-    height:auto !important;
-    min-height:0 !important;
-    margin-top:10px !important;
-  }
-
-  /* Second row */
-  .left-column > #searchSection,
-  #ambulanceSection{
-    min-height:240px !important;
-  }
-
-  #ambulanceSection{
-    display:flex !important;
-    flex-direction:column !important;
-  }
-
-  #ambulanceList{
-    max-height:150px !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-  }
-
-  /* Third row */
-  #sosSection,
-  #doctorSection{
-    min-height:360px !important;
-  }
-
-  #sosSection{
-    display:flex !important;
-    flex-direction:column !important;
-  }
-
-  #requestList{
-    max-height:150px !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-  }
-
-  #doctorSection{
-    display:flex !important;
-    flex-direction:column !important;
-  }
-
-  /* Fourth row */
-  #hospitalSection,
-  .right-column > .card:has(#profileName){
-    min-height:300px !important;
-  }
-
-  #hospitalSection,
-  .right-column > .card:has(#profileName){
-    display:flex !important;
-    flex-direction:column !important;
-  }
-
-  /* Fifth row */
-  #aiSection,
-  .left-column > .card:nth-child(5){
-    min-height:260px !important;
-  }
-
-  #aiSection{
-    display:flex !important;
-    flex-direction:column !important;
-  }
-
-  /* Analytics stays compact and clean. */
-  .left-column > .card:nth-child(5){
-    min-height:220px !important;
-  }
-
-  /* Health profile needs enough room for the complete form. */
-  .right-column > .card:has(#profileName){
-    min-height:420px !important;
-  }
-
-  /* Consistent inner spacing */
-  .desktop-dashboard .card{
-    padding:22px !important;
-  }
-
-  .desktop-dashboard .card h2{
-    margin-bottom:5px !important;
-  }
+.ai-output{
+  width:100%;
+  height:150px;
+  max-height:150px;
+  overflow-y:auto;
+  margin-top:8px;
+  padding:10px;
+  background:#fafcfb;
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:10px;
 }
 
+/* =========================================================
+   HEALTH PROFILE
+   ========================================================= */
 
-/* ---------------- Tablet ---------------- */
+.profile-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px 14px;
+}
+
+.profile-grid > div{
+  min-width:0;
+}
+
+.profile-grid label{
+  display:block;
+  margin:0 0 5px;
+  color:#657169;
+  font-size:11px;
+  font-weight:750;
+}
+
+.full-field{
+  grid-column:1 / -1;
+}
+
+.health-card .primary-action{
+  margin-top:4px;
+}
+
+/* =========================================================
+   DOCTOR
+   ========================================================= */
+
+.doctor-search{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 260px;
+  gap:10px;
+  align-items:start;
+}
+
+.doctor-search input{
+  margin-bottom:0;
+}
+
+.patient-profile-card{
+  margin-top:14px;
+  padding:16px;
+  background:#fafcf9;
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+
+.patient-profile-card h3{
+  margin:0 0 12px;
+  font-size:15px;
+}
+
+.patient-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px 14px;
+}
+
+.patient-grid p{
+  margin:0;
+  padding:9px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:9px;
+  font-size:12px;
+}
+
+/* =========================================================
+   FOOTER — FULL WIDTH LARGE CARD
+   ========================================================= */
+
+.lifelink-footer{
+  width:100%;
+  min-height:170px;
+  margin-top:var(--gap);
+  padding:30px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+.footer-inner{
+  width:100%;
+  min-height:110px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:24px;
+}
+
+.footer-logo{
+  width:72px;
+  height:72px;
+  object-fit:contain;
+}
+
+.lifelink-footer h2{
+  margin:0 0 4px;
+  color:var(--text);
+  font-size:30px;
+  font-weight:850;
+}
+
+.lifelink-footer p{
+  margin:0 0 7px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.lifelink-footer strong{
+  color:#55725f;
+  font-size:12px;
+}
+
+.footer-developer{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:3px;
+  text-align:right;
+}
+
+.footer-developer span{
+  color:var(--muted);
+  font-size:11px;
+}
+
+.footer-developer b{
+  color:var(--text);
+  font-size:15px;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
 
 @media (min-width:700px) and (max-width:899px){
 
   .container{
-    width:min(100% - 32px,900px) !important;
-    padding-top:24px !important;
+    width:min(100% - 32px,900px);
+    padding:24px 0 40px;
   }
 
-  .desktop-dashboard{
-    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-    gap:16px !important;
+  .quick-actions{
+    grid-template-columns:repeat(3,minmax(0,1fr));
   }
 
-  .left-column,
-  .right-column{
-    gap:16px !important;
+  .pair-row{
+    grid-template-columns:repeat(2,minmax(0,1fr));
   }
 
-  .hero > h2 + div{
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  .map-card #map{
+    height:400px;
+    min-height:400px;
   }
 
-  #map{
-    height:340px !important;
-    min-height:340px !important;
+  .footer-inner{
+    grid-template-columns:auto 1fr;
+  }
+
+  .footer-developer{
+    grid-column:1 / -1;
+    align-items:flex-start;
+    text-align:left;
   }
 }
 
-
-/* ---------------- Mobile ---------------- */
+/* =========================================================
+   MOBILE — ONE CARD AT A TIME
+   ========================================================= */
 
 @media (max-width:699px){
 
   body{
-    background:var(--bg) !important;
+    background:var(--bg);
   }
 
   .container{
-    width:calc(100% - 24px) !important;
-    max-width:none !important;
-    padding:18px 0 34px !important;
+    width:calc(100% - 24px);
+    max-width:none;
+    padding:18px 0 34px;
   }
 
   .hero{
-    margin-bottom:22px !important;
+    margin-bottom:22px;
   }
 
   .hero-logo{
-    width:64px !important;
-    height:64px !important;
+    width:64px;
+    height:64px;
   }
 
   .hero h1{
-    font-size:34px !important;
+    font-size:34px;
   }
 
   .hero h3{
-    font-size:18px !important;
+    font-size:18px;
   }
 
   .hero > p{
-    font-size:13px !important;
+    font-size:13px;
   }
 
   .heroCard{
     min-height:100px;
-    padding:18px !important;
+    padding:18px;
   }
 
   .heroLeft h2{
-    font-size:18px !important;
+    font-size:18px;
+  }
+
+  .heroLeft p{
+    font-size:12px;
   }
 
   .heroRight{
-    font-size:38px !important;
+    font-size:38px;
+  }
+
+  .wallet-btn-group{
+    grid-template-columns:1fr;
   }
 
   #dashboard{
-    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-    gap:10px !important;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
   }
 
-  #dashboard > div{
-    min-height:100px !important;
-    padding:14px !important;
+  .stat-card{
+    min-height:100px;
+    padding:14px;
   }
 
-  .hero > h2 + div{
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-    gap:8px !important;
+  .stat-card h1{
+    font-size:28px;
+  }
+
+  .quick-actions{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:8px;
   }
 
   .quick-action{
-    min-height:68px !important;
-    padding:9px 5px !important;
-    border-radius:11px !important;
-    font-size:19px !important;
+    min-height:66px;
+    padding:8px 5px;
+    border-radius:11px;
+    font-size:18px;
   }
 
   .quick-action small{
-    font-size:11px !important;
+    font-size:10px;
   }
 
-  /* Mobile stays exactly one card at a time. */
-  .desktop-dashboard{
-    grid-template-columns:1fr !important;
-    gap:16px !important;
+  .dashboard-stack{
+    gap:16px;
   }
 
-  .left-column,
-  .right-column{
-    gap:16px !important;
+  /* Each pair becomes two separate cards vertically. */
+  .pair-row{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
   }
 
   .card{
-    padding:17px !important;
-    border-radius:15px !important;
+    padding:17px;
+    border-radius:15px;
   }
 
-  .card h2{
-    font-size:17px !important;
+  .card-heading{
+    margin-bottom:13px;
   }
 
-  input,
-  select,
-  textarea{
-    min-height:40px !important;
-    padding:9px 10px !important;
-    font-size:13px !important;
+  .card-heading h2{
+    font-size:17px;
   }
 
-  #map{
-    height:320px !important;
-    min-height:320px !important;
+  .card-heading p{
+    font-size:12px;
   }
 
-  #registeredDonorsList,
-  #requestList{
-    max-height:220px !important;
-    overflow-y:auto !important;
+  .section-badge{
+    display:none;
   }
 
-  #ambulanceList,
-  #searchResults{
-    max-height:180px !important;
-    overflow-y:auto !important;
+  .form-grid,
+  .profile-grid,
+  .patient-grid{
+    grid-template-columns:1fr;
   }
 
-  footer{
-    padding:26px 18px !important;
+  .donor-form .primary-action,
+  .sos-form .danger-action,
+  .ambulance-form .primary-action,
+  .full-field{
+    grid-column:auto;
   }
 
-  footer h2{
-    font-size:27px !important;
+  .map-card #map{
+    height:340px;
+    min-height:340px;
+  }
+
+  .donor-list{
+    height:220px;
+    max-height:220px;
+  }
+
+  .request-list{
+    height:220px;
+    max-height:220px;
+  }
+
+  .ambulance-list{
+    height:210px;
+    max-height:210px;
+  }
+
+  .doctor-search{
+    grid-template-columns:1fr;
+    gap:0;
+  }
+
+  .doctor-search input{
+    margin-bottom:10px;
+  }
+
+  .lifelink-footer{
+    min-height:230px;
+    padding:26px 18px;
+  }
+
+  .footer-inner{
+    grid-template-columns:1fr;
+    justify-items:center;
+    text-align:center;
+    gap:14px;
+  }
+
+  .footer-developer{
+    align-items:center;
+    text-align:center;
   }
 }
 
-
-/* Accessibility / motion */
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
 
 @media (prefers-reduced-motion:reduce){
-  *{
-    scroll-behavior:auto !important;
-    transition:none !important;
+  html{
+    scroll-behavior:auto;
   }
-}
+
+  *,
+  *::before,
+  *::after{
+    transition:none !important;
+    animation:none !important;
+  }
+   }
+   
