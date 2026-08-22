@@ -158,8 +158,12 @@ The **Nearby Donor Map** can also show registered donor locations.
 3. Select **Request Emergency Ambulance**.
 4. Approve the transaction.
 5. Wait for confirmation.
+6. Open the live ambulance request as an ambulance driver.
+7. Select **Complete Request**.
+8. Approve the transaction if required.
+9. Wait for blockchain confirmation.
 
-**Expected result:** The ambulance request is recorded on Arc Testnet and appears in the live ambulance request section.
+**Expected result:** The ambulance request is recorded on Arc Testnet, appears in the live ambulance requests, and can be successfully fulfilled by the ambulance driver. The request status should update to **fulfilled**.
 
 ---
 
@@ -418,6 +422,9 @@ LifeLink/
 ☐ Create an SOS blood request
 ☐ Test donor response
 ☐ Create an ambulance request
+☐ View live ambulance requests
+☐ Fulfill an ambulance request as an ambulance driver
+☐ Verify the request is fulfilled
 ☐ Create/save a Health Profile
 ☐ Test Doctor Portal
 ☐ Test AI Emergency Assistant
