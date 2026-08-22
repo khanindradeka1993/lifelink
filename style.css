@@ -1,16 +1,31 @@
+
 /* =========================================================
-   LifeLink — Stable Responsive UI
-   Desktop: fixed-size two-column card grid
-   Mobile: existing one-by-one natural layout
-   No JavaScript / Circle SDK / contract changes
+   LIFELINK — CLEAN UI REDESIGN
+   Inspired by the clean, spacious dashboard style shown by
+   the user. Visual layer only: existing HTML IDs/classes,
+   wallet, Google login, maps and JavaScript are preserved.
    ========================================================= */
 
-/* ---------- Base ---------- */
+:root{
+  --bg:#f5f7f4;
+  --surface:#ffffff;
+  --surface-soft:#fafcf9;
+  --border:#e3e8e2;
+  --text:#18211c;
+  --muted:#6d776f;
+  --accent:#c92535;
+  --accent-soft:#fff1f2;
+  --blue:#2563eb;
+  --green:#b9ff2c;
+  --green-dark:#172019;
+  --danger:#c92535;
+  --shadow:0 8px 28px rgba(23,32,25,.06);
+  --radius:18px;
+  --gap:20px;
+}
+
 *{
   box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Arial,sans-serif;
 }
 
 html{
@@ -18,608 +33,811 @@ html{
 }
 
 body{
+  margin:0 !important;
+  padding:0 !important;
   width:100%;
   min-height:100vh;
-  background:#0B1220;
-  color:#fff;
-  padding:24px;
   overflow-x:hidden;
+  background:var(--bg) !important;
+  color:var(--text) !important;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif !important;
+  line-height:1.45;
 }
 
 .container{
-  width:100%;
-  max-width:1800px;
-  margin:0 auto;
-  padding:0 0 50px;
+  width:min(1380px,calc(100% - 40px)) !important;
+  max-width:1380px !important;
+  margin:0 auto !important;
+  padding:28px 0 48px !important;
 }
 
+/* ---------------- Header / hero ---------------- */
+
 .hero{
-  width:100%;
-  margin:0 auto 30px;
+  width:100% !important;
+  max-width:none !important;
+  margin:0 0 30px !important;
   text-align:center;
 }
 
 .hero-logo{
-  width:110px;
-  height:110px;
+  width:72px !important;
+  height:72px !important;
   object-fit:contain;
   display:block;
-  margin:0 auto 12px;
+  margin:0 auto 14px !important;
 }
 
 .hero h1{
-  font-size:48px;
-  font-weight:800;
-  color:#ef4444;
-  margin:8px 0;
+  margin:0 0 4px !important;
+  color:var(--accent) !important;
+  font-size:clamp(34px,5vw,52px) !important;
+  line-height:1.05;
+  font-weight:800 !important;
+  letter-spacing:-1.8px;
 }
 
 .hero h3{
-  color:#fff;
-  font-size:21px;
-  margin:0 0 6px;
+  margin:0 !important;
+  color:var(--text) !important;
+  font-size:clamp(19px,2.5vw,27px) !important;
+  font-weight:700 !important;
 }
 
 .hero > p{
-  color:#93c5fd;
-  font-size:16px;
+  margin:7px 0 24px !important;
+  color:#6a8fca !important;
+  font-size:15px !important;
+  font-weight:600;
 }
 
+/* Intro card */
+
 .heroCard{
-  width:100%;
-  margin:24px 0 18px;
-  padding:24px 30px;
-  display:flex;
-  justify-content:space-between;
+  width:100% !important;
+  min-height:120px;
+  margin:0 0 16px !important;
+  padding:24px 28px !important;
+  display:flex !important;
   align-items:center;
-  gap:30px;
-  background:#1E293B;
-  border-radius:20px;
+  justify-content:space-between;
+  gap:20px;
+  text-align:left;
+  background:var(--surface) !important;
+  border:1px solid var(--border) !important;
+  border-radius:var(--radius) !important;
+  box-shadow:var(--shadow) !important;
 }
 
 .heroLeft{
-  text-align:left;
   flex:1;
 }
 
 .heroLeft h2{
-  color:#fff;
-  font-size:28px;
-  margin-bottom:8px;
+  margin:0 0 5px !important;
+  color:var(--text) !important;
+  font-size:22px !important;
+  font-weight:750 !important;
 }
 
 .heroLeft p{
-  color:#CBD5E1;
-  text-align:left;
+  margin:2px 0 !important;
+  color:var(--muted) !important;
+  font-size:14px !important;
 }
 
 .heroRight{
-  font-size:64px;
   flex:0 0 auto;
+  font-size:46px !important;
 }
 
-/* ---------- Wallet / Circle controls ---------- */
-.wallet-section-card{
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:12px;
-  padding:16px;
-  margin:15px 0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:12px;
-  box-shadow:0 4px 15px rgba(0,0,0,.2);
-}
+/* ---------------- Wallet / auth ---------------- */
 
-.wallet-btn-group{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  width:100%;
-  max-width:380px;
-}
-
-.action-btn{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  width:100%;
-  min-height:48px;
-  font-size:15px;
-  font-weight:600;
-  border-radius:8px;
-  border:none;
+#connectBtn,
+#googleLoginBtn{
+  width:100% !important;
+  min-height:46px;
+  margin:6px 0 !important;
+  padding:12px 18px !important;
+  border-radius:12px !important;
+  font:inherit !important;
+  font-size:14px !important;
+  font-weight:700 !important;
   cursor:pointer;
-  transition:all .2s ease-in-out;
+  transition:transform .18s ease,box-shadow .18s ease,opacity .18s ease;
 }
 
-.primary-btn{
-  background:#2563eb;
-  color:#fff;
+#connectBtn{
+  background:var(--green) !important;
+  color:var(--green-dark) !important;
+  border:1px solid #9bd91c !important;
+  box-shadow:none !important;
 }
 
-.primary-btn:hover{
-  background:#1d4ed8;
+#googleLoginBtn{
+  background:#fff !important;
+  color:var(--text) !important;
+  border:1px solid var(--border) !important;
+  box-shadow:none !important;
 }
 
-.google-btn{
-  background:#fff;
-  color:#1f2937;
-}
-
-.google-btn:hover{
-  background:#f3f4f6;
-}
-
-.status-badge{
-  background:#059669;
-  color:#fff;
-  font-weight:600;
-  font-size:13px;
-  padding:6px 14px;
-  border-radius:20px;
-  text-align:center;
-  width:fit-content;
-}
-
-.address-box{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  background:#111827;
-  border:1px solid #374151;
-  border-radius:8px;
-  padding:8px 14px;
-  width:100%;
-  max-width:380px;
+#connectBtn:hover,
+#googleLoginBtn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 5px 14px rgba(23,32,25,.08) !important;
 }
 
 #walletAddress{
-  color:#10b981;
-  font-family:monospace;
-  font-size:14px;
-  font-weight:600;
-  text-align:center;
-  flex-grow:1;
-  word-break:break-all;
-}
-
-.copy-btn{
-  background:#374151;
-  color:#fff;
-  border:none;
-  padding:6px 10px;
-  border-radius:6px;
-  font-size:12px;
-  cursor:pointer;
+  width:100% !important;
+  margin:8px 0 !important;
+  padding:11px 14px !important;
+  background:var(--surface) !important;
+  color:#277b61 !important;
+  border:1px solid var(--border) !important;
+  border-radius:12px !important;
+  font-size:13px !important;
+  font-weight:650 !important;
 }
 
 #txCard{
-  width:100%;
+  width:100% !important;
+  margin:10px 0 !important;
 }
 
-/* ---------- Top statistics ---------- */
+/* ---------------- Top stats ---------------- */
+
 #dashboard{
-  width:100%;
+  width:100% !important;
   display:grid !important;
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-  gap:20px !important;
-  margin:22px 0 !important;
+  gap:var(--gap) !important;
+  margin:20px 0 !important;
 }
 
 #dashboard > div{
-  width:100% !important;
-  min-width:0;
+  min-width:0 !important;
+  min-height:120px !important;
+  padding:22px !important;
+  display:flex !important;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:var(--surface) !important;
+  color:var(--text) !important;
+  border:1px solid var(--border) !important;
+  border-radius:var(--radius) !important;
+  box-shadow:var(--shadow) !important;
 }
 
-/* ---------- Quick actions ---------- */
-.quick-action{
-  min-width:0;
-  transition:.2s ease;
+#dashboard > div h1,
+#dashboard > div h2,
+#dashboard > div h3{
+  color:var(--text) !important;
 }
+
+/* ---------------- Quick actions ---------------- */
+
+.hero > h2{
+  margin:28px 0 12px !important;
+  color:var(--text) !important;
+  font-size:18px !important;
+  font-weight:750 !important;
+  text-align:left;
+}
+
+.hero > h2 + div{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:12px !important;
+  margin-bottom:28px !important;
+}
+
+.quick-action{
+  min-height:76px !important;
+  padding:13px 10px !important;
+  display:flex !important;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  background:var(--surface) !important;
+  color:var(--text) !important;
+  border:1px solid var(--border) !important;
+  border-radius:14px !important;
+  box-shadow:none !important;
+  font-size:22px !important;
+  cursor:pointer;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+
+.quick-action small{
+  color:var(--text) !important;
+  font-size:13px !important;
+  font-weight:700 !important;
+}
+
+.quick-action:nth-child(1){border-top:3px solid #8b5cf6 !important;}
+.quick-action:nth-child(2){border-top:3px solid #2563eb !important;}
+.quick-action:nth-child(3){border-top:3px solid #f97316 !important;}
+.quick-action:nth-child(4){border-top:3px solid #10b981 !important;}
+.quick-action:nth-child(5){border-top:3px solid #db2777 !important;}
+.quick-action:nth-child(6){border-top:3px solid #dc2626 !important;}
 
 .quick-action:hover{
-  transform:translateY(-3px);
+  transform:translateY(-2px);
+  box-shadow:var(--shadow) !important;
 }
 
-/* ---------- Cards ---------- */
+/* ---------------- Main dashboard ---------------- */
+
+.desktop-dashboard{
+  width:100% !important;
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+  gap:var(--gap) !important;
+  align-items:start !important;
+}
+
+.left-column,
+.right-column{
+  width:100% !important;
+  min-width:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:var(--gap) !important;
+}
+
+.left-column > *,
+.right-column > *{
+  width:100% !important;
+  min-width:0 !important;
+  margin:0 !important;
+}
+
+/* ---------------- Cards ---------------- */
+
 .card{
-  width:100%;
-  min-width:0;
-  padding:24px;
-  margin:0;
-  background:#1E293B;
-  color:#fff;
-  border-radius:20px;
-  border-top:4px solid #2563eb;
-  box-shadow:0 10px 28px rgba(0,0,0,.22);
+  width:100% !important;
+  min-width:0 !important;
+  margin:0 !important;
+  padding:22px !important;
+  background:var(--surface) !important;
+  color:var(--text) !important;
+  border:1px solid var(--border) !important;
+  border-top:3px solid #dbe4dc !important;
+  border-radius:var(--radius) !important;
+  box-shadow:var(--shadow) !important;
   overflow:hidden;
 }
 
 .card:hover{
-  transform:none;
+  transform:none !important;
 }
 
-.card h2,
-.card h3,
-.card h4{
-  color:#fff;
+.card h2{
+  margin:0 0 4px !important;
+  color:var(--text) !important;
+  font-size:19px !important;
+  line-height:1.2 !important;
+  font-weight:750 !important;
+  letter-spacing:-.25px;
+}
+
+.card h3{
+  margin:16px 0 8px !important;
+  color:var(--text) !important;
+  font-size:14px !important;
+  font-weight:750 !important;
 }
 
 .card p{
-  color:#CBD5E1;
+  margin:0 0 12px !important;
+  color:var(--muted) !important;
+  font-size:13px !important;
 }
 
 .card span{
-  color:#fff;
+  color:inherit;
 }
+
+/* subtle card accents */
+
+#registerSection,
+#searchSection,
+#hospitalSection,
+#aiSection{
+  border-top-color:#dbe4dc !important;
+}
+
+#sosSection{
+  border-top-color:#efb2b7 !important;
+}
+
+#ambulanceSection{
+  border-top-color:#b7d8c8 !important;
+}
+
+#doctorSection{
+  border-top-color:#b9cbee !important;
+}
+
+/* ---------------- Forms ---------------- */
 
 input,
 select,
 textarea{
-  width:100%;
-  max-width:100%;
-  background:#334155;
-  color:#fff;
-  border:1px solid #64748B;
-  border-radius:12px;
-  padding:14px;
-  font-size:16px;
-  margin-bottom:14px;
+  width:100% !important;
+  max-width:100% !important;
+  min-height:42px;
+  margin:0 0 10px !important;
+  padding:10px 12px !important;
+  background:#fbfcfb !important;
+  color:var(--text) !important;
+  border:1px solid #d8dfd9 !important;
+  border-radius:10px !important;
+  outline:none;
+  font:inherit !important;
+  font-size:13px !important;
+  box-shadow:none !important;
 }
 
 textarea{
+  min-height:92px !important;
   resize:vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:#a9b7ac !important;
+  box-shadow:0 0 0 3px rgba(37,99,235,.06) !important;
 }
 
 input::placeholder,
 textarea::placeholder{
-  color:#AAB4C5;
+  color:#9aa39c !important;
 }
 
 button{
   max-width:100%;
+  font:inherit !important;
+  cursor:pointer;
 }
+
+/* Standard action buttons */
+
+.card button{
+  min-height:38px;
+  padding:9px 14px !important;
+  border:1px solid #d5ddd6 !important;
+  border-radius:9px !important;
+  background:#ffffff !important;
+  color:var(--text) !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  box-shadow:none !important;
+  transition:transform .16s ease,box-shadow .16s ease,background .16s ease;
+}
+
+.card button:hover{
+  transform:translateY(-1px);
+  background:#f7faf7 !important;
+  box-shadow:0 4px 12px rgba(23,32,25,.07) !important;
+}
+
+/* Primary actions */
+
+#registerBtn,
+#requestBtn,
+#ambulanceBtn,
+#saveProfileBtn,
+#payBillBtn,
+#searchPatientBtn,
+#searchBtn,
+#askAIBtn{
+  width:100% !important;
+  background:var(--green) !important;
+  color:var(--green-dark) !important;
+  border-color:#9bd91c !important;
+}
+
+/* SOS is intentionally red */
+
+#requestBtn{
+  background:#fff0f1 !important;
+  color:#a51f2c !important;
+  border-color:#f1c3c7 !important;
+}
+
+/* ---------------- Dashboard mini blocks ---------------- */
+
+.dashboard-card{
+  margin:7px 0 !important;
+  padding:10px 12px !important;
+  background:#fafcf9 !important;
+  border:1px solid var(--border) !important;
+  border-radius:10px !important;
+  color:var(--text) !important;
+  font-size:12px !important;
+}
+
+.dashboard-card span{
+  font-weight:750 !important;
+}
+
+/* ---------------- Donor / request lists ---------------- */
+
+/* These are the important permanent containment rules.
+   Lists scroll INSIDE their card and cannot push the next
+   card downward. */
+
+#donorList,
+#requestList,
+#ambulanceList,
+#searchResults{
+  width:100% !important;
+  max-width:100% !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+  scrollbar-color:#b8c1ba transparent;
+}
+
+#donorList{
+  max-height:220px !important;
+}
+
+#requestList{
+  max-height:220px !important;
+}
+
+#ambulanceList{
+  max-height:190px !important;
+}
+
+#searchResults{
+  max-height:180px !important;
+}
+
+#donorList > div,
+#requestList > div,
+#ambulanceList > div,
+#searchResults > div{
+  width:100% !important;
+  margin:7px 0 !important;
+  padding:10px !important;
+  background:#fafcfb !important;
+  color:var(--text) !important;
+  border:1px solid var(--border) !important;
+  border-radius:10px !important;
+  box-shadow:none !important;
+}
+
+/* ---------------- Map ---------------- */
+
+#map{
+  width:100% !important;
+  height:380px !important;
+  min-height:380px !important;
+  margin:10px 0 0 !important;
+  border:1px solid var(--border) !important;
+  border-radius:12px !important;
+  overflow:hidden;
+  box-shadow:none !important;
+}
+
+.leaflet-container{
+  width:100% !important;
+  max-width:100% !important;
+}
+
+/* ---------------- AI output ---------------- */
+
+#chatBox{
+  max-height:220px !important;
+  overflow-y:auto !important;
+  background:#fafcfb !important;
+  color:var(--text) !important;
+  border:1px solid var(--border) !important;
+}
+
+/* ---------------- Footer ---------------- */
 
 footer{
-  width:100%;
-  max-width:none;
+  width:100% !important;
+  max-width:none !important;
+  margin:28px 0 0 !important;
+  padding:32px 24px !important;
+  background:var(--surface) !important;
+  color:var(--text) !important;
+  border:1px solid var(--border) !important;
+  border-radius:var(--radius) !important;
+  box-shadow:var(--shadow) !important;
 }
 
-/* =========================================================
-   DESKTOP
-   ========================================================= */
+footer h2{
+  color:var(--text) !important;
+  font-size:30px !important;
+  text-shadow:none !important;
+}
+
+footer p{
+  color:var(--muted) !important;
+}
+
+footer p:last-child{
+  color:var(--text) !important;
+}
+
+footer hr{
+  background:var(--border) !important;
+}
+
+/* ---------------- Desktop ---------------- */
+
 @media (min-width:900px){
 
-  html,
-  body{
-    width:100%;
-    min-width:0;
-    overflow-x:hidden;
-  }
-
-  body{
-    margin:0;
-    padding:24px 28px 40px;
-  }
-
   .container{
-    width:100%;
-    max-width:1800px;
-    margin:0 auto;
-    padding:28px 0 50px;
+    width:min(1380px,calc(100% - 56px)) !important;
+    padding-top:34px !important;
   }
 
-  .hero{
-    width:100%;
-    margin:0 0 28px;
+  .hero > h2 + div{
+    grid-template-columns:repeat(6,minmax(0,1fr)) !important;
   }
 
-  /*
-    IMPORTANT:
-    The HTML currently has two wrappers (.left-column/.right-column)
-    containing the ten cards. They are made transparent on desktop
-    so the ten REAL .card elements become the grid items.
+  .quick-action{
+    min-height:82px !important;
+  }
 
-    This prevents the old "one column becomes taller and pushes the
-    footer down" problem.
-  */
+  /* Keep two independent columns. No row stretching and no
+     display:contents, which was causing the previous layout
+     instability. */
+
   .desktop-dashboard{
-    width:100% !important;
-    display:grid !important;
     grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
-    column-gap:24px !important;
-    row-gap:24px !important;
-    align-items:stretch !important;
+    align-items:start !important;
   }
 
-  .desktop-dashboard > .left-column,
-  .desktop-dashboard > .right-column{
-    display:contents !important;
-  }
-
-  .desktop-dashboard .card{
-    width:100% !important;
-    min-width:0 !important;
-    margin:0 !important;
-    box-sizing:border-box !important;
-    align-self:center !important;
-    overflow:hidden !important;
-  }
-
-  /*
-    Fixed card sizes.
-    Large cards: 560px
-    Small cards: 280px
-
-    These selectors match the ACTUAL current index.html structure.
-  */
-
-  /* LEFT: large */
-  .left-column > .card:nth-child(1), /* Blood Donor Registration */
-  .left-column > .card:nth-child(3)  /* SOS */
-  {
-    height:560px !important;
-    min-height:560px !important;
-    max-height:560px !important;
-  }
-
-  /* RIGHT: large */
-  .right-column > .card:nth-child(1), /* Nearby Donor Map */
-  #ambulanceSection,                  /* Emergency Ambulance */
-  .right-column > .card:nth-child(4)  /* Health Profile */
-  {
-    height:560px !important;
-    min-height:560px !important;
-    max-height:560px !important;
-  }
-
-  /* Small cards */
-  .left-column > .card:nth-child(2), /* Search */
-  #hospitalSection,                  /* Hospital */
-  .left-column > .card:nth-child(5), /* Analytics */
-  #aiSection,                         /* AI */
-  #doctorSection                      /* Doctor */
-  {
-    height:280px !important;
-    min-height:280px !important;
-    max-height:280px !important;
-  }
-
-  /*
-    Explicit desktop placement.
-    This creates balanced left/right rows instead of two independent
-    columns with different total heights.
-  */
-
-  /* Row 1 */
-  #registerSection{grid-column:1;grid-row:1;}
-  .right-column > .card:nth-child(1){grid-column:2;grid-row:1;}
-
-  /* Row 2 */
-  .left-column > .card:nth-child(2){grid-column:1;grid-row:2;}
-  #ambulanceSection{grid-column:2;grid-row:2;}
-
-  /* Row 3 */
-  .left-column > .card:nth-child(3){grid-column:1;grid-row:3;}
-  #doctorSection{grid-column:2;grid-row:3;}
-
-  /* Row 4 */
-  #hospitalSection{grid-column:1;grid-row:4;}
-  .right-column > .card:nth-child(4){grid-column:2;grid-row:4;}
-
-  /* Row 5 */
-  .left-column > .card:nth-child(5){grid-column:1;grid-row:5;}
-  #aiSection{grid-column:2;grid-row:5;}
-
-  /*
-    Dynamic lists NEVER change card height.
-    Their contents scroll inside the fixed card.
-  */
-
-  #registerSection,
-  #sosSection,
-  #ambulanceSection{
-    display:flex !important;
-    flex-direction:column !important;
-    min-height:0 !important;
-  }
-
-  #registeredDonorsList{
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-    max-height:none !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-    padding:4px 8px 4px 0 !important;
-  }
-
-  #requestList{
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-    max-height:none !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-    padding:4px 8px 4px 0 !important;
-  }
-
-  #ambulanceList{
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-    max-height:none !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-    padding:4px 8px 4px 0 !important;
-  }
-
-  /* Map stays inside its fixed card */
-  .right-column > .card:nth-child(1){
-    display:flex !important;
-    flex-direction:column !important;
-    min-height:0 !important;
-  }
-
-  #map{
-    width:100% !important;
-    height:470px !important;
-    min-height:0 !important;
-    max-height:470px !important;
-    flex:0 0 470px !important;
-    box-sizing:border-box !important;
-    margin-top:10px;
-    border-radius:15px;
-    border:2px solid #2563eb;
-  }
-
-  /* Health Profile: keep content inside the card */
-  .right-column > .card:nth-child(4){
-    overflow-y:auto !important;
-    scrollbar-width:thin;
-  }
-
-  /* AI response cannot stretch the card */
-  #aiSection{
-    display:flex !important;
-    flex-direction:column !important;
-    min-height:0 !important;
-  }
-
-  #aiStatus,
-  #chatBox,
-  #aiResponse{
-    min-height:0 !important;
-    max-height:80px !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-  }
-
-  /* Keep long blockchain strings from breaking columns */
-  .desktop-dashboard .card *{
-    max-width:100%;
-    box-sizing:border-box;
-  }
-
-  /* Subtle scrollbars */
-  #registeredDonorsList::-webkit-scrollbar,
-  #requestList::-webkit-scrollbar,
-  #ambulanceList::-webkit-scrollbar,
-  #aiStatus::-webkit-scrollbar,
-  #chatBox::-webkit-scrollbar,
-  #aiResponse::-webkit-scrollbar,
-  .right-column > .card:nth-child(4)::-webkit-scrollbar{
-    width:6px;
-  }
-
-  #registeredDonorsList::-webkit-scrollbar-thumb,
-  #requestList::-webkit-scrollbar-thumb,
-  #ambulanceList::-webkit-scrollbar-thumb,
-  #aiStatus::-webkit-scrollbar-thumb,
-  #chatBox::-webkit-scrollbar-thumb,
-  #aiResponse::-webkit-scrollbar-thumb,
-  .right-column > .card:nth-child(4)::-webkit-scrollbar-thumb{
-    background:#64748B;
-    border-radius:10px;
-  }
-
-  footer{
-    margin-top:40px !important;
-  }
-}
-
-/* =========================================================
-   TABLET / MOBILE
-   DO NOT force desktop fixed heights here.
-   The dashboard remains one-by-one and natural.
-   ========================================================= */
-@media (max-width:899px){
-
-body{
-    padding:12px;
-  }
-
-  .container{
-    width:100%;
-    max-width:100%;
-    padding:14px 0 35px;
-  }
-
-  .hero-logo{
-    width:90px;
-    height:90px;
-  }
-
-  .hero h1{
-    font-size:36px;
-  }
-
-  .hero h3{
-    font-size:18px;
-  }
-
-  .heroCard{
-    padding:18px;
-  }
-
-  .heroRight{
-    font-size:45px;
-  }
-
-  #dashboard{
-    grid-template-columns:1fr !important;
-  }
-
-  .desktop-dashboard{
-    display:flex !important;
-    flex-direction:column !important;
-    width:100% !important;
-    gap:20px !important;
-  }
-
-  .desktop-dashboard > .left-column,
-  .desktop-dashboard > .right-column{
-    display:flex !important;
-    flex-direction:column !important;
-    width:100% !important;
-    gap:20px !important;
-  }
-
-  .desktop-dashboard .card,
-  .left-column > .card,
-  .right-column > .card{
-    width:100% !important;
-    height:auto !important;
-    min-height:0 !important;
-    max-height:none !important;
-    margin:0 !important;
-    overflow:visible !important;
-  }
-
-  /* Restore natural mobile lists */
-  #registeredDonorsList,
-  #requestList,
-  #ambulanceList,
-  #aiStatus,
-  #chatBox,
-  #aiResponse{
-    height:auto !important;
-    min-height:0 !important;
-    max-height:none !important;
-    overflow:visible !important;
-  }
-
-  #map{
-    width:100% !important;
-    height:340px !important;
-    max-height:none !important;
+  .left-column,
+  .right-column{
+    align-self:start !important;
   }
 
   .card{
-    padding:18px;
+    align-self:start !important;
+  }
+
+  /* Desktop card sizing: controlled, not content-dependent. */
+
+  #registerSection,
+  #map{
+    min-height:430px !important;
+  }
+
+  #registerSection{
+    height:430px !important;
+  }
+
+  #registerSection #donorList{
+    height:165px !important;
+    max-height:165px !important;
+  }
+
+  .right-column > .card:first-child{
+    height:430px !important;
+  }
+
+  .right-column > .card:first-child #map{
+    height:360px !important;
+    min-height:360px !important;
+  }
+
+  #searchSection{
+    /* selector is on the heading; the parent card remains natural */
+  }
+
+  .left-column > .card:nth-child(2),
+  .left-column > .card:nth-child(3),
+  .left-column > .card:nth-child(4),
+  .left-column > .card:nth-child(5){
+    min-height:190px !important;
+  }
+
+  #ambulanceSection{
+    min-height:420px !important;
+  }
+
+  #ambulanceSection #ambulanceList{
+    height:150px !important;
+    max-height:150px !important;
+  }
+
+  #sosSection{
+    min-height:420px !important;
+  }
+
+  #sosSection ~ *{
+    min-width:0;
+  }
+
+  .right-column > .card{
+    min-height:190px;
+  }
+
+  /* Health Profile needs more room for its form. */
+  .right-column > .card:has(#profileName){
+    min-height:470px !important;
+  }
+
+  /* Doctor is intentionally compact. */
+  #doctorSection{
+    min-height:220px !important;
   }
 }
+
+/* ---------------- Tablet ---------------- */
+
+@media (min-width:700px) and (max-width:899px){
+
+  .container{
+    width:min(100% - 32px,900px) !important;
+    padding-top:24px !important;
+  }
+
+  .desktop-dashboard{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+
+  .hero > h2 + div{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+
+  #map{
+    height:340px !important;
+    min-height:340px !important;
+  }
+}
+
+/* ---------------- Mobile ---------------- */
+
+@media (max-width:699px){
+
+  body{
+    background:var(--bg) !important;
+  }
+
+  .container{
+    width:calc(100% - 24px) !important;
+    max-width:none !important;
+    padding:18px 0 34px !important;
+  }
+
+  .hero{
+    margin-bottom:22px !important;
+  }
+
+  .hero-logo{
+    width:64px !important;
+    height:64px !important;
+  }
+
+  .hero h1{
+    font-size:34px !important;
+  }
+
+  .hero h3{
+    font-size:18px !important;
+  }
+
+  .hero > p{
+    font-size:13px !important;
+  }
+
+  .heroCard{
+    min-height:100px;
+    padding:18px !important;
+  }
+
+  .heroLeft h2{
+    font-size:18px !important;
+  }
+
+  .heroRight{
+    font-size:38px !important;
+  }
+
+  #dashboard{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:10px !important;
+  }
+
+  #dashboard > div{
+    min-height:100px !important;
+    padding:14px !important;
+  }
+
+  .hero > h2 + div{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:8px !important;
+  }
+
+  .quick-action{
+    min-height:68px !important;
+    padding:9px 5px !important;
+    border-radius:11px !important;
+    font-size:19px !important;
+  }
+
+  .quick-action small{
+    font-size:11px !important;
+  }
+
+  /* Mobile remains one-by-one as requested. */
+  .desktop-dashboard{
+    grid-template-columns:1fr !important;
+    gap:16px !important;
+  }
+
+  .left-column,
+  .right-column{
+    gap:16px !important;
+  }
+
+  .card{
+    padding:17px !important;
+    border-radius:15px !important;
+  }
+
+  .card h2{
+    font-size:17px !important;
+  }
+
+  input,
+  select,
+  textarea{
+    min-height:40px !important;
+    padding:9px 10px !important;
+    font-size:13px !important;
+  }
+
+  #map{
+    height:320px !important;
+    min-height:320px !important;
+  }
+
+  /* Keep mobile list containment too. */
+  #donorList{
+    max-height:220px !important;
+  }
+
+  #requestList{
+    max-height:220px !important;
+  }
+
+  #ambulanceList{
+    max-height:180px !important;
+  }
+
+  #searchResults{
+    max-height:180px !important;
+  }
+
+  footer{
+    padding:26px 18px !important;
+  }
+
+  footer h2{
+    font-size:27px !important;
+  }
+}
+
+/* Accessibility / motion */
+
+@media (prefers-reduced-motion:reduce){
+  *{
+    scroll-behavior:auto !important;
+    transition:none !important;
+  }
+   }
