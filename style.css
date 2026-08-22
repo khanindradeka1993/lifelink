@@ -15,20 +15,20 @@
    ========================================================= */
 
 :root{
-  --bg:#f5f7f4;
-  --surface:#ffffff;
-  --surface-soft:#fafcf9;
-  --border:#e2e8e2;
-  --text:#172019;
-  --muted:#6b756d;
+  --bg:#080d17;
+  --surface:#111a2a;
+  --surface-soft:#0d1522;
+  --border:#26354a;
+  --text:#f4f7fb;
+  --muted:#9aa8ba;
   --accent:#c92535;
-  --accent-soft:#fff2f3;
+  --accent-soft:#32151b;
   --green:#b8ff2a;
   --green-border:#9ddd16;
-  --green-dark:#172019;
+  --green-dark:#08100a;
   --blue:#2563eb;
-  --shadow:0 8px 28px rgba(23,32,25,.07);
-  --shadow-hover:0 12px 34px rgba(23,32,25,.10);
+  --shadow:0 10px 32px rgba(0,0,0,.28);
+  --shadow-hover:0 14px 38px rgba(0,0,0,.38);
   --radius:20px;
   --gap:20px;
 }
@@ -1095,5 +1095,187 @@ textarea::placeholder{
     transition:none !important;
     animation:none !important;
   }
-   }
-   
+}
+
+
+/* ===== LIFELINK DARK PREMIUM THEME ===== */
+
+body{
+  background:
+    radial-gradient(circle at 50% -10%,rgba(37,99,235,.10),transparent 34%),
+    var(--bg);
+  color:var(--text);
+}
+
+.hero h3,.heroLeft h2,.card-heading h2,.quick-title,
+.quick-action small,.stat-card h1,.lifelink-footer h2,
+.footer-developer b,.list-header h3,.patient-profile-card h3{
+  color:#f5f7fb;
+}
+
+.hero > p{color:#79a7e8;}
+
+.heroCard,.wallet-section-card,.stat-card,.card,
+.lifelink-footer,.quick-action{
+  background:linear-gradient(145deg,#131e30,#0f1827);
+  border-color:#25354b;
+  box-shadow:var(--shadow);
+}
+
+.heroLeft p,.card-heading p,.stat-label,
+.lifelink-footer p,.footer-developer span,.list-header span{
+  color:#9aa8ba;
+}
+
+.action-btn,.copy-btn{
+  background:#172337;
+  color:#f5f7fb;
+  border-color:#2b3c53;
+}
+
+.action-btn:hover,.copy-btn:hover{background:#1b2940;}
+
+.primary-btn,.primary-action{
+  background:#b8ff2a;
+  border-color:#9ddd16;
+  color:#071008;
+}
+
+.google-btn{
+  background:#f7f8fa;
+  color:#111827;
+  border-color:#d7dce2;
+}
+
+.status-badge{
+  background:#0d2b20;
+  border-color:#1d6549;
+  color:#56d7a2;
+}
+
+.address-box{
+  background:#0c1523;
+  border-color:#26374d;
+}
+
+#walletAddress{
+  color:#4ee0ad !important;
+}
+
+.quick-action{
+  color:#f5f7fb;
+  border-color:#26364b;
+}
+
+.quick-action:hover{background:#172337;}
+
+.card{border-top-color:#30435d;}
+#registerSection{border-top-color:#2f4664;}
+#sosSection{
+  border-top-color:#a53a48;
+  background:linear-gradient(145deg,#151d2b,#121925);
+}
+#ambulanceSection{border-top-color:#277654;}
+#doctorSection{border-top-color:#3b5f9c;}
+
+.section-badge{
+  background:#172337;
+  border-color:#2b3d55;
+  color:#aab8c9;
+}
+
+.danger-badge{
+  background:#32151b;
+  border-color:#6d2934;
+  color:#ff9ba6;
+}
+
+.ambulance-badge{
+  background:#10291f;
+  border-color:#245b43;
+  color:#6ce0aa;
+}
+
+.doctor-badge{
+  background:#14233d;
+  border-color:#2b4a78;
+  color:#8db7ff;
+}
+
+input,select,textarea{
+  background:#172337;
+  color:#f1f5f9;
+  border-color:#2b3d54;
+}
+
+input::placeholder,textarea::placeholder{color:#8190a3;}
+
+input:focus,select:focus,textarea:focus{
+  border-color:#79a7e8;
+  background:#19283e;
+  box-shadow:0 0 0 3px rgba(37,99,235,.14);
+}
+
+.danger-action{
+  background:#32151b;
+  border-color:#71303a;
+  color:#ff9ba6;
+}
+
+.dashboard-card,.patient-profile-card,.ai-output{
+  background:#0d1624;
+  border-color:#27394f;
+  color:#e8eef5;
+}
+
+.inner-scroll{scrollbar-color:#42556e transparent;}
+.inner-scroll::-webkit-scrollbar-thumb{background:#42556e;}
+
+.inner-scroll > div{
+  background:#172337;
+  border-color:#2a3d55;
+  color:#e9eef5;
+}
+
+.emergency-notice{
+  background:#32151b;
+  border-color:#632a34;
+  color:#ffadb5;
+}
+
+.status-line{color:#a4b0bf;}
+.profile-grid label{color:#9baabd;}
+
+.patient-grid p{
+  background:#172337;
+  border-color:#2a3d55;
+  color:#e8eef5;
+}
+
+.lifelink-footer strong{color:#7fc69d;}
+
+.leaflet-control-zoom a{
+  background:#111a2a !important;
+  color:#f5f7fb !important;
+  border-color:#2b3d54 !important;
+}
+
+.leaflet-control-attribution{
+  background:rgba(8,13,23,.78) !important;
+  color:#b6c0cc !important;
+}
+
+.leaflet-control-attribution a{color:#9fc4ff !important;}
+
+@media (max-width:699px){
+  body{
+    background:
+      radial-gradient(circle at 50% -5%,rgba(37,99,235,.10),transparent 38%),
+      var(--bg);
+  }
+
+  .heroCard,.wallet-section-card,.stat-card,.card,
+  .lifelink-footer,.quick-action{
+    box-shadow:0 8px 24px rgba(0,0,0,.26);
+  }
+}
