@@ -1,203 +1,3 @@
-// ============================================================
-// LifeLink - Health Profile
-// ============================================================
-
-window.HEALTHCARE_CONTRACT_ADDRESS =
-  "0xA3483f9B44d749F60e4061a99bbd6f5795B6c5C5";
-
-window.HEALTHCARE_ABI = [
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_fullName",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_bloodGroup",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_dob",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_gender",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_emergencyContact",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_allergies",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_medicalHistory",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_addressInfo",
-        "type": "string"
-      }
-    ],
-    "name": "createProfile",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "ProfileCreated",
-    "type": "event"
-  },
-
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "ProfileUpdated",
-    "type": "event"
-  },
-
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_fullName",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_bloodGroup",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_dob",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_gender",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_emergencyContact",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_allergies",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_medicalHistory",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_addressInfo",
-        "type": "string"
-      }
-    ],
-    "name": "updateProfile",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_user",
-        "type": "address"
-      }
-    ],
-    "name": "getProfile",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  }
-];
-
 // Keep this available globally.
 window.healthcareContract = null;
 
@@ -207,7 +7,8 @@ window.healthcareContract = null;
 // ============================================================
 
 function initializeHealthProfile() {
-  const saveProfileBtn = document.getElementById("saveProfileBtn");
+  const saveProfileBtn =
+    document.getElementById("saveProfileBtn");
 
   if (!saveProfileBtn) {
     console.error("❌ saveProfileBtn was not found.");
@@ -251,6 +52,7 @@ if (document.readyState === "loading") {
 // ============================================================
 
 function getHealthProfileData() {
+
   const fullNameElement =
     document.getElementById("profileName");
 
@@ -310,7 +112,9 @@ function getHealthProfileData() {
 // ============================================================
 
 function setProfileStatus(message) {
-  const status = document.getElementById("profileStatus");
+
+  const status =
+    document.getElementById("profileStatus");
 
   if (status) {
     status.innerHTML = message;
@@ -333,12 +137,12 @@ async function saveHealthProfile() {
   // Check ethers
   // ----------------------------------------------------------
 
-  if (
-    typeof ethers === "undefined"
-  ) {
+  if (typeof ethers === "undefined") {
+
     alert(
       "Ethers.js is not loaded. Please refresh the page."
     );
+
     return;
   }
 
@@ -350,8 +154,11 @@ async function saveHealthProfile() {
   let profile;
 
   try {
+
     profile = getHealthProfileData();
+
   } catch (error) {
+
     console.error(error);
 
     setProfileStatus(
@@ -409,215 +216,572 @@ async function saveHealthProfile() {
   }
 
 
-  // ----------------------------------------------------------
-  // Check wallet
-  // ----------------------------------------------------------
+  // ==========================================================
+  // DETECT ACTIVE WALLET
+  // ==========================================================
 
-  if (!window.ethereum) {
-    alert(
-      "Please install MetaMask and connect your wallet first."
-    );
-    return;
-  }
-
+  let activeWallet = null;
 
   try {
 
-    setProfileStatus(
-      "⏳ Preparing health profile transaction..."
+    if (typeof getActiveWallet === "function") {
+      activeWallet = getActiveWallet();
+    }
+
+  } catch (walletError) {
+
+    console.error(
+      "❌ Could not determine active wallet:",
+      walletError
     );
+  }
 
 
-    // --------------------------------------------------------
-    // Get current wallet account
-    // --------------------------------------------------------
+  // Fallback for MetaMask if getActiveWallet()
+  // is not available for some reason.
+  if (!activeWallet && window.ethereum) {
 
     const accounts =
       await window.ethereum.request({
         method: "eth_accounts"
       });
 
+    if (accounts && accounts.length > 0) {
 
-    if (!accounts || accounts.length === 0) {
+      activeWallet = {
+        type: "METAMASK",
+        account: accounts[0]
+      };
+    }
+  }
+
+
+  if (!activeWallet) {
+
+    setProfileStatus(
+      "❌ Wallet not connected."
+    );
+
+    alert(
+      "Please connect your wallet first."
+    );
+
+    return;
+  }
+
+
+  console.log(
+    "🔗 Active Health Profile wallet:",
+    activeWallet
+  );
+
+
+  // ==========================================================
+  // CONTRACT ARGUMENTS
+  // ==========================================================
+
+  const args = [
+    profile.fullName,
+    profile.bloodGroup,
+    profile.dob,
+    profile.gender,
+    profile.emergency,
+    profile.allergies,
+    profile.medicalHistory,
+    profile.addressInfo
+  ];
+
+
+  // Exact Solidity function signatures
+  // for the verified Health Profile contract.
+  const CREATE_PROFILE_SIGNATURE =
+    "createProfile(string,string,string,string,string,string,string,string)";
+
+  const UPDATE_PROFILE_SIGNATURE =
+    "updateProfile(string,string,string,string,string,string,string,string)";
+
+
+  // ==========================================================
+  // CIRCLE WALLET
+  // ==========================================================
+
+  if (activeWallet.type === "CIRCLE") {
+
+    console.log(
+      "🟣 Circle Wallet detected."
+    );
+
+
+    if (
+      typeof executeCircleTransaction !== "function"
+    ) {
 
       setProfileStatus(
-        "❌ Wallet not connected."
+        "❌ Circle transaction system is not available."
       );
 
       alert(
-        "Please connect your wallet first."
+        "Circle transaction system is not loaded. Please refresh the page."
       );
 
       return;
     }
 
 
-    const account = accounts[0];
+    try {
 
-    console.log(
-      "🔗 Health Profile wallet:",
-      account
-    );
+      // ------------------------------------------------------
+      // Read existing profile using the Arc RPC.
+      // This is a VIEW call, so no wallet signature is needed.
+      // ------------------------------------------------------
+
+      const readProvider =
+        new ethers.providers.JsonRpcProvider(
+          typeof ARC_RPC_URL !== "undefined"
+            ? ARC_RPC_URL
+            : undefined
+        );
 
 
-    // --------------------------------------------------------
-    // Create signer directly from MetaMask
-    // --------------------------------------------------------
+      const readOnlyHealthcare =
+        new ethers.Contract(
+          window.HEALTHCARE_CONTRACT_ADDRESS,
+          window.HEALTHCARE_ABI,
+          readProvider
+        );
 
-    const provider =
-      new ethers.providers.Web3Provider(
-        window.ethereum
+
+      let profileExists = false;
+
+
+      try {
+
+        const existingProfile =
+          await readOnlyHealthcare.getProfile(
+            activeWallet.address
+          );
+
+
+        console.log(
+          "🔎 Existing Circle Health Profile:",
+          existingProfile
+        );
+
+
+        // getProfile() returns timestamp at index 9.
+        if (
+          existingProfile &&
+          existingProfile[9] &&
+          existingProfile[9].toString() !== "0"
+        ) {
+
+          profileExists = true;
+        }
+
+
+        // Fallback: check full name.
+        if (
+          !profileExists &&
+          existingProfile &&
+          existingProfile[0] &&
+          existingProfile[0].toString().trim() !== ""
+        ) {
+
+          profileExists = true;
+        }
+
+      } catch (readError) {
+
+        console.log(
+          "ℹ️ Could not read existing Circle profile. Will use createProfile().",
+          readError
+        );
+
+        profileExists = false;
+      }
+
+
+      console.log(
+        "🔎 Circle profile already exists:",
+        profileExists
       );
 
-    const signer =
-      provider.getSigner();
+
+      // ------------------------------------------------------
+      // CREATE PROFILE THROUGH EXISTING CIRCLE HELPER
+      // ------------------------------------------------------
+
+      if (!profileExists) {
+
+        setProfileStatus(
+          "⏳ Saving health profile with Circle Wallet..."
+        );
 
 
-    // --------------------------------------------------------
-    // Create healthcare contract
-    // --------------------------------------------------------
+        alert(
+          "⏳ Saving Health Profile with Circle Wallet..."
+        );
 
-    const healthcareContract =
-      new ethers.Contract(
-        window.HEALTHCARE_CONTRACT_ADDRESS,
-        window.HEALTHCARE_ABI,
-        signer
+
+        console.log(
+          "🟣 Circle → createProfile()"
+        );
+
+
+        const finalHash =
+          await executeCircleTransaction(
+            CREATE_PROFILE_SIGNATURE,
+            window.HEALTHCARE_CONTRACT_ADDRESS,
+            args
+          );
+
+
+        console.log(
+          "✅ Circle Health Profile transaction:",
+          finalHash
+        );
+
+
+        setProfileStatus(
+          "✅ Health Profile saved on blockchain"
+        );
+
+
+        alert(
+          "✅ Health Profile saved successfully on Arc Testnet!"
+        );
+
+
+        if (
+          typeof window.showExplorerButton === "function"
+        ) {
+
+          window.showExplorerButton(
+            finalHash
+          );
+        }
+
+
+        return;
+      }
+
+
+      // ------------------------------------------------------
+      // UPDATE PROFILE THROUGH EXISTING CIRCLE HELPER
+      // ------------------------------------------------------
+
+      setProfileStatus(
+        "⏳ Updating health profile with Circle Wallet..."
       );
 
 
-    // Keep the contract globally available too.
-    window.healthcareContract =
-      healthcareContract;
+      alert(
+        "⏳ Updating Health Profile with Circle Wallet..."
+      );
 
 
-    console.log(
-      "✅ Healthcare contract initialized:",
-      window.HEALTHCARE_CONTRACT_ADDRESS
-    );
+      console.log(
+        "🟣 Circle → updateProfile()"
+      );
 
 
-    // --------------------------------------------------------
-    // Check whether profile already exists
-    // --------------------------------------------------------
+      const finalHash =
+        await executeCircleTransaction(
+          UPDATE_PROFILE_SIGNATURE,
+          window.HEALTHCARE_CONTRACT_ADDRESS,
+          args
+        );
 
-    let profileExists = false;
+
+      console.log(
+        "✅ Circle Health Profile update:",
+        finalHash
+      );
+
+
+      setProfileStatus(
+        "✅ Health Profile updated on blockchain"
+      );
+
+
+      alert(
+        "✅ Health Profile updated successfully on Arc Testnet!"
+      );
+
+
+      if (
+        typeof window.showExplorerButton === "function"
+      ) {
+
+        window.showExplorerButton(
+          finalHash
+        );
+      }
+
+
+      return;
+
+    } catch (error) {
+
+      console.error(
+        "❌ Circle Health Profile transaction failed:",
+        error
+      );
+
+
+      let message =
+        "Failed to save health profile.";
+
+
+      if (error && error.reason) {
+
+        message = error.reason;
+
+      } else if (
+        error &&
+        error.data &&
+        error.data.message
+      ) {
+
+        message = error.data.message;
+
+      } else if (
+        error &&
+        error.message
+      ) {
+
+        message = error.message;
+      }
+
+
+      setProfileStatus(
+        "❌ " + message
+      );
+
+
+      alert(
+        "❌ Health Profile Error:\n\n" +
+        message
+      );
+
+
+      return;
+    }
+  }
+
+
+  // ==========================================================
+  // METAMASK
+  // ==========================================================
+
+  if (activeWallet.type === "METAMASK") {
 
     try {
 
-      const existingProfile =
-        await healthcareContract.getProfile(
-          account
+      if (!window.ethereum) {
+
+        throw new Error(
+          "MetaMask provider is not available."
         );
-
-      console.log(
-        "🔎 Existing profile:",
-        existingProfile
-      );
-
-
-      /*
-       * getProfile() returns:
-       *
-       * 0  fullName
-       * 1  bloodGroup
-       * 2  dob
-       * 3  gender
-       * 4  emergencyContact
-       * 5  allergies
-       * 6  medicalHistory
-       * 7  addressInfo
-       * 8  owner/address
-       * 9  timestamp
-       *
-       * A non-zero timestamp means a profile already exists.
-       */
-
-      if (
-        existingProfile &&
-        existingProfile[9] &&
-        existingProfile[9].toString() !== "0"
-      ) {
-        profileExists = true;
       }
 
-      // Some contract implementations may return data
-      // without using the timestamp, so also check name.
-      if (
-        !profileExists &&
-        existingProfile &&
-        existingProfile[0] &&
-        existingProfile[0].toString().trim() !== ""
-      ) {
-        profileExists = true;
-      }
-
-    } catch (readError) {
-
-      console.log(
-        "ℹ️ Could not read existing profile. Will try createProfile().",
-        readError
-      );
-
-      profileExists = false;
-    }
-
-
-    console.log(
-      "🔎 Profile already exists:",
-      profileExists
-    );
-
-
-    // --------------------------------------------------------
-    // Prepare contract arguments
-    // --------------------------------------------------------
-
-    const args = [
-      profile.fullName,
-      profile.bloodGroup,
-      profile.dob,
-      profile.gender,
-      profile.emergency,
-      profile.allergies,
-      profile.medicalHistory,
-      profile.addressInfo
-    ];
-
-
-    // --------------------------------------------------------
-    // CREATE PROFILE
-    // --------------------------------------------------------
-
-    if (!profileExists) {
 
       setProfileStatus(
-        "⏳ Saving health profile on Arc Testnet..."
+        "⏳ Preparing health profile transaction..."
       );
 
+
+      const provider =
+        new ethers.providers.Web3Provider(
+          window.ethereum
+        );
+
+
+      const signer =
+        provider.getSigner();
+
+
+      const healthcareContract =
+        new ethers.Contract(
+          window.HEALTHCARE_CONTRACT_ADDRESS,
+          window.HEALTHCARE_ABI,
+          signer
+        );
+
+
+      // Keep the contract globally available.
+      window.healthcareContract =
+        healthcareContract;
+
+
+      console.log(
+        "✅ Healthcare contract initialized:",
+        window.HEALTHCARE_CONTRACT_ADDRESS
+      );
+
+
+      // ------------------------------------------------------
+      // Check whether profile already exists
+      // ------------------------------------------------------
+
+      let profileExists = false;
+
+
+      try {
+
+        const existingProfile =
+          await healthcareContract.getProfile(
+            activeWallet.account
+          );
+
+
+        console.log(
+          "🔎 Existing MetaMask profile:",
+          existingProfile
+        );
+
+
+        if (
+          existingProfile &&
+          existingProfile[9] &&
+          existingProfile[9].toString() !== "0"
+        ) {
+
+          profileExists = true;
+        }
+
+
+        if (
+          !profileExists &&
+          existingProfile &&
+          existingProfile[0] &&
+          existingProfile[0].toString().trim() !== ""
+        ) {
+
+          profileExists = true;
+        }
+
+      } catch (readError) {
+
+        console.log(
+          "ℹ️ Could not read existing profile. Will try createProfile().",
+          readError
+        );
+
+        profileExists = false;
+      }
+
+
+      console.log(
+        "🔎 MetaMask profile already exists:",
+        profileExists
+      );
+
+
+      // ------------------------------------------------------
+      // CREATE
+      // ------------------------------------------------------
+
+      if (!profileExists) {
+
+        setProfileStatus(
+          "⏳ Saving health profile on Arc Testnet..."
+        );
+
+
+        alert(
+          "⏳ Saving Health Profile on Arc Testnet..."
+        );
+
+
+        console.log(
+          "🚀 MetaMask → createProfile()"
+        );
+
+
+        const tx =
+          await healthcareContract.createProfile(
+            ...args
+          );
+
+
+        console.log(
+          "📦 Health Profile transaction:",
+          tx
+        );
+
+
+        setProfileStatus(
+          "⏳ Transaction submitted. Waiting for confirmation..."
+        );
+
+
+        await tx.wait();
+
+
+        console.log(
+          "✅ Health Profile transaction confirmed:",
+          tx.hash
+        );
+
+
+        setProfileStatus(
+          "✅ Health Profile saved on blockchain"
+        );
+
+
+        alert(
+          "✅ Health Profile saved successfully on Arc Testnet!"
+        );
+
+
+        if (
+          typeof window.showExplorerButton === "function"
+        ) {
+
+          window.showExplorerButton(
+            tx.hash
+          );
+        }
+
+
+        return;
+      }
+
+
+      // ------------------------------------------------------
+      // UPDATE
+      // ------------------------------------------------------
+
+      setProfileStatus(
+        "⏳ Updating health profile on Arc Testnet..."
+      );
+
+
       alert(
-        "⏳ Saving Health Profile on Arc Testnet..."
+        "⏳ Updating Health Profile on Arc Testnet..."
       );
 
 
       console.log(
-        "🚀 Calling createProfile()..."
+        "🚀 MetaMask → updateProfile()"
       );
 
 
       const tx =
-        await healthcareContract.createProfile(
+        await healthcareContract.updateProfile(
           ...args
         );
 
 
       console.log(
-        "📦 Health Profile transaction:",
+        "📦 Health Profile update transaction:",
         tx
       );
 
 
       setProfileStatus(
-        "⏳ Transaction submitted. Waiting for confirmation..."
+        "⏳ Update submitted. Waiting for confirmation..."
       );
 
 
@@ -625,146 +789,105 @@ async function saveHealthProfile() {
 
 
       console.log(
-        "✅ Health Profile transaction confirmed:",
+        "✅ Health Profile update confirmed:",
         tx.hash
       );
 
 
       setProfileStatus(
-        "✅ Health Profile saved on blockchain"
+        "✅ Health Profile updated on blockchain"
       );
 
 
       alert(
-        "✅ Health Profile saved successfully on Arc Testnet!"
+        "✅ Health Profile updated successfully on Arc Testnet!"
       );
 
 
-      // Show transaction if app.js provides the function.
       if (
         typeof window.showExplorerButton === "function"
       ) {
-        window.showExplorerButton(tx.hash);
+
+        window.showExplorerButton(
+          tx.hash
+        );
       }
 
 
-      return;
-    }
+    } catch (error) {
 
-
-    // --------------------------------------------------------
-    // UPDATE PROFILE
-    // --------------------------------------------------------
-
-    setProfileStatus(
-      "⏳ Updating health profile on Arc Testnet..."
-    );
-
-    alert(
-      "⏳ Updating Health Profile on Arc Testnet..."
-    );
-
-
-    console.log(
-      "🚀 Calling updateProfile()..."
-    );
-
-
-    const tx =
-      await healthcareContract.updateProfile(
-        ...args
+      console.error(
+        "❌ MetaMask Health Profile transaction failed:",
+        error
       );
 
 
-    console.log(
-      "📦 Health Profile update transaction:",
-      tx
-    );
+      let message =
+        "Failed to save health profile.";
 
 
-    setProfileStatus(
-      "⏳ Update submitted. Waiting for confirmation..."
-    );
+      if (error && error.reason) {
+
+        message = error.reason;
+
+      } else if (
+        error &&
+        error.data &&
+        error.data.message
+      ) {
+
+        message = error.data.message;
+
+      } else if (
+        error &&
+        error.message
+      ) {
+
+        message = error.message;
+      }
 
 
-    await tx.wait();
+      if (
+        error &&
+        (
+          error.code === 4001 ||
+          error.code === "ACTION_REJECTED"
+        )
+      ) {
+
+        message =
+          "Transaction was rejected in your wallet.";
+      }
 
 
-    console.log(
-      "✅ Health Profile update confirmed:",
-      tx.hash
-    );
+      setProfileStatus(
+        "❌ " + message
+      );
 
 
-    setProfileStatus(
-      "✅ Health Profile updated on blockchain"
-    );
-
-
-    alert(
-      "✅ Health Profile updated successfully on Arc Testnet!"
-    );
-
-
-    // Show transaction if app.js provides the function.
-    if (
-      typeof window.showExplorerButton === "function"
-    ) {
-      window.showExplorerButton(tx.hash);
+      alert(
+        "❌ Health Profile Error:\n\n" +
+        message
+      );
     }
 
 
-  } catch (error) {
-
-    console.error(
-      "❌ Health Profile transaction failed:",
-      error
-    );
-
-
-    let message =
-      "Failed to save health profile.";
-
-
-    if (error && error.reason) {
-      message = error.reason;
-    } else if (
-      error &&
-      error.data &&
-      error.data.message
-    ) {
-      message = error.data.message;
-    } else if (
-      error &&
-      error.message
-    ) {
-      message = error.message;
-    }
-
-
-    // Handle user rejection cleanly.
-    if (
-      error &&
-      (
-        error.code === 4001 ||
-        error.code === "ACTION_REJECTED"
-      )
-    ) {
-      message =
-        "Transaction was rejected in your wallet.";
-    }
-
-
-    setProfileStatus(
-      "❌ " + message
-    );
-
-
-    alert(
-      "❌ Health Profile Error:\n\n" +
-      message
-    );
+    return;
   }
+
+
+  // ==========================================================
+  // UNKNOWN WALLET
+  // ==========================================================
+
+  setProfileStatus(
+    "❌ Unsupported wallet type."
+  );
+
+
+  alert(
+    "Unsupported wallet type. Please reconnect your wallet."
+  );
 }
 
 
