@@ -1,194 +1,206 @@
 window.HEALTHCARE_CONTRACT_ADDRESS =
   "0xA3483f9B44d749F60e4061a99bbd6f5795B6c5C5";
 
-window.HEALTHCARE_ABI =
-  [
-{
-"inputs": [
-{
-"internalType": "string",
-"name": "_fullName",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "_bloodGroup",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "_dob",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "_gender",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "_emergencyContact",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "_allergies",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "_addressInfo",
-"type": "string"
-}
-],
-"name": "createProfile",
-"outputs": [],
-"stateMutability": "nonpayable",
-"type": "function"
-},
-{
-"anonymous": false,
-"inputs": [
-{
-"indexed": true,
-"internalType": "address",
-"name": "user",
-"type": "address"
-}
-],
-"name": "ProfileCreated",
-"type": "event"
-},
-{
-"anonymous": false,
-"inputs": [
-{
-"indexed": true,
-"internalType": "address",
-"name": "user",
-"type": "address"
-}
-],
-"name": "ProfileUpdated",
-"type": "event"
-},
-{
-"inputs": [
-{
-"internalType": "string",
-"name": "_fullName",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "_bloodGroup",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "_dob",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "_gender",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "_emergencyContact",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "_allergies",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "_addressInfo",
-"type": "string"
-}
-],
-"name": "updateProfile",
-"outputs": [],
-"stateMutability": "nonpayable",
-"type": "function"
-},
-{
-"inputs": [
-{
-"internalType": "address",
-"name": "_user",
-"type": "address"
-}
-],
-"name": "getProfile",
-"outputs": [
-{
-"internalType": "string",
-"name": "",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "",
-"type": "string"
-},
-{
-"internalType": "string",
-"name": "",
-"type": "string"
-},
-{
-"internalType": "address",
-"name": "",
-"type": "address"
-},
-{
-"internalType": "uint256",
-"name": "",
-"type": "uint256"
-}
-],
-"stateMutability": "view",
-"type": "function"
-}
+window.HEALTHCARE_ABI = [
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_fullName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_bloodGroup",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_dob",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_gender",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_emergencyContact",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_allergies",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_medicalHistory",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_addressInfo",
+        "type": "string"
+      }
+    ],
+    "name": "createProfile",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "ProfileCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "ProfileUpdated",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_fullName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_bloodGroup",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_dob",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_gender",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_emergencyContact",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_allergies",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_medicalHistory",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_addressInfo",
+        "type": "string"
+      }
+    ],
+    "name": "updateProfile",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_user",
+        "type": "address"
+      }
+    ],
+    "name": "getProfile",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
 ];
 
 window.healthcareContract = null;
-document.addEventListener("DOMContentLoaded", () => {
 
+document.addEventListener("DOMContentLoaded", () => {
   const saveProfileBtn = document.getElementById("saveProfileBtn");
 
   if (!saveProfileBtn) return;
 
   saveProfileBtn.addEventListener("click", saveHealthProfile);
-
 });
 
 async function saveHealthProfile() {
-
   if (!window.healthcareContract) {
     alert("Please connect wallet first");
     return;
@@ -200,39 +212,57 @@ async function saveHealthProfile() {
   const gender = document.getElementById("profileGender").value;
   const emergency = document.getElementById("profileEmergency").value;
   const allergies = document.getElementById("profileAllergies").value;
+  const medicalHistory =
+    document.getElementById("profileMedicalHistory").value;
   const addressInfo = document.getElementById("profileAddress").value;
 
   try {
     const tx = await window.healthcareContract.createProfile(
-        fullName,
-        bloodGroup,
-        dob,
-        gender,
-        emergency,
-        allergies,
-        addressInfo
+      fullName,
+      bloodGroup,
+      dob,
+      gender,
+      emergency,
+      allergies,
+      medicalHistory,
+      addressInfo
     );
 
     alert("Saving profile...");
     await tx.wait();
 
-} catch (e) {
+    document.getElementById("profileStatus").innerHTML =
+      "✅ Health Profile saved on blockchain";
+  } catch (e) {
     console.log(e);
 
-    const tx = await window.healthcareContract.updateProfile(
+    try {
+      const tx = await window.healthcareContract.updateProfile(
         fullName,
         bloodGroup,
         dob,
         gender,
         emergency,
         allergies,
+        medicalHistory,
         addressInfo
-    );
+      );
 
-    alert("Updating profile...");
-    await tx.wait();
-}
+      alert("Updating profile...");
+      await tx.wait();
 
-document.getElementById("profileStatus").innerHTML =
-"✅ Health Profile saved on blockchain";
+      document.getElementById("profileStatus").innerHTML =
+        "✅ Health Profile updated on blockchain";
+    } catch (updateError) {
+      console.error(updateError);
+
+      document.getElementById("profileStatus").innerHTML =
+        "❌ Failed to save health profile";
+
+      alert(
+        "Health profile transaction failed: " +
+          (updateError.message || updateError)
+      );
+    }
+  }
 }
