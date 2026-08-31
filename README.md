@@ -177,6 +177,7 @@ The **Nearby Donor Map** can also show registered donor locations.
 
 **Expected result:** The health profile is saved through the LifeLink healthcare workflow.
 
+
 ---
 
 ## 9. 👨‍⚕️ Test Doctor Portal
@@ -268,17 +269,17 @@ Both MetaMask and Circle Wallet interact with the same LifeLink blockchain infra
                      │
            ┌─────────┴─────────┐
            │                   │
-       MetaMask          Circle Wallet
+      MetaMask          Circle Wallet
            │                   │
            └─────────┬─────────┘
                      │
-               Arc Testnet
+                Arc Testnet
                      │
-             LifeLink Contracts
+              LifeLink Contracts
                      │
         ┌────────────┼────────────┐
         │            │            │
-      Donors      Requests    Healthcare
+     Donors       Requests    Healthcare
         │            │            │
         └────────────┼────────────┘
                      │
@@ -317,38 +318,46 @@ This architecture keeps sensitive server-side credentials out of the frontend.
 
 ---
 
-
 # 📸 Application Screenshots
 
 > Below are screenshots showcasing the LifeLink application interface and core features.
 
 ### 🏠 Home Dashboard
+
 ![Home Dashboard](screenshots/LifeLink_Home_Dashboard_Google.jpg)
 
 ### 🩸 Blood Donor Registration
+
 ![Blood Donor Registration](screenshots/Screenshot_20260806-154753~2.jpg)
 
 ### 🔍 Search Donors & Nearby Donor Map
+
 ![Search Donors](screenshots/Screenshot_20260806-154810~3.jpg)
 
 ![Nearby Donor Map](screenshots/Screenshot_20260806-201935~2.jpg)
 
 ### 🚨 SOS Emergency Request
+
 ![SOS Emergency](screenshots/Screenshot_20260806-154824~2.jpg)
 
 ### 🚑 Emergency Ambulance
+
 ![Emergency Ambulance](screenshots/Screenshot_20260806-154855~2.jpg)
 
 ### 🩺 Health Profile
+
 ![Health Profile](screenshots/Screenshot_20260806-154850~2.jpg)
 
 ### 👨‍⚕️ Doctor Portal
+
 ![Doctor Portal](screenshots/Screenshot_20260806-154902~2.jpg)
 
 ### 🤖 AI Emergency Assistant
+
 ![AI Assistant](screenshots/Screenshot_20260806-154841~2.jpg)
 
 ### 💳 Hospital Bill Payment
+
 ![Hospital Bill Payment](screenshots/Screenshot_20260806-154845~2.jpg)
 
 ---
@@ -379,7 +388,7 @@ LifeLink uses smart-contract functionality deployed on **Arc Testnet**.
 | Contract | Purpose | Contract Address |
 |---|---|---|
 | 🩸 Blood Donor Contract | Blood donor registration and emergency blood requests | `0x80C0E143602DfDaD980adF1ae3cfF9B9153Aa2b7` |
-| 🩺 Healthcare Contract | Patient health profile functionality | `0xE32313e236784f57a7479a830E4a9c0ce22d0761` |
+| 🩺 Healthcare Contract | Patient health profile functionality | `0xA3483f9B44d749F60e4061a99bbd6f5795B6c5C5` |
 | 🚑 Emergency Contract | Emergency ambulance and coordination functionality | `0x8d1183f802b5688e5244a493Ea965e856150c2Ef` |
 | 💳 Payment Contract | USDC hospital bill payments | `0x0CA164a6FE7FfEA47945761748D77cd0aa16Afb1` |
 
@@ -393,10 +402,12 @@ LifeLink/
 ├── index.html
 ├── style.css
 ├── app.js
-├── health-profile.js
 ├── package.json
 ├── vite.config.js
 ├── README.md
+│
+├── public/
+│   └── health-profile.js
 │
 ├── src/
 │   └── circle-wallet.js
