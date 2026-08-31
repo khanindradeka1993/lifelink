@@ -7,7 +7,7 @@ window.getCircleSdk = getCircleSdk;
 // 1. CONTRACT ADDRESSES & RPC CONFIGURATION
 // ==========================================
 const CONTRACT_ADDRESS = "0x80C0E143602DfDaD980adF1ae3cfF9B9153Aa2b7";
-const HEALTHCARE_CONTRACT_ADDRESS = "0xE32313e236784f57a7479a830E4a9c0ce22d0761";
+const HEALTHCARE_CONTRACT_ADDRESS = "0xA3483f9B44d749F60e4061a99bbd6f5795B6c5C5";
 const EMERGENCY_CONTRACT_ADDRESS = "0x8d1183f802b5688e5244a493Ea965e856150c2Ef";
 const PAYMENT_CONTRACT_ADDRESS = "0x0CA164a6FE7FfEA47945761748D77cd0aa16Afb1";
 const EXPLORER = "https://testnet.arcscan.app";
@@ -151,6 +151,7 @@ const HEALTHCARE_ABI = [
       { "internalType": "string", "name": "_gender", "type": "string" },
       { "internalType": "string", "name": "_emergencyContact", "type": "string" },
       { "internalType": "string", "name": "_allergies", "type": "string" },
+      { "internalType": "string", "name": "_medicalHistory", "type": "string" },
       { "internalType": "string", "name": "_addressInfo", "type": "string" }
     ],
     "name": "createProfile",
@@ -159,9 +160,54 @@ const HEALTHCARE_ABI = [
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "_user", "type": "address" }],
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "ProfileCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "ProfileUpdated",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "_fullName", "type": "string" },
+      { "internalType": "string", "name": "_bloodGroup", "type": "string" },
+      { "internalType": "string", "name": "_dob", "type": "string" },
+      { "internalType": "string", "name": "_gender", "type": "string" },
+      { "internalType": "string", "name": "_emergencyContact", "type": "string" },
+      { "internalType": "string", "name": "_allergies", "type": "string" },
+      { "internalType": "string", "name": "_medicalHistory", "type": "string" },
+      { "internalType": "string", "name": "_addressInfo", "type": "string" }
+    ],
+    "name": "updateProfile",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_user", "type": "address" }
+    ],
     "name": "getProfile",
     "outputs": [
+      { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "string", "name": "", "type": "string" },
       { "internalType": "string", "name": "", "type": "string" },
@@ -452,9 +498,7 @@ return new Promise((resolve, reject) => {
 
       console.log("🚀 EXECUTING CONTRACT CHALLENGE:", txChallengeId);
 
-      // Execute the ACTUAL contract transaction challenge.
-      
-// Execute the ACTUAL contract transaction challenge.
+   // Execute the ACTUAL contract transaction challenge.
       sdkInstance.execute(txChallengeId, async (txError, txSdkResult) => {
   if (txError) {
     console.error("❌ CONTRACT SDK ERROR:", txError);
@@ -1409,7 +1453,7 @@ if (payBillBtn) {
       alert(err.message);
     }
   });
-}
+    }
 
 // --- REQUEST AMBULANCE ---
 if (ambulanceBtn) {
@@ -1532,7 +1576,7 @@ if (searchPatientBtn) {
       if (viewGender) viewGender.textContent = profile[3];
       if (viewEmergency) viewEmergency.textContent = profile[4];
       if (viewAllergies) viewAllergies.textContent = profile[5];
-      if (viewAddress) viewAddress.textContent = profile[6];
+      if (viewAddress) viewAddress.textContent = profile[7];
 
       if (patientProfileCard) patientProfileCard.style.display = "block";
       if (doctorStatus) doctorStatus.innerHTML = "✅ Patient record loaded.";
