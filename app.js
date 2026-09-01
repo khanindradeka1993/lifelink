@@ -375,45 +375,20 @@ function enableWalletCopy(address) {
   const copyBtn = document.getElementById("copyWalletBtn");
   if (!copyBtn) return;
 
-  const addrToCopy =
-    address ||
-    sessionStorage.getItem("circle_wallet_address") ||
-    currentAccount;
-
+  const addrToCopy = address || sessionStorage.getItem("circle_wallet_address") || currentAccount;
+  
   if (!addrToCopy) {
     copyBtn.style.display = "none";
     return;
   }
 
   copyBtn.style.display = "inline-block";
-
-  copyBtn.onclick = async () => {
-    try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(addrToCopy);
-      } else {
-        const textArea = document.createElement("textarea");
-        textArea.value = addrToCopy;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-9999px";
-        textArea.style.top = "0";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        document.execCommand("copy");
-        textArea.remove();
-      }
-
-      copyBtn.innerText = "✅ Copied!";
-
-      setTimeout(() => {
-        copyBtn.innerText = "📋 Copy";
-      }, 2000);
-
-    } catch (error) {
-      console.error("Wallet copy failed:", error);
-      alert("Unable to copy wallet address. Please copy it manually.");
-    }
+  copyBtn.onclick = () => {async
+    navigator.clipboard.writeText(addrToCopy);
+    copyBtn.innerText = "✅ Copied!";
+    setTimeout(() => {
+      copyBtn.innerText = "📋 Copy";
+    }, 2000);
   };
 }
 
@@ -532,7 +507,7 @@ return new Promise((resolve, reject) => {
 
   console.log("✅ CONTRACT SDK RESULT:", txSdkResult);
 
-  // Wallet creation is still processing.
+       // Wallet creation is still processing.
   // This is NOT the actual contract transaction.
   if (
     txSdkResult?.type === "CREATE_WALLET" &&
@@ -827,6 +802,122 @@ async function disconnectWallet() {
   resetDashboardLists();
 }
 
+
+// ==========================================
+// PHONE CONTACT UI (MOBILE + DESKTOP)
+// ==========================================
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function isMobileDevice() {
+  return /Android|iPhone|iPad|iPod|Windows Phone|webOS|BlackBerry|Opera Mini|IEMobile/i.test(
+    navigator.userAgent || ""
+  );
+}
+
+window.copyPhoneNumber = async function(phone, button) {
+  try {
+    await navigator.clipboard.writeText(String(phone));
+
+    if (button) {
+      const originalText = button.innerText;
+      button.innerText = "✅ Copied!";
+      setTimeout(() => {
+        button.innerText = originalText;
+      }, 2000);
+    }
+  } catch (err) {
+    console.error("Failed to copy phone number:", err);
+
+    // Fallback for browsers where Clipboard API is unavailable.
+    try {
+      const input = document.createElement("input");
+      input.value = String(phone);
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand("copy");
+      input.remove();
+
+      if (button) {
+        const originalText = button.innerText;
+        button.innerText = "✅ Copied!";
+        setTimeout(() => {
+          button.innerText = originalText;
+        }, 2000);
+      }
+    } catch (fallbackErr) {
+      console.error("Fallback copy failed:", fallbackErr);
+      alert("Unable to copy the phone number.");
+    }
+  }
+};
+
+function getPhoneContactUI(phone, label = "Call") {
+  const safePhone = escapeHtml(phone);
+  const encodedPhone = encodeURIComponent(String(phone ?? ""));
+
+  if (isMobileDevice()) {
+    return `
+      <a href="tel:${safePhone}" style="text-decoration:none;">
+        <button style="margin-top:8px;background:#2563eb;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;">
+          📞 ${label}
+        </button>
+      </a>
+    `;
+  }
+
+  return `
+    <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span style="color:#e2e8f0;font-size:14px;">
+        📞 <strong>${safePhone}</strong>
+      </span>
+      <button
+        type="button"
+        onclick="window.copyPhoneNumber(decodeURIComponent('${encodedPhone}'), this)"
+        style="background:#475569;color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:12px;"
+      >
+        📋 Copy
+      </button>
+    </div>
+  `;
+}
+
+function getPhoneContactUICompact(phone, label = "Call Patient") {
+  const safePhone = escapeHtml(phone);
+  const encodedPhone = encodeURIComponent(String(phone ?? ""));
+
+  if (isMobileDevice()) {
+    return `
+      <a href="tel:${safePhone}" style="text-decoration:none;">
+        <button style="background:#dc2626;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;">
+          📞 ${label}
+        </button>
+      </a>
+    `;
+  }
+
+  return `
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span style="color:#e2e8f0;font-size:14px;">
+        📞 <strong>${safePhone}</strong>
+      </span>
+      <button
+        type="button"
+        onclick="window.copyPhoneNumber(decodeURIComponent('${encodedPhone}'), this)"
+        style="background:#475569;color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:12px;"
+      >
+        📋 Copy
+      </button>
+    </div>
+  `;
+}
+
 // ==========================================
 // 5. DATA LOADERS (STRICT WALLET CHECK)
 // ==========================================
@@ -868,9 +959,7 @@ const availableDonors = donors.filter(donor => donor.available);
         <div style="border:1px solid #334155;background:#1E293B;color:#FFFFFF;padding:12px;margin-top:10px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.2);">
           <strong style="color:#ef4444;">🩸 ${donor.bloodGroup}</strong> - ${donor.name}<br>
           <span style="color:#94a3b8;">📍 City: ${donor.city}</span><br>
-          <button onclick="window.location.href='tel:${donor.phone}'" style="margin-top:8px;background:#2563eb;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;">
-            📞 Call Donor
-          </button>
+          ${getPhoneContactUI(donor.phone, "Call Donor")}
         </div>
         `;
       });
@@ -918,7 +1007,7 @@ async function loadRequests() {
 
     const requests = await activeContract.getRequests();
 
-    const activeRequests = requests.filter(r => !r.fulfilled);
+      const activeRequests = requests.filter(r => !r.fulfilled);
     const fulfilledRequests = requests.filter(r => r.fulfilled);
 
     // 1. Hospital Dashboard Counters
@@ -981,10 +1070,8 @@ async function loadRequests() {
           🏥 ${req.hospital}<br>
           📍 ${req.city}<br>
         </div>
-        <div style="margin-top:8px;display:flex;gap:8px;">
-          <button onclick="window.location.href='tel:${req.contactNumber}'" style="background:#dc2626;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;">
-            📞 Call Patient
-          </button>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          ${getPhoneContactUICompact(req.contact, "Call Patient")}
           <button onclick="window.fulfillRequest(${req.id})" style="background:#16a34a;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;">
             ❤️ I'm Coming to Donate
           </button>
@@ -1022,9 +1109,7 @@ async function loadAmbulanceRequests() {
         🚨 Level: ${r.emergencyLevel}<br>
         📍 Location: ${r.pickupLocation}<br>
         🏥 Hospital: ${r.hospital}<br><br>
-        <a href="tel:${r.contact}">
-          <button style="background:#2563eb;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;">📞 Call Patient</button>
-        </a>
+        ${getPhoneContactUICompact(r.contact, "Call Patient")}
         <button onclick="completeAmbulance(${r.id})" style="background:#16a34a;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;margin-left:8px;">
           ✅ Complete Request
         </button>
@@ -1297,9 +1382,7 @@ if (searchBtn) {
         <div style="border:1px solid #ddd;padding:10px;margin-top:10px;border-radius:10px;">
           🩸 <strong>${donor.bloodGroup}</strong> - ${donor.name}<br>
           📍 ${donor.city}<br>
-          <button onclick="window.location.href='tel:${donor.phone}'" style="margin-top:10px;background:#2563eb;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;">
-            📞 Call Donor
-          </button>
+          ${getPhoneContactUI(donor.phone, "Call Donor")}
         </div>
         `;
       });
@@ -1371,7 +1454,7 @@ if (requestBtn) {
       alert(err.message);
     }
   });
-}
+    }
 
 // --- FULFILL SOS REQUEST ---
 window.fulfillRequest = async function(id) {
