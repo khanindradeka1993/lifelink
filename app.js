@@ -375,20 +375,45 @@ function enableWalletCopy(address) {
   const copyBtn = document.getElementById("copyWalletBtn");
   if (!copyBtn) return;
 
-  const addrToCopy = address || sessionStorage.getItem("circle_wallet_address") || currentAccount;
-  
+  const addrToCopy =
+    address ||
+    sessionStorage.getItem("circle_wallet_address") ||
+    currentAccount;
+
   if (!addrToCopy) {
     copyBtn.style.display = "none";
     return;
   }
 
   copyBtn.style.display = "inline-block";
-  copyBtn.onclick = () => {async
-    navigator.clipboard.writeText(addrToCopy);
-    copyBtn.innerText = "✅ Copied!";
-    setTimeout(() => {
-      copyBtn.innerText = "📋 Copy";
-    }, 2000);
+
+  copyBtn.onclick = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(addrToCopy);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = addrToCopy;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        textArea.remove();
+      }
+
+      copyBtn.innerText = "✅ Copied!";
+
+      setTimeout(() => {
+        copyBtn.innerText = "📋 Copy";
+      }, 2000);
+
+    } catch (error) {
+      console.error("Wallet copy failed:", error);
+      alert("Unable to copy wallet address. Please copy it manually.");
+    }
   };
 }
 
