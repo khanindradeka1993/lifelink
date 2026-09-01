@@ -516,7 +516,7 @@ return new Promise((resolve, reject) => {
         );
       }
 
-      const txChallengeId =
+         const txChallengeId =
         txData.challengeId ||
         txData.data?.challengeId;
 
@@ -831,7 +831,18 @@ async function disconnectWallet() {
 }
 
 
+// ==========================================
+// PHONE CONTACT UI COMPATIBILITY WRAPPERS
+// Keep existing loader function names while using the
+// single desktop-popup/mobile-dialer implementation below.
+// ==========================================
+function getPhoneContactUI(phone, label = "Call Donor") {
+  return phoneButton(phone, label, "#2563eb");
+}
 
+function getPhoneContactUICompact(phone, label = "Call Patient") {
+  return phoneButton(phone, label, "#dc2626");
+}
 
 // ==========================================
 // PHONE CONTACT UI
@@ -1017,7 +1028,7 @@ const availableDonors = donors.filter(donor => donor.available);
   } catch (e) {
     console.error("Error loading donors:", e);
   }
-}
+        }
 
 async function loadRequests() {
   if (!isWalletConnected()) {
@@ -1504,7 +1515,7 @@ window.fulfillRequest = async function(id) {
       alert("Circle Tx Failed: " + err.message);
     }
     return;
-  }
+   }
 
   try {
     const tx = await contract.fulfillRequest(id);
@@ -1778,4 +1789,4 @@ document.querySelectorAll(".quick-action").forEach(button => {
   });
 });
 
-      
+
