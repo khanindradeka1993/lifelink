@@ -375,20 +375,48 @@ function enableWalletCopy(address) {
   const copyBtn = document.getElementById("copyWalletBtn");
   if (!copyBtn) return;
 
-  const addrToCopy = address || sessionStorage.getItem("circle_wallet_address") || currentAccount;
-  
+  const addrToCopy =
+    address ||
+    sessionStorage.getItem("circle_wallet_address") ||
+    currentAccount;
+
   if (!addrToCopy) {
     copyBtn.style.display = "none";
     return;
   }
 
   copyBtn.style.display = "inline-block";
-  copyBtn.onclick = () => {async
-    navigator.clipboard.writeText(addrToCopy);
-    copyBtn.innerText = "✅ Copied!";
-    setTimeout(() => {
-      copyBtn.innerText = "📋 Copy";
-    }, 2000);
+  copyBtn.onclick = null;
+
+  copyBtn.onclick = async function () {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(addrToCopy);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = addrToCopy;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        textArea.setSelectionRange(0, textArea.value.length);
+
+        const copied = document.execCommand("copy");
+        textArea.remove();
+
+        if (!copied) throw new Error("Copy command failed");
+      }
+
+      copyBtn.innerText = "✅ Copied!";
+      setTimeout(() => {
+        copyBtn.innerText = "📋 Copy";
+      }, 2000);
+    } catch (error) {
+      console.error("Wallet address copy failed:", error);
+      window.prompt("Copy your wallet address:", addrToCopy);
+    }
   };
 }
 
@@ -480,7 +508,7 @@ return new Promise((resolve, reject) => {
 
       const txData = await txResponse.json();
 
-      console.log("🔎 CONTRACT CHALLENGE RESPONSE:", txData);
+          console.log("🔎 CONTRACT CHALLENGE RESPONSE:", txData);
 
       if (!txResponse.ok) {
         throw new Error(
@@ -507,7 +535,7 @@ return new Promise((resolve, reject) => {
 
   console.log("✅ CONTRACT SDK RESULT:", txSdkResult);
 
-       // Wallet creation is still processing.
+  // Wallet creation is still processing.
   // This is NOT the actual contract transaction.
   if (
     txSdkResult?.type === "CREATE_WALLET" &&
@@ -919,6 +947,115 @@ function getPhoneContactUICompact(phone, label = "Call Patient") {
 }
 
 // ==========================================
+// PHONE CONTACT UI
+// Mobile = tel: dialer
+// Desktop = popup with number + Copy Number
+// ==========================================
+function isMobileDevice() {
+  return /Android|iPhone|iPad|iPod|Windows Phone|webOS|BlackBerry|Opera Mini|IEMobile/i.test(navigator.userAgent || "");
+}
+
+window.copyPhoneNumber = async function(phone, button) {
+  const value = String(phone || "").trim();
+  if (!value) {
+    alert("Phone number is not available.");
+    return;
+  }
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(value);
+    } else {
+      const textArea = document.createElement("textarea");
+      textArea.value = value;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      textArea.setSelectionRange(0, textArea.value.length);
+      const copied = document.execCommand("copy");
+      textArea.remove();
+      if (!copied) throw new Error("Copy command failed");
+    }
+
+    if (button) {
+      const oldText = button.innerText;
+      button.innerText = "✅ Copied!";
+      setTimeout(() => button.innerText = oldText, 2000);
+    }
+  } catch (err) {
+    console.error("Phone number copy failed:", err);
+    window.prompt("Copy this phone number:", value);
+  }
+};
+
+window.showPhoneNumber = function(phone, title = "Phone Number") {
+  const value = String(phone || "").trim();
+  if (!value) {
+    alert("Phone number is not available.");
+    return;
+  }
+
+  document.getElementById("phoneNumberPopup")?.remove();
+
+  const popup = document.createElement("div");
+  popup.id = "phoneNumberPopup";
+
+  const safePhone = value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const jsPhone = value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+  const jsTitle = title.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+
+  popup.innerHTML = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:99999;padding:20px;"
+         onclick="if(event.target===this)this.parentElement.remove()">
+      <div style="width:min(400px,100%);background:#1E293B;border:1px solid #475569;border-radius:18px;padding:22px;text-align:center;color:white;box-shadow:0 20px 50px rgba(0,0,0,.45);">
+        <div style="font-size:30px;margin-bottom:8px;">📞</div>
+        <h3 style="margin:0 0 15px;color:white;">${title}</h3>
+        <div style="background:#0F172A;border:1px solid #334155;border-radius:12px;padding:15px;font-size:22px;font-weight:bold;margin-bottom:16px;user-select:text;">
+          ${safePhone}
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button type="button" onclick="window.copyPhoneNumber('${jsPhone}', this)"
+            style="flex:1;background:#2563eb;color:white;border:none;padding:11px;border-radius:9px;cursor:pointer;font-weight:bold;">
+            📋 Copy Number
+          </button>
+          <button type="button" onclick="document.getElementById('phoneNumberPopup')?.remove()"
+            style="background:#475569;color:white;border:none;padding:11px 16px;border-radius:9px;cursor:pointer;font-weight:bold;">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+};
+
+function phoneButton(phone, label = "Call Donor", color = "#2563eb") {
+  const value = String(phone || "").trim();
+  const jsPhone = value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+  const jsLabel = label.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+
+  if (isMobileDevice()) {
+    return `
+      <a href="tel:${value}" style="text-decoration:none;">
+        <button style="margin-top:8px;background:${color};color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;">
+          📞 ${label}
+        </button>
+      </a>
+    `;
+  }
+
+  return `
+    <button type="button" onclick="window.showPhoneNumber('${jsPhone}', '${jsLabel}')"
+      style="margin-top:8px;background:${color};color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;">
+      📞 ${label}
+    </button>
+  `;
+};
+
+// ==========================================
 // 5. DATA LOADERS (STRICT WALLET CHECK)
 // ==========================================
 async function reloadAppData() {
@@ -1007,7 +1144,7 @@ async function loadRequests() {
 
     const requests = await activeContract.getRequests();
 
-      const activeRequests = requests.filter(r => !r.fulfilled);
+    const activeRequests = requests.filter(r => !r.fulfilled);
     const fulfilledRequests = requests.filter(r => r.fulfilled);
 
     // 1. Hospital Dashboard Counters
@@ -1370,7 +1507,7 @@ if (searchBtn) {
       );
     });
 
-    if (searchResults) {
+if (searchResults) {
       searchResults.innerHTML = "";
       if (filtered.length === 0) {
         searchResults.innerHTML = "<p>❌ No nearby donors found in this city.</p>";
@@ -1454,7 +1591,7 @@ if (requestBtn) {
       alert(err.message);
     }
   });
-    }
+}
 
 // --- FULFILL SOS REQUEST ---
 window.fulfillRequest = async function(id) {
@@ -1754,3 +1891,4 @@ document.querySelectorAll(".quick-action").forEach(button => {
   });
 });
 
+      
