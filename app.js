@@ -952,64 +952,12 @@ window.copyPhoneNumber = async function(phone, button) {
   }
 };
 
-function getPhoneContactUI(phone, label = "Call") {
-  const safePhone = escapeHtml(phone);
-  const encodedPhone = encodeURIComponent(String(phone ?? ""));
-
-  if (isMobileDevice()) {
-    return `
-      <a href="tel:${safePhone}" style="text-decoration:none;">
-        <button style="margin-top:8px;background:#2563eb;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;">
-          📞 ${label}
-        </button>
-      </a>
-    `;
-  }
-
-  return `
-    <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-      <span style="color:#e2e8f0;font-size:14px;">
-        📞 <strong>${safePhone}</strong>
-      </span>
-      <button
-        type="button"
-        onclick="window.copyPhoneNumber(decodeURIComponent('${encodedPhone}'), this)"
-        style="background:#475569;color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:12px;"
-      >
-        📋 Copy
-      </button>
-    </div>
-  `;
+function getPhoneContactUI(phone, label = "Call Donor") {
+  return phoneButton(phone, label, "#2563eb");
 }
 
 function getPhoneContactUICompact(phone, label = "Call Patient") {
-  const safePhone = escapeHtml(phone);
-  const encodedPhone = encodeURIComponent(String(phone ?? ""));
-
-  if (isMobileDevice()) {
-    return `
-      <a href="tel:${safePhone}" style="text-decoration:none;">
-        <button style="background:#dc2626;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;">
-          📞 ${label}
-        </button>
-      </a>
-    `;
-  }
-
-  return `
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-      <span style="color:#e2e8f0;font-size:14px;">
-        📞 <strong>${safePhone}</strong>
-      </span>
-      <button
-        type="button"
-        onclick="window.copyPhoneNumber(decodeURIComponent('${encodedPhone}'), this)"
-        style="background:#475569;color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:12px;"
-      >
-        📋 Copy
-      </button>
-    </div>
-  `;
+  return phoneButton(phone, label, "#dc2626");
 }
 
 // ==========================================
