@@ -364,7 +364,7 @@ function getActiveWallet() {
       type: "CIRCLE",
       userId: circleUserId,
       userToken: circleUserToken,
-      address: sessionStorage.getItem("circle_wallet_address") || ""
+      address: sessionStorage.getItem("circle_wallet_address") || circleUserId
     };
   }
 
@@ -439,7 +439,8 @@ const userId = sessionStorage.getItem("circle_user_id");
   encryptionKey,
       functionSignature: abiFunction,
       contractAddress,
-      args
+      args,
+      skipSetup: true
     })
   });
 
@@ -452,6 +453,9 @@ const userId = sessionStorage.getItem("circle_user_id");
   // Update session storage if fresh tokens were returned
   if (data.userToken) sessionStorage.setItem("circle_user_token", data.userToken);
   if (data.encryptionKey) sessionStorage.setItem("circle_encryption_key", data.encryptionKey);
+  if (data.walletAddress && /^0x[a-fA-F0-9]{40}$/.test(data.walletAddress)) {
+    sessionStorage.setItem("circle_wallet_address", data.walletAddress);
+  }
 
   // 2. Ensure SDK instance is ready
     let sdkInstance;
@@ -506,11 +510,17 @@ return new Promise((resolve, reject) => {
 })
       });
 
-      const txData = await txResponse.json();
+        const txData = await txResponse.json();
 
           console.log("🔎 CONTRACT CHALLENGE RESPONSE:", txData);
 
-          if (!txResponse.ok) {
+      if (txData.userToken) sessionStorage.setItem("circle_user_token", txData.userToken);
+      if (txData.encryptionKey) sessionStorage.setItem("circle_encryption_key", txData.encryptionKey);
+      if (txData.walletAddress && /^0x[a-fA-F0-9]{40}$/.test(txData.walletAddress)) {
+        sessionStorage.setItem("circle_wallet_address", txData.walletAddress);
+      }
+
+      if (!txResponse.ok) {
         throw new Error(
           txData.error || "Failed to create contract execution challenge."
         );
@@ -568,6 +578,12 @@ return new Promise((resolve, reject) => {
           "🔄 RETRY CONTRACT CHALLENGE RESPONSE:",
           retryData
         );
+
+        if (retryData.userToken) sessionStorage.setItem("circle_user_token", retryData.userToken);
+        if (retryData.encryptionKey) sessionStorage.setItem("circle_encryption_key", retryData.encryptionKey);
+        if (retryData.walletAddress && /^0x[a-fA-F0-9]{40}$/.test(retryData.walletAddress)) {
+          sessionStorage.setItem("circle_wallet_address", retryData.walletAddress);
+        }
 
         if (!retryResponse.ok) {
                     throw new Error(
@@ -832,16 +848,118 @@ async function disconnectWallet() {
 
 
 // ==========================================
-// PHONE CONTACT UI COMPATIBILITY WRAPPERS
-// Keep existing loader function names while using the
-// single desktop-popup/mobile-dialer implementation below.
+// PHONE CONTACT UI (MOBILE + DESKTOP)
 // ==========================================
-function getPhoneContactUI(phone, label = "Call Donor") {
-  return phoneButton(phone, label, "#2563eb");
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function isMobileDevice() {
+  return /Android|iPhone|iPad|iPod|Windows Phone|webOS|BlackBerry|Opera Mini|IEMobile/i.test(
+    navigator.userAgent || ""
+  );
+}
+
+window.copyPhoneNumber = async function(phone, button) {
+  try {
+    await navigator.clipboard.writeText(String(phone));
+
+    if (button) {
+      const originalText = button.innerText;
+      button.innerText = "✅ Copied!";
+      setTimeout(() => {
+        button.innerText = originalText;
+      }, 2000);
+    }
+  } catch (err) {
+    console.error("Failed to copy phone number:", err);
+
+    // Fallback for browsers where Clipboard API is unavailable.
+    try {
+      const input = document.createElement("input");
+      input.value = String(phone);
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand("copy");
+      input.remove();
+
+      if (button) {
+        const originalText = button.innerText;
+        button.innerText = "✅ Copied!";
+        setTimeout(() => {
+          button.innerText = originalText;
+        }, 2000);
+      }
+    } catch (fallbackErr) {
+      console.error("Fallback copy failed:", fallbackErr);
+      alert("Unable to copy the phone number.");
+    }
+  }
+};
+
+function getPhoneContactUI(phone, label = "Call") {
+  const safePhone = escapeHtml(phone);
+  const encodedPhone = encodeURIComponent(String(phone ?? ""));
+
+  if (isMobileDevice()) {
+    return `
+      <a href="tel:${safePhone}" style="text-decoration:none;">
+        <button style="margin-top:8px;background:#2563eb;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;">
+          📞 ${label}
+        </button>
+      </a>
+    `;
+  }
+
+  return `
+    <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span style="color:#e2e8f0;font-size:14px;">
+        📞 <strong>${safePhone}</strong>
+      </span>
+      <button
+        type="button"
+        onclick="window.copyPhoneNumber(decodeURIComponent('${encodedPhone}'), this)"
+        style="background:#475569;color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:12px;"
+      >
+        📋 Copy
+      </button>
+    </div>
+  `;
 }
 
 function getPhoneContactUICompact(phone, label = "Call Patient") {
-  return phoneButton(phone, label, "#dc2626");
+  const safePhone = escapeHtml(phone);
+  const encodedPhone = encodeURIComponent(String(phone ?? ""));
+
+  if (isMobileDevice()) {
+    return `
+      <a href="tel:${safePhone}" style="text-decoration:none;">
+        <button style="background:#dc2626;color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;">
+          📞 ${label}
+        </button>
+      </a>
+    `;
+  }
+
+  return `
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span style="color:#e2e8f0;font-size:14px;">
+        📞 <strong>${safePhone}</strong>
+      </span>
+      <button
+        type="button"
+        onclick="window.copyPhoneNumber(decodeURIComponent('${encodedPhone}'), this)"
+        style="background:#475569;color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:12px;"
+      >
+        📋 Copy
+      </button>
+    </div>
+  `;
 }
 
 // ==========================================
@@ -1014,7 +1132,7 @@ const availableDonors = donors.filter(donor => donor.available);
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(window.donorMap);
 
-          donors.forEach((donor) => {
+      donors.forEach((donor) => {
         if (Number(donor.latitude) !== 0 && Number(donor.longitude) !== 0) {
           L.marker([
             Number(donor.latitude) / 1000000,
@@ -1247,15 +1365,18 @@ async function handleCircleGoogleLogin() {
       walletAddress.style.color = "#FBBF24";
     }
 
+    // Keep ONE stable Circle user for this LifeLink installation.
+    // Never generate a new user ID for every login.
+    const stableCircleUserId =
+      localStorage.getItem("lifelink_circle_user_id") ||
+      "google_user_default";
+
+    localStorage.setItem("lifelink_circle_user_id", stableCircleUserId);
+
     const response = await fetch("/api/circle-token", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId:
-          sessionStorage.getItem("circle_user_id") ||
-          localStorage.getItem("circle_user_id") ||
-          "google_user_default"
-      })
+      body: JSON.stringify({ userId: stableCircleUserId })
     });
 
     const data = await response.json();
@@ -1264,7 +1385,10 @@ async function handleCircleGoogleLogin() {
       throw new Error(data.error || "Failed to generate Circle session");
     }
 
-    const displayAddress = data.walletAddress || sessionStorage.getItem("circle_wallet_address") || "";
+    const displayAddress =
+      data.walletAddress ||
+      sessionStorage.getItem("circle_wallet_address") ||
+      "";
 
       sessionStorage.setItem("active_wallet_type", "CIRCLE");
     sessionStorage.setItem("circle_user_token", data.userToken);
@@ -1281,11 +1405,9 @@ async function handleCircleGoogleLogin() {
 explicitWalletConnected = true;
     
     if (walletAddress) {
-      if (displayAddress.startsWith("0x")) {
-        walletAddress.innerText = `Connected: ${displayAddress.slice(0, 6)}...${displayAddress.slice(-4)}`;
-      } else {
-        walletAddress.innerText = "Connected via Circle";
-      }
+      walletAddress.innerText = displayAddress.startsWith("0x")
+        ? `Connected: ${displayAddress.slice(0, 6)}...${displayAddress.slice(-4)}`
+        : `Connected via Circle (${displayAddress.slice(0, 12)}...)`;
       walletAddress.style.color = "#10B981";
     }
 
@@ -1388,7 +1510,7 @@ if (registerBtn) {
       alert(err.message);
     }
   });
-}
+  }
 
 // --- SEARCH DONORS ---
 if (searchBtn) {
@@ -1496,7 +1618,7 @@ if (requestBtn) {
       alert(err.message);
     }
   });
-           }
+}
 
 // --- FULFILL SOS REQUEST ---
 window.fulfillRequest = async function(id) {
@@ -1797,3 +1919,4 @@ document.querySelectorAll(".quick-action").forEach(button => {
 });
 
 
+      
