@@ -364,7 +364,7 @@ function getActiveWallet() {
       type: "CIRCLE",
       userId: circleUserId,
       userToken: circleUserToken,
-      address: sessionStorage.getItem("circle_wallet_address") || circleUserId
+      address: sessionStorage.getItem("circle_wallet_address") || ""
     };
   }
 
@@ -510,13 +510,13 @@ return new Promise((resolve, reject) => {
 
           console.log("🔎 CONTRACT CHALLENGE RESPONSE:", txData);
 
-      if (!txResponse.ok) {
+          if (!txResponse.ok) {
         throw new Error(
           txData.error || "Failed to create contract execution challenge."
         );
       }
 
-         const txChallengeId =
+      const txChallengeId =
         txData.challengeId ||
         txData.data?.challengeId;
 
@@ -1014,7 +1014,7 @@ const availableDonors = donors.filter(donor => donor.available);
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(window.donorMap);
 
-      donors.forEach((donor) => {
+          donors.forEach((donor) => {
         if (Number(donor.latitude) !== 0 && Number(donor.longitude) !== 0) {
           L.marker([
             Number(donor.latitude) / 1000000,
@@ -1028,7 +1028,7 @@ const availableDonors = donors.filter(donor => donor.available);
   } catch (e) {
     console.error("Error loading donors:", e);
   }
-        }
+}
 
 async function loadRequests() {
   if (!isWalletConnected()) {
@@ -1250,7 +1250,12 @@ async function handleCircleGoogleLogin() {
     const response = await fetch("/api/circle-token", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: "google_user_" + Date.now() })
+      body: JSON.stringify({
+        userId:
+          sessionStorage.getItem("circle_user_id") ||
+          localStorage.getItem("circle_user_id") ||
+          "google_user_default"
+      })
     });
 
     const data = await response.json();
@@ -1259,7 +1264,7 @@ async function handleCircleGoogleLogin() {
       throw new Error(data.error || "Failed to generate Circle session");
     }
 
-    const displayAddress = data.walletAddress || data.userId;
+    const displayAddress = data.walletAddress || sessionStorage.getItem("circle_wallet_address") || "";
 
       sessionStorage.setItem("active_wallet_type", "CIRCLE");
     sessionStorage.setItem("circle_user_token", data.userToken);
@@ -1276,9 +1281,11 @@ async function handleCircleGoogleLogin() {
 explicitWalletConnected = true;
     
     if (walletAddress) {
-      walletAddress.innerText = displayAddress.startsWith("0x")
-        ? `Connected: ${displayAddress.slice(0, 6)}...${displayAddress.slice(-4)}`
-        : `Connected via Circle (${displayAddress.slice(0, 12)}...)`;
+      if (displayAddress.startsWith("0x")) {
+        walletAddress.innerText = `Connected: ${displayAddress.slice(0, 6)}...${displayAddress.slice(-4)}`;
+      } else {
+        walletAddress.innerText = "Connected via Circle";
+      }
       walletAddress.style.color = "#10B981";
     }
 
@@ -1489,7 +1496,7 @@ if (requestBtn) {
       alert(err.message);
     }
   });
-}
+           }
 
 // --- FULFILL SOS REQUEST ---
 window.fulfillRequest = async function(id) {
@@ -1515,7 +1522,7 @@ window.fulfillRequest = async function(id) {
       alert("Circle Tx Failed: " + err.message);
     }
     return;
-   }
+  }
 
   try {
     const tx = await contract.fulfillRequest(id);
