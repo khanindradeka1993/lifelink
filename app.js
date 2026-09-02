@@ -967,45 +967,6 @@ function getPhoneContactUICompact(phone, label = "Call Patient") {
 // Mobile = tel: dialer
 // Desktop = popup with number + Copy Number
 // ==========================================
-function isMobileDevice() {
-  return /Android|iPhone|iPad|iPod|Windows Phone|webOS|BlackBerry|Opera Mini|IEMobile/i.test(navigator.userAgent || "");
-}
-
-window.copyPhoneNumber = async function(phone, button) {
-  const value = String(phone || "").trim();
-  if (!value) {
-    alert("Phone number is not available.");
-    return;
-  }
-
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(value);
-    } else {
-      const textArea = document.createElement("textarea");
-      textArea.value = value;
-      textArea.style.position = "fixed";
-      textArea.style.left = "-9999px";
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      textArea.setSelectionRange(0, textArea.value.length);
-      const copied = document.execCommand("copy");
-      textArea.remove();
-      if (!copied) throw new Error("Copy command failed");
-    }
-
-    if (button) {
-      const oldText = button.innerText;
-      button.innerText = "✅ Copied!";
-      setTimeout(() => button.innerText = oldText, 2000);
-    }
-  } catch (err) {
-    console.error("Phone number copy failed:", err);
-    window.prompt("Copy this phone number:", value);
-  }
-};
-
 window.showPhoneNumber = function(phone, title = "Phone Number") {
   const value = String(phone || "").trim();
   if (!value) {
@@ -1018,25 +979,32 @@ window.showPhoneNumber = function(phone, title = "Phone Number") {
   const popup = document.createElement("div");
   popup.id = "phoneNumberPopup";
 
-  const safePhone = value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const safePhone = value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
   const jsPhone = value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
   const jsTitle = title.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 
   popup.innerHTML = `
     <div style="position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:99999;padding:20px;"
          onclick="if(event.target===this)this.parentElement.remove()">
-      <div style="width:min(400px,100%);background:#1E293B;border:1px solid #475569;border-radius:18px;padding:22px;text-align:center;color:white;box-shadow:0 20px 50px rgba(0,0,0,.45);">
+      <div style="width:min(400px,100%);background:#1E293B;border:1px solid #475569;border-radius:18px;padding:22px;text-align:center;color:white;">
         <div style="font-size:30px;margin-bottom:8px;">📞</div>
-        <h3 style="margin:0 0 15px;color:white;">${title}</h3>
-        <div style="background:#0F172A;border:1px solid #334155;border-radius:12px;padding:15px;font-size:22px;font-weight:bold;margin-bottom:16px;user-select:text;">
+        <h3 style="margin:0 0 15px;color:white;">${jsTitle}</h3>
+        <div style="background:#0F172A;border:1px solid #334155;border-radius:12px;padding:15px;font-size:22px;font-weight:bold;margin-bottom:16px;">
           ${safePhone}
         </div>
         <div style="display:flex;gap:10px;">
-          <button type="button" onclick="window.copyPhoneNumber('${jsPhone}', this)"
+          <button type="button"
+            onclick="window.copyPhoneNumber('${jsPhone}', this)"
             style="flex:1;background:#2563eb;color:white;border:none;padding:11px;border-radius:9px;cursor:pointer;font-weight:bold;">
             📋 Copy Number
           </button>
-          <button type="button" onclick="document.getElementById('phoneNumberPopup')?.remove()"
+          <button type="button"
+            onclick="document.getElementById('phoneNumberPopup')?.remove()"
             style="background:#475569;color:white;border:none;padding:11px 16px;border-radius:9px;cursor:pointer;font-weight:bold;">
             Close
           </button>
@@ -1064,12 +1032,13 @@ function phoneButton(phone, label = "Call Donor", color = "#2563eb") {
   }
 
   return `
-    <button type="button" onclick="window.showPhoneNumber('${jsPhone}', '${jsLabel}')"
+    <button type="button"
+      onclick="window.showPhoneNumber('${jsPhone}', '${jsLabel}')"
       style="margin-top:8px;background:${color};color:white;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;">
       📞 ${label}
     </button>
   `;
-};
+}
 
 // ==========================================
 // 5. DATA LOADERS (STRICT WALLET CHECK)
