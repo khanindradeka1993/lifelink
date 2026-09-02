@@ -421,6 +421,465 @@ function enableWalletCopy(address) {
 }
 
 async function executeCircleTransaction(abiFunction, contractAddress, args) {
+  const userToken =
+    sessionStorage.getItem("circle_user_token") ||
+    sessionStorage.getItem("userToken");
+
+  const encryptionKey =
+    sessionStorage.getItem("circle_encryption_key") ||
+    sessionStorage.getItem("encryptionKey");
+
+  const userId = sessionStorage.getItem("circle_user_id");
+
+  if (!userToken || !encryptionKey) {
+    throw new Error(
+      "Circle session or encryption key missing. Please sign in again."
+    );
+  }
+
+  // 1. Ask backend for the first required Circle challenge
+  const response = await fetch("/api/execute-circle-tx", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      userToken,
+      userId,
+      encryptionKey,
+      functionSignature: abiFunction,
+      contractAddress,
+      args,
+      skipSetup: true
+    })
+  });
+
+  const data = await response.json();
+
+  if (!response.ok || data.error) {
+    throw new Error(
+      data.error ||
+      "Failed to initialize transaction on server."
+    );
+  }
+
+  // Save refreshed Circle session data
+  if (data.userToken) {
+    sessionStorage.setItem(
+      "circle_user_token",
+      data.userToken
+    );
+  }
+
+  if (data.encryptionKey) {
+    sessionStorage.setItem(
+      "circle_encryption_key",
+      data.encryptionKey
+    );
+  }
+
+  if (
+    data.walletAddress &&
+    /^0x[a-fA-F0-9]{40}$/.test(data.walletAddress)
+  ) {
+    sessionStorage.setItem(
+      "circle_wallet_address",
+      data.walletAddress
+    );
+  }
+
+  // 2. Get Circle SDK
+  let sdkInstance;
+
+  try {
+    sdkInstance = window.getCircleSdk();
+    console.log(
+      "SDK Instance successfully retrieved:",
+      sdkInstance
+    );
+  } catch (err) {
+    console.error(
+      "Failed to call getCircleSdk",
+      err
+    );
+  }
+
+  if (!sdkInstance) {
+    throw new Error(
+      "Circle web SDK failed to load."
+    );
+  }
+
+  sdkInstance.setAuthentication({
+    userToken:
+      sessionStorage.getItem("circle_user_token"),
+    encryptionKey:
+      sessionStorage.getItem("circle_encryption_key")
+  });
+
+  const challengeId =
+    data.challengeId ||
+    data.data?.challengeId;
+
+  if (!challengeId) {
+    throw new Error(
+      "No challenge ID returned from Circle API."
+    );
+  }
+
+  // Helper: execute exactly ONE Circle challenge
+  const executeChallenge = (id) => {
+    return new Promise((resolve, reject) => {
+      sdkInstance.execute(
+        id,
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+
+          resolve(result);
+        }
+      );
+    });
+  };
+
+  // 3. Execute the FIRST challenge
+  console.log(
+    "🚀 EXECUTING CIRCLE CHALLENGE:",
+    challengeId
+  );
+
+  const sdkResult =
+    await executeChallenge(challengeId);
+
+  console.log(
+    "✅ CIRCLE SDK RESULT:",
+    sdkResult
+  );
+
+  // =====================================================
+  // NORMAL CASE:
+  // The first challenge is already CONTRACT_EXECUTION.
+  // DO NOT create another transaction.
+  // =====================================================
+  if (
+    sdkResult?.type !== "CREATE_WALLET"
+  ) {
+    let finalHash =
+      sdkResult?.transactionHash ||
+      sdkResult?.txHash ||
+      sdkResult?.data?.transactionHash ||
+      sdkResult?.data?.txHash ||
+      "";
+
+    // Circle may complete the transaction without
+    // returning the hash immediately.
+    if (!finalHash) {
+      console.log(
+        "🔎 No hash in SDK result. Looking up completed transaction..."
+      );
+
+      try {
+        const lookupResponse =
+          await fetch(
+            "/api/execute-circle-tx",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+              body: JSON.stringify({
+                action:
+                  "lookupTransaction",
+                userToken:
+                  sessionStorage.getItem(
+                    "circle_user_token"
+                  ),
+                userId:
+                  sessionStorage.getItem(
+                    "circle_user_id"
+                  ),
+                contractAddress,
+                functionSignature:
+                  abiFunction
+              })
+            }
+          );
+
+        const lookupData =
+          await lookupResponse.json();
+
+        console.log(
+          "🔎 TRANSACTION LOOKUP RESULT:",
+          lookupData
+        );
+
+        if (lookupResponse.ok) {
+          finalHash =
+            lookupData.transactionHash ||
+            lookupData.txHash ||
+            lookupData.transaction?.txHash ||
+            lookupData.transaction?.transactionHash ||
+            "";
+        }
+      } catch (lookupError) {
+        console.error(
+          "❌ TRANSACTION LOOKUP FAILED:",
+          lookupError
+        );
+      }
+    }
+
+    console.log(
+      "🔎 FINAL TRANSACTION HASH:",
+      finalHash
+    );
+
+    if (!finalHash) {
+      throw new Error(
+        "Circle contract execution completed, but the transaction hash is not available yet."
+      );
+    }
+
+    if (
+      typeof showExplorerButton ===
+      "function"
+    ) {
+      showExplorerButton(finalHash);
+    }
+
+    setTimeout(async () => {
+      if (
+        typeof loadDashboardData ===
+        "function"
+      ) {
+        await loadDashboardData();
+      }
+
+      if (
+        typeof fetchRequests ===
+        "function"
+      ) {
+        await fetchRequests();
+      }
+    }, 4000);
+
+    return finalHash;
+  }
+
+  // =====================================================
+  // FIRST-TIME WALLET CASE:
+  // First challenge was wallet creation.
+  // Only NOW do we request the contract challenge.
+  // =====================================================
+  console.log(
+    "⏳ Circle wallet creation challenge completed/processing."
+  );
+
+  const retryResponse =
+    await fetch(
+      "/api/execute-circle-tx",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+        body: JSON.stringify({
+          userToken:
+            sessionStorage.getItem(
+              "circle_user_token"
+            ),
+          userId:
+            sessionStorage.getItem(
+              "circle_user_id"
+            ),
+          encryptionKey:
+            sessionStorage.getItem(
+              "circle_encryption_key"
+            ),
+          functionSignature:
+            abiFunction,
+          contractAddress,
+          args,
+          skipSetup: true,
+          walletCreationComplete: true
+        })
+      }
+    );
+
+  const retryData =
+    await retryResponse.json();
+
+  console.log(
+    "🔄 CONTRACT CHALLENGE RESPONSE:",
+    retryData
+  );
+
+  if (retryData.userToken) {
+    sessionStorage.setItem(
+      "circle_user_token",
+      retryData.userToken
+    );
+  }
+
+  if (retryData.encryptionKey) {
+    sessionStorage.setItem(
+      "circle_encryption_key",
+      retryData.encryptionKey
+    );
+  }
+
+  if (
+    retryData.walletAddress &&
+    /^0x[a-fA-F0-9]{40}$/.test(
+      retryData.walletAddress
+    )
+  ) {
+    sessionStorage.setItem(
+      "circle_wallet_address",
+      retryData.walletAddress
+    );
+  }
+
+  if (!retryResponse.ok) {
+    throw new Error(
+      retryData.error ||
+      "Wallet creation is still processing. Please try again."
+    );
+  }
+
+  const txChallengeId =
+    retryData.challengeId ||
+    retryData.data?.challengeId;
+
+  if (!txChallengeId) {
+    throw new Error(
+      "No contract execution challenge returned after wallet creation."
+    );
+  }
+
+  console.log(
+    "🚀 EXECUTING ACTUAL CONTRACT CHALLENGE:",
+    txChallengeId
+  );
+
+  // This is the ONLY second SDK execution,
+  // and it happens ONLY after wallet creation.
+  const txSdkResult =
+    await executeChallenge(
+      txChallengeId
+    );
+
+  console.log(
+    "✅ ACTUAL CONTRACT SDK RESULT:",
+    txSdkResult
+  );
+
+  let finalHash =
+    txSdkResult?.transactionHash ||
+    txSdkResult?.txHash ||
+    txSdkResult?.data?.transactionHash ||
+    txSdkResult?.data?.txHash ||
+    "";
+
+  if (!finalHash) {
+    console.log(
+      "🔎 No hash in SDK result. Looking up completed transaction..."
+    );
+
+    try {
+      const lookupResponse =
+        await fetch(
+          "/api/execute-circle-tx",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+            body: JSON.stringify({
+              action:
+                "lookupTransaction",
+              userToken:
+                sessionStorage.getItem(
+                  "circle_user_token"
+                ),
+              userId:
+                sessionStorage.getItem(
+                  "circle_user_id"
+                ),
+              contractAddress,
+              functionSignature:
+                abiFunction
+            })
+          }
+        );
+
+      const lookupData =
+        await lookupResponse.json();
+
+      console.log(
+        "🔎 TRANSACTION LOOKUP RESULT:",
+        lookupData
+      );
+
+      if (lookupResponse.ok) {
+        finalHash =
+          lookupData.transactionHash ||
+          lookupData.txHash ||
+          lookupData.transaction?.txHash ||
+          lookupData.transaction?.transactionHash ||
+          "";
+      }
+    } catch (lookupError) {
+      console.error(
+        "❌ TRANSACTION LOOKUP FAILED:",
+        lookupError
+      );
+    }
+  }
+
+  console.log(
+    "🔎 FINAL TRANSACTION HASH:",
+    finalHash
+  );
+
+  if (!finalHash) {
+    throw new Error(
+      "Circle contract execution completed, but the transaction hash is not available yet."
+    );
+  }
+
+  if (
+    typeof showExplorerButton ===
+    "function"
+  ) {
+    showExplorerButton(finalHash);
+  }
+
+  setTimeout(async () => {
+    if (
+      typeof loadDashboardData ===
+      "function"
+    ) {
+      await loadDashboardData();
+    }
+
+    if (
+      typeof fetchRequests ===
+      "function"
+    ) {
+      await fetchRequests();
+    }
+  }, 4000);
+
+  return finalHash;
+}
+
+async function 
+  executeCircleTransaction(abiFunction, contractAddress, args) {
     const userToken = sessionStorage.getItem("circle_user_token") || sessionStorage.getItem("userToken");
   const encryptionKey = sessionStorage.getItem("circle_encryption_key") || sessionStorage.getItem("encryptionKey");
 const userId = sessionStorage.getItem("circle_user_id");
@@ -764,48 +1223,6 @@ if (!finalHash) {
   } catch (lookupError) {
     console.error(
       "❌ TRANSACTION LOOKUP FAILED:",
-      lookupError
-    );
-  }
-}
-
-console.log(
-  "🔎 FINAL TRANSACTION HASH:",
-  finalHash
-);
-
-if (!finalHash) {
-  return reject(
-    new Error(
-      "Circle contract execution completed, but the transaction hash is not available yet."
-    )
-  );
-}
-
-  if (typeof showExplorerButton === "function") {
-    showExplorerButton(finalHash);
-  }
-
-  setTimeout(async () => {
-    if (typeof loadDashboardData === "function") {
-      await loadDashboardData();
-    }
-
-    if (typeof fetchRequests === "function") {
-      await fetchRequests();
-    }
-  }, 4000);
-
-  resolve(finalHash);
-});
-
-    } catch (err) {
-      console.error("❌ CONTRACT EXECUTION FAILED:", err);
-      reject(err);
-    }
-  });
-});
-}
 
 function showExplorerButton(txHash) {
   txHash = typeof txHash === 'object' ? (txHash.txHash || txHash.challengeId || "") : txHash;
