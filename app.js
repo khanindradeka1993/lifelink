@@ -712,25 +712,75 @@ if (!finalHash) {
   }
 
   // Normal contract execution result
-  const finalHash =
-    txSdkResult?.transactionHash ||
-    txSdkResult?.txHash ||
-    txSdkResult?.data?.transactionHash ||
-    txSdkResult?.data?.txHash ||
-    "";
+let finalHash =
+  txSdkResult?.transactionHash ||
+  txSdkResult?.txHash ||
+  txSdkResult?.data?.transactionHash ||
+  txSdkResult?.data?.txHash ||
+  "";
 
+console.log(
+  "🔎 FINAL TRANSACTION HASH:",
+  finalHash
+);
+
+// Circle can return COMPLETE without the transaction hash.
+// Look up the completed transaction before reporting failure.
+if (!finalHash) {
   console.log(
-    "🔎 FINAL TRANSACTION HASH:",
-    finalHash
+    "🔎 No hash in SDK result. Looking up completed transaction..."
   );
 
-  if (!finalHash) {
-    return reject(
-      new Error(
-        "Circle contract execution did not return a transaction hash."
-      )
+  try {
+    const lookupResponse = await fetch("/api/execute-circle-tx", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "lookupTransaction",
+        userToken: sessionStorage.getItem("circle_user_token"),
+        userId: sessionStorage.getItem("circle_user_id"),
+        contractAddress,
+        functionSignature: abiFunction
+      })
+    });
+
+    const lookupData = await lookupResponse.json();
+
+    console.log(
+      "🔎 TRANSACTION LOOKUP RESULT:",
+      lookupData
+    );
+
+    if (lookupResponse.ok) {
+      finalHash =
+        lookupData.transactionHash ||
+        lookupData.txHash ||
+        lookupData.transaction?.txHash ||
+        lookupData.transaction?.transactionHash ||
+        "";
+    }
+  } catch (lookupError) {
+    console.error(
+      "❌ TRANSACTION LOOKUP FAILED:",
+      lookupError
     );
   }
+}
+
+console.log(
+  "🔎 FINAL TRANSACTION HASH:",
+  finalHash
+);
+
+if (!finalHash) {
+  return reject(
+    new Error(
+      "Circle contract execution completed, but the transaction hash is not available yet."
+    )
+  );
+}
 
   if (typeof showExplorerButton === "function") {
     showExplorerButton(finalHash);
