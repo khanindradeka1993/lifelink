@@ -2009,7 +2009,7 @@ window.completeAmbulance = async function(id) {
   }
 
     const isAuthorized =
-    await readOnlyEmergency.ambulanceAuthorities(wallet.address);
+    await readOnlyEmergency.ambulanceAuthorities(wallet.account);
 
 if (!isAuthorized) {
     alert(
