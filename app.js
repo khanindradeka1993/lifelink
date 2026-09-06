@@ -1896,6 +1896,19 @@ window.completeAmbulance = async function(id) {
     return;
   }
 
+    const isAuthorized =
+    await readOnlyEmergency.ambulanceAuthorities(wallet.address);
+
+  if (!isAuthorized) {
+    alert(
+      "🚫 SECURITY ALERT\n\n" +
+      "You are NOT authorized to complete ambulance requests.\n\n" +
+      "Only an approved ambulance authority can complete this request.\n\n" +
+      "The blockchain has blocked this unauthorized action."
+    );
+    return;
+  }
+
   try {
     if (ambulanceStatus) ambulanceStatus.innerHTML = "⏳ Completing request...";
     const tx = await window.emergencyContract.completeRequest(id);
