@@ -6,9 +6,9 @@ window.getCircleSdk = getCircleSdk;
 // ==========================================
 // 1. CONTRACT ADDRESSES & RPC CONFIGURATION
 // ==========================================
-const CONTRACT_ADDRESS = "0x80C0E143602DfDaD980adF1ae3cfF9B9153Aa2b7";
+const CONTRACT_ADDRESS = "0x6B41db2DB2357826933BcFa8dC627aca3fd33883";
 const HEALTHCARE_CONTRACT_ADDRESS = "0xA3483f9B44d749F60e4061a99bbd6f5795B6c5C5";
-const EMERGENCY_CONTRACT_ADDRESS = "0x8d1183f802b5688e5244a493Ea965e856150c2Ef";
+const EMERGENCY_CONTRACT_ADDRESS = "0x498d87b4b9dC90C8037088BD2687E758769e918E";
 const PAYMENT_CONTRACT_ADDRESS = "0x0CA164a6FE7FfEA47945761748D77cd0aa16Afb1";
 const EXPLORER = "https://testnet.arcscan.app";
 const ARC_RPC_URL = "https://rpc.testnet.arc.network";
@@ -498,7 +498,7 @@ async function executeCircleTransaction(abiFunction, contractAddress, args) {
       sdkInstance
     );
   } catch (err) {
-    console.error(
+      console.error(
       "Failed to call getCircleSdk",
       err
     );
@@ -1496,7 +1496,7 @@ if (registerBtn) {
     if (!name || !bloodGroup || !city || !phone) {
       alert("Please fill all fields");
       return;
-    }
+        }
 
     let latitude = 0;
     let longitude = 0;
@@ -1957,4 +1957,5 @@ document.querySelectorAll(".quick-action").forEach(button => {
 });
 
 
-      
+
+  
