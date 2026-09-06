@@ -2011,33 +2011,57 @@ window.completeAmbulance = async function(id) {
     const isAuthorized =
     await readOnlyEmergency.ambulanceAuthorities(wallet.address);
 
-  if (!isAuthorized) {
+if (!isAuthorized) {
     alert(
-      "🚫 SECURITY ALERT\n\n" +
-      "You are NOT authorized to complete ambulance requests.\n\n" +
-      "Only an approved ambulance authority can complete this request.\n\n" +
-      "The blockchain has blocked this unauthorized action."
+        "🚫 SECURITY ALERT\n\n" +
+        "You are NOT authorized to complete ambulance requests.\n\n" +
+        "Only an approved ambulance authority can complete this request.\n\n" +
+        "The blockchain has blocked this unauthorized action."
     );
     return;
-  }
+}
 
-  try {
-    if (ambulanceStatus) ambulanceStatus.innerHTML = "⏳ Completing request...";
-    const tx = await window.emergencyContract.completeRequest(id);
+try {
+    if (ambulanceStatus)
+        ambulanceStatus.innerHTML = "⏳ Completing request...";
+
+    // Connect MetaMask to a SIGNER
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+
+    const signer = provider.getSigner();
+
+    const emergencyWithSigner = new ethers.Contract(
+        EMERGENCY_CONTRACT_ADDRESS,
+        EMERGENCY_ABI,
+        signer
+    );
+
+    const tx = await emergencyWithSigner.completeRequest(id);
+
     await tx.wait();
 
-      if (ambulanceStatus) ambulanceStatus.innerHTML = "✅ Request completed.";
+    if (ambulanceStatus)
+        ambulanceStatus.innerHTML = "✅ Request completed.";
+
+    showExplorerButton(tx.hash);
+
+    alert("✅ Ambulance request completed successfully!");
+
     await loadAmbulanceRequests();
-  } catch (err) {
-    console.error(err);
+
+} catch (err) {
+    console.error("MetaMask ambulance completion error:", err);
+
+    if (ambulanceStatus)
+        ambulanceStatus.innerHTML = "❌ Action Failed";
+
     alert(
-  "🚫 SECURITY ALERT\n\n" +
-  "You are NOT authorized to complete ambulance requests.\n\n" +
-  "Only an approved ambulance authority can complete this request.\n\n" +
-  "The blockchain has blocked this unauthorized action."
- );
- }
-};
+        "🚫 SECURITY ALERT\n\n" +
+        "The blockchain rejected this completion.\n\n" +
+        (err.reason || err.message || "Transaction failed.")
+    );
+}
 
 // --- DOCTOR PATIENT LOOKUP ---
 if (searchPatientBtn) {
