@@ -1677,55 +1677,167 @@ if (requestBtn) {
   });
 }
 
-// --- FULFILL SOS REQUEST ---
+// ---// --- FULFILL SOS REQUEST ---
 window.fulfillRequest = async function(id) {
   const wallet = getActiveWallet();
+
   if (!wallet) {
-    alert("Please connect your wallet first");
-    return;
-  }
-
-  if (wallet.type === "CIRCLE") {
-    try {
-      alert("⌛ Submitting request fulfillment via Circle Wallet...");
-      const txHash = await executeCircleTransaction(
-        "fulfillRequest(uint256)",
-        CONTRACT_ADDRESS,
-        [id.toString()]
-      );
-
-      showExplorerButton(txHash);
-      alert("❤️ Request marked as fulfilled on Arc via Circle Wallet!");
-      await reloadAppData();
-    } catch (err) {
-      alert(
-  "🚫 SECURITY ALERT\n\n" +
-  "You are NOT an eligible donor for this blood request.\n\n" +
-  "Your blood group or city does not match the request, " +
-  "or you are not registered as an available donor.\n\n" +
-  "The blockchain has blocked this unauthorized action."
-);
-    }
+    alert("Please connect your wallet first.");
     return;
   }
 
   try {
-    const tx = await contract.fulfillRequest(id);
-    alert("Updating request...");
-    await tx.wait();
+    // ------------------------------------------
+    // SECURITY PRE-CHECK
+    // ------------------------------------------
+    const requests = await readOnlyContract.getRequests();
+    const donors = await readOnlyContract.getDonors();
 
-    showExplorerButton(tx.hash);
-    alert("✅ Request marked as fulfilled!");
-    await reloadAppData();
+    const request = requests.find(
+      (r) => Number(r.id) === Number(id)
+    );
+
+    if (!request) {
+      alert("❌ SOS request not found.");
+      return;
+    }
+
+    if (request.fulfilled) {
+      alert("⚠️ This SOS request has already been fulfilled.");
+      await reloadAppData();
+      return;
+    }
+
+    const walletAddress =
+      wallet.type === "CIRCLE"
+        ? wallet.address
+        : wallet.account;
+
+    if (!walletAddress) {
+      alert("❌ Wallet address not available.");
+      return;
+    }
+
+    // Find donor belonging to the connected wallet
+    const donor = donors.find(
+      (d) =>
+        d.wallet.toLowerCase() === walletAddress.toLowerCase()
+    );
+
+    if (!donor) {
+      alert(
+        "🚫 SECURITY ALERT\n\n" +
+        "You are NOT a registered donor.\n\n" +
+        "Only a registered donor can fulfill this blood request."
+      );
+      return;
+    }
+
+    // Check donor availability
+    if (!donor.available) {
+      alert(
+        "🚫 SECURITY ALERT\n\n" +
+        "Your donor account is currently unavailable.\n\n" +
+        "You cannot fulfill this request."
+      );
+      return;
+    }
+
+    // Check exact blood-group match
+    if (
+      String(donor.bloodGroup).trim() !==
+      String(request.bloodGroup).trim()
+    ) {
+      alert(
+        "🚫 SECURITY ALERT\n\n" +
+        "Your blood group does NOT match this SOS request.\n\n" +
+        "The blockchain will block this unauthorized action."
+      );
+      return;
+    }
+
+    // Check exact city match
+    if (
+      String(donor.city).trim() !==
+      String(request.city).trim()
+    ) {
+      alert(
+        "🚫 SECURITY ALERT\n\n" +
+        "Your registered city does NOT match this SOS request.\n\n" +
+        "The blockchain will block this unauthorized action."
+      );
+      return;
+    }
+
+    // ------------------------------------------
+    // ALL SECURITY CHECKS PASSED
+    // ------------------------------------------
+
+    if (wallet.type === "CIRCLE") {
+      try {
+        alert(
+          "⌛ Eligible donor verified.\n\n" +
+          "Submitting fulfillment via Circle Wallet..."
+        );
+
+        const txHash = await executeCircleTransaction(
+          "fulfillRequest(uint256)",
+          CONTRACT_ADDRESS,
+          [id.toString()]
+        );
+
+        showExplorerButton(txHash);
+
+        alert(
+          "❤️ Request marked as fulfilled on Arc via Circle Wallet!"
+        );
+
+        await reloadAppData();
+      } catch (err) {
+        console.error("Circle fulfillment error:", err);
+
+        alert(
+          "🚫 SECURITY ALERT\n\n" +
+          "The blockchain rejected this fulfillment.\n\n" +
+          "Your donor eligibility could not be verified on-chain."
+        );
+      }
+
+      return;
+    }
+
+    // ------------------------------------------
+    // METAMASK
+    // ------------------------------------------
+    try {
+      alert("⌛ Eligible donor verified.\n\nUpdating request...");
+
+      const tx = await contract.fulfillRequest(id);
+
+      await tx.wait();
+
+      showExplorerButton(tx.hash);
+
+      alert("❤️ Request marked as fulfilled!");
+
+      await reloadAppData();
+    } catch (err) {
+      console.error("MetaMask fulfillment error:", err);
+
+      alert(
+        "🚫 SECURITY ALERT\n\n" +
+        "The blockchain rejected this fulfillment.\n\n" +
+        "Your donor eligibility could not be verified on-chain."
+      );
+    }
+
   } catch (err) {
-    console.error(err);
+    console.error("SOS security pre-check failed:", err);
+
     alert(
-  "🚫 SECURITY ALERT\n\n" +
-  "You are NOT an eligible donor for this blood request.\n\n" +
-  "Your blood group or city does not match the request, " +
-  "or you are not registered as an available donor.\n\n" +
-  "The blockchain has blocked this unauthorized action."
-);
+      "❌ Unable to verify donor eligibility.\n\n" +
+      "The SOS request was NOT completed."
+    );
   }
 };
 
