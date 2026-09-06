@@ -225,6 +225,25 @@ const HEALTHCARE_ABI = [
 
 const EMERGENCY_ABI = [
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "ambulanceAuthorities",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "uint256", "name": "_id", "type": "uint256" }],
     "name": "completeRequest",
     "outputs": [],
@@ -1840,6 +1859,19 @@ window.completeAmbulance = async function(id) {
   }
 
   if (wallet.type === "CIRCLE") {
+        const isAuthorized =
+      await readOnlyEmergency.ambulanceAuthorities(wallet.address);
+
+    if (!isAuthorized) {
+      alert(
+        "🚫 SECURITY ALERT\n\n" +
+        "You are NOT authorized to complete ambulance requests.\n\n" +
+        "Only an approved ambulance authority can complete this request.\n\n" +
+        "The blockchain has blocked this unauthorized action."
+      );
+      return;
+    }
+
     try {
       if (ambulanceStatus) ambulanceStatus.innerHTML = "⏳ Completing request via Circle Wallet...";
       const txHash = await executeCircleTransaction(
