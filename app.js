@@ -2062,6 +2062,7 @@ try {
         (err.reason || err.message || "Transaction failed.")
     );
 }
+};
 
 // --- DOCTOR PATIENT LOOKUP ---
 if (searchPatientBtn) {
