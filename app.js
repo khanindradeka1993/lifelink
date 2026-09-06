@@ -1679,7 +1679,13 @@ window.fulfillRequest = async function(id) {
       alert("❤️ Request marked as fulfilled on Arc via Circle Wallet!");
       await reloadAppData();
     } catch (err) {
-      alert("Circle Tx Failed: " + err.message);
+      alert(
+  "🚫 SECURITY ALERT\n\n" +
+  "You are NOT an eligible donor for this blood request.\n\n" +
+  "Your blood group or city does not match the request, " +
+  "or you are not registered as an available donor.\n\n" +
+  "The blockchain has blocked this unauthorized action."
+);
     }
     return;
   }
@@ -1694,7 +1700,13 @@ window.fulfillRequest = async function(id) {
     await reloadAppData();
   } catch (err) {
     console.error(err);
-    alert(err.message);
+    alert(
+  "🚫 SECURITY ALERT\n\n" +
+  "You are NOT an eligible donor for this blood request.\n\n" +
+  "Your blood group or city does not match the request, " +
+  "or you are not registered as an available donor.\n\n" +
+  "The blockchain has blocked this unauthorized action."
+);
   }
 };
 
