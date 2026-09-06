@@ -1842,7 +1842,12 @@ window.completeAmbulance = async function(id) {
       await loadAmbulanceRequests();
     } catch (err) {
       if (ambulanceStatus) ambulanceStatus.innerHTML = "❌ Action Failed";
-      alert("Circle Action Failed: " + err.message);
+      alert(
+  "🚫 SECURITY ALERT\n\n" +
+  "You are NOT authorized to complete ambulance requests.\n\n" +
+  "Only an approved ambulance authority can complete this request.\n\n" +
+  "The blockchain has blocked this unauthorized action."
+);
     }
     return;
   }
@@ -1856,8 +1861,13 @@ window.completeAmbulance = async function(id) {
     await loadAmbulanceRequests();
   } catch (err) {
     console.error(err);
-    alert(err.message);
-  }
+    alert(
+  "🚫 SECURITY ALERT\n\n" +
+  "You are NOT authorized to complete ambulance requests.\n\n" +
+  "Only an approved ambulance authority can complete this request.\n\n" +
+  "The blockchain has blocked this unauthorized action."
+ );
+ }
 };
 
 // --- DOCTOR PATIENT LOOKUP ---
