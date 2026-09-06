@@ -387,7 +387,7 @@ LifeLink uses smart-contract functionality deployed on **Arc Testnet**.
 
 | Contract | Purpose | Contract Address |
 |---|---|---|
-| 🩸 Blood Donor Contract | Blood donor registration and emergency blood requests | `0x498d87b4b9dC90C8037088BD2687E758769e918E` |
+| 🩸 Blood Donor Contract | Blood donor registration and emergency blood requests | `0x6B41db2DB2357826933BcFa8dC627aca3fd33883` |
 | 🩺 Healthcare Contract | Patient health profile functionality | `0xA3483f9B44d749F60e4061a99bbd6f5795B6c5C5` |
 | 🚑 Emergency Contract | Emergency ambulance and coordination functionality | `0x498d87b4b9dC90C8037088BD2687E758769e918E` |
 | 💳 Payment Contract | USDC hospital bill payments | `0x0CA164a6FE7FfEA47945761748D77cd0aa16Afb1` |
