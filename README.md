@@ -167,6 +167,216 @@ The **Nearby Donor Map** can also show registered donor locations.
 
 ---
 
+# 🔐 Security & Request Fulfillment Flow
+
+LifeLink uses a **two-layer security model** for emergency request fulfillment:
+
+1. **Frontend security checks** — LifeLink checks the connected wallet before asking the user to send a blockchain transaction.
+2. **Smart-contract security checks** — The smart contract enforces the important authorization and eligibility rules on-chain.
+
+The frontend improves the user experience, while the smart contract remains the real security boundary.
+
+## 🩸 Blood SOS Fulfillment Security
+
+### Flow
+
+```text
+Patient
+   │
+   ▼
+Create Blood SOS
+   │
+   ▼
+SOS Request Recorded on Arc
+   │
+   ▼
+Donor Opens Active Request
+   │
+   ▼
+Frontend Eligibility Check
+   │
+   ├── ❌ Donor Not Registered
+   ├── ❌ Wrong Blood Group
+   ├── ❌ Wrong City
+   └── ❌ Donor Not Available
+            │
+            ▼
+       🚫 FULFILLMENT BLOCKED
+
+If all checks pass:
+            │
+            ▼
+       ✅ Eligible Donor
+            │
+            ▼
+       Fulfill Request
+            │
+            ▼
+    Smart Contract Verification
+            │
+            ├── ❌ Invalid
+            │      → Transaction Rejected
+            │
+            └── ✅ Valid
+                    │
+                    ▼
+             Blockchain Confirmation
+                    │
+                    ▼
+             ❤️ Request Fulfilled
+```
+
+### Blood SOS Security Rules
+
+Before a donor can fulfill an SOS request, LifeLink checks:
+
+- The wallet is registered as a donor.
+- The donor is currently available.
+- The donor's blood group matches the SOS request.
+- The donor's city matches the SOS request.
+
+The smart contract also enforces the donor/request eligibility rules.
+
+This means that bypassing the frontend does not bypass the contract-level security.
+
+### Demonstration Flow
+
+```text
+Create SOS
+    ↓
+Try with wrong / non-eligible donor
+    ↓
+🚫 Security check fails
+    ↓
+Use matching registered donor
+    ↓
+✅ Security check passes
+    ↓
+Send blockchain transaction
+    ↓
+❤️ Request marked as fulfilled
+```
+
+---
+
+## 🚑 Ambulance Fulfillment Security
+
+### Flow
+
+```text
+Patient
+   │
+   ▼
+Request Emergency Ambulance
+   │
+   ▼
+Request Recorded on Arc
+   │
+   ▼
+Live Ambulance Request
+   │
+   ▼
+Ambulance Wallet
+   │
+   ▼
+Authorization Check
+   │
+   ├── ❌ Unauthorized Wallet
+   │        │
+   │        ▼
+   │    🚫 COMPLETION BLOCKED
+   │
+   └── ✅ Authorized Ambulance Authority
+            │
+            ▼
+       Complete Request
+            │
+            ▼
+    Smart Contract Verification
+            │
+            ├── ❌ Not Authorized
+            │      → Transaction Rejected
+            │
+            └── ✅ Authorized
+                    │
+                    ▼
+             Blockchain Confirmation
+                    │
+                    ▼
+             🚑 Request Completed
+```
+
+### Ambulance Security Rules
+
+Only a wallet registered as an **authorized ambulance authority** can complete an ambulance request.
+
+LifeLink performs an authorization check before sending the transaction.
+
+The Emergency smart contract also checks the caller's authorization on-chain.
+
+### Demonstration Flow
+
+```text
+Create Ambulance Request
+    ↓
+Try with unauthorized wallet
+    ↓
+🚫 Security check fails
+    ↓
+Use authorized ambulance wallet
+    ↓
+✅ Security check passes
+    ↓
+Send blockchain transaction
+    ↓
+🚑 Request marked as completed
+```
+
+---
+
+## 🛡️ Two-Layer Security Model
+
+```text
+                    USER
+                      │
+                      ▼
+               LifeLink Frontend
+                      │
+                Security Check
+                      │
+             ┌────────┴────────┐
+             │                 │
+           ❌ FAIL            ✅ PASS
+             │                 │
+             ▼                 ▼
+          BLOCKED         Blockchain Tx
+                               │
+                               ▼
+                       Smart Contract
+                       Security Check
+                               │
+                      ┌────────┴────────┐
+                      │                 │
+                    ❌ FAIL            ✅ PASS
+                      │                 │
+                      ▼                 ▼
+                 TX REJECTED       TX CONFIRMED
+                                        │
+                                        ▼
+                                Request Fulfilled
+```
+
+### Security Principle
+
+> **Frontend checks for better UX. Smart contracts provide the real security boundary.**
+
+This security approach is used for both:
+
+- 🩸 Blood SOS donor fulfillment
+- 🚑 Emergency ambulance completion
+
+---
+
 ## 8. 🩺 Test Health Profile
 
 1. Open **Health Profile**.
