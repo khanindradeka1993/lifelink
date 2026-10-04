@@ -212,7 +212,7 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify({
               idempotencyKey: crypto.randomUUID(),
-              blockchains: ["ARC-TESTNET"],
+              blockchains: ["ARC-MAINNET"],
               accountType: "SCA"
             })
           }
