@@ -6,12 +6,12 @@ window.getCircleSdk = getCircleSdk;
 // ==========================================
 // 1. CONTRACT ADDRESSES & RPC CONFIGURATION
 // ==========================================
-const CONTRACT_ADDRESS = "0x6B41db2DB2357826933BcFa8dC627aca3fd33883";
-const HEALTHCARE_CONTRACT_ADDRESS = "0xA3483f9B44d749F60e4061a99bbd6f5795B6c5C5";
-const EMERGENCY_CONTRACT_ADDRESS = "0x498d87b4b9dC90C8037088BD2687E758769e918E";
-const PAYMENT_CONTRACT_ADDRESS = "0x0CA164a6FE7FfEA47945761748D77cd0aa16Afb1";
-const EXPLORER = "https://testnet.arcscan.app";
-const ARC_RPC_URL = "https://rpc.testnet.arc.network";
+const CONTRACT_ADDRESS = "0xe7482a36d0Eb4DB050f1A11C20859fCF32A1E80D";
+const HEALTHCARE_CONTRACT_ADDRESS = "0xBcCcAA1467f49530FB724C39aE63923179169F39";
+const EMERGENCY_CONTRACT_ADDRESS = "0x9e0F4b7BA1DA223b5C960232A95B7b93B4060451";
+const PAYMENT_CONTRACT_ADDRESS = "0xC01826cFc84294b702bD8293C47aBF75805fE9fb";
+const EXPLORER = "https://explorer.arc.io";
+const ARC_RPC_URL = "https://rpc.mainnet.arc.io";
 
 // ==========================================
 // 2. ABIs
@@ -1355,7 +1355,7 @@ if (connectBtn) {
     }
 
     try {
-      const ARC_CHAIN_ID = "0x4cef52"; 
+      const ARC_CHAIN_ID = "0x13b2";
       const chainId = await window.ethereum.request({ method: "eth_chainId" });
 
       if (chainId !== ARC_CHAIN_ID) {
@@ -1370,7 +1370,7 @@ if (connectBtn) {
               method: "wallet_addEthereumChain",
               params: [{
                 chainId: ARC_CHAIN_ID,
-                chainName: "Arc Network Testnet",
+                chainName: "Arc Mainnet",
                 nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
                 rpcUrls: [ARC_RPC_URL],
                 blockExplorerUrls: [EXPLORER]
@@ -1532,7 +1532,7 @@ if (registerBtn) {
 
     if (wallet.type === "CIRCLE") {
       try {
-        alert("⌛ Submitting transaction to Arc Testnet via Circle Wallet...");
+        alert("⌛ Submitting transaction to Arc Mainnet via Circle Wallet...");
         const txHash = await executeCircleTransaction(
           "registerDonor(string,string,string,string,int256,int256)",
           CONTRACT_ADDRESS,
@@ -1634,7 +1634,7 @@ if (requestBtn) {
 
     if (wallet.type === "CIRCLE") {
       try {
-        alert("⌛ Submitting SOS Request via Circle Wallet to Arc Testnet...");
+        alert("⌛ Submitting SOS Request via Circle Wallet to Arc Mainnet...");
         const txHash = await executeCircleTransaction(
           "createRequest(string,string,string,string,string)",
           CONTRACT_ADDRESS,
