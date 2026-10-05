@@ -1187,7 +1187,7 @@ const availableDonors = donors.filter(donor => donor.available);
         window.donorMap.remove();
       }
 
-      window.donorMap = L.map("map").setView([26.1443, 91.7362], 11);
+      window.donorMap = L.map("map").setView([20, 0], 2);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
