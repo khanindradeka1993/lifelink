@@ -320,6 +320,7 @@ let contract = readOnlyContract;
 const connectBtn = document.getElementById("connectBtn");
 const disconnectBtn = document.getElementById("disconnectBtn");
 const walletAddress = document.getElementById("walletAddress");
+const networkStatus = document.getElementById("networkStatus");
 const registerBtn = document.getElementById("registerBtn");
 const donorList = document.getElementById("donorList");
 const searchBtn = document.getElementById("searchBtn");
@@ -968,7 +969,10 @@ async function disconnectWallet() {
     walletAddress.innerText = "Not Connected";
     walletAddress.style.color = "";
   }
-
+if (networkStatus) {
+  networkStatus.style.display = "none";
+}
+  
   if (disconnectBtn) {
     disconnectBtn.style.display = "none";
   }
@@ -1398,6 +1402,11 @@ explicitWalletConnected = true;
   
       walletAddress.innerText = `Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(currentAccount.length - 4)}`;
       walletAddress.style.color = "#10B981";
+     if (networkStatus) {
+  networkStatus.innerText = "🟢 Arc Mainnet • Chain ID: 5042";
+  networkStatus.style.color = "#10B981";
+  networkStatus.style.display = "block";
+     }
       enableWalletCopy(currentAccount);      
       connectBtn.innerText = "✅ Wallet Connected";
       connectBtn.style.background = "#16a34a";
