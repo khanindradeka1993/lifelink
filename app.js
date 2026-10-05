@@ -1193,16 +1193,31 @@ const availableDonors = donors.filter(donor => donor.available);
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(window.donorMap);
 
-      donors.forEach((donor) => {
-        if (Number(donor.latitude) !== 0 && Number(donor.longitude) !== 0) {
-          L.marker([
-            Number(donor.latitude) / 1000000,
-            Number(donor.longitude) / 1000000
-          ])
-          .addTo(window.donorMap)
-          .bindPopup(`<b>${donor.name}</b><br>${donor.bloodGroup}<br>${donor.city}`);
-        }
-      });
+      const donorBounds = L.latLngBounds([]);
+let donorMarkerCount = 0;
+
+donors.forEach((donor) => {
+  if (Number(donor.latitude) !== 0 && Number(donor.longitude) !== 0) {
+
+    const lat = Number(donor.latitude) / 1000000;
+    const lng = Number(donor.longitude) / 1000000;
+
+    const marker = L.marker([lat, lng])
+      .addTo(window.donorMap)
+      .bindPopup(
+        `<b>${donor.name}</b><br>${donor.bloodGroup}<br>${donor.city}`
+      );
+
+    donorBounds.extend([lat, lng]);
+    donorMarkerCount++;
+  }
+});
+
+if (donorMarkerCount > 0) {
+  window.donorMap.fitBounds(donorBounds.pad(0.2), {
+    maxZoom: 12
+  });
+}
     }
   } catch (e) {
     console.error("Error loading donors:", e);
