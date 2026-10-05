@@ -61,7 +61,19 @@
       </div>
 
       <div id="walletAddressContainer" class="address-box">
-  <span id="walletAddress">Not Connected</span>
+
+  <div style="
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  ">
+    <span id="walletAddress">Not Connected</span>
+
+    <button id="copyWalletBtn" class="copy-btn" style="display:none;">
+      📋 Copy
+    </button>
+  </div>
 
   <div id="networkStatus"
        style="
@@ -74,9 +86,6 @@
     🟢 Arc Mainnet • Chain ID: 5042
   </div>
 
-  <button id="copyWalletBtn" class="copy-btn" style="display:none;">
-    📋 Copy
-  </button>
       </div>
     </div>
 
