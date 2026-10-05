@@ -60,17 +60,25 @@
         🟢 Circle Wallet Active
       </div>
 
-      <div id="walletAddressContainer" class="address-box">
+      <div id="walletAddressContainer"
+     class="address-box"
+     style="
+       display:flex;
+       align-items:center;
+       justify-content:space-between;
+       gap:10px;
+     ">
 
   <div style="
     display:flex;
     align-items:center;
-    justify-content:center;
     gap:8px;
   ">
     <span id="walletAddress">Not Connected</span>
 
-    <button id="copyWalletBtn" class="copy-btn" style="display:none;">
+    <button id="copyWalletBtn"
+            class="copy-btn"
+            style="display:none;">
       📋 Copy
     </button>
   </div>
@@ -78,16 +86,15 @@
   <div id="networkStatus"
        style="
          display:none;
-         margin-top:8px;
          font-size:13px;
          font-weight:600;
          color:#10B981;
+         white-space:nowrap;
        ">
     🟢 Arc Mainnet • Chain ID: 5042
   </div>
 
       </div>
-    </div>
 
     <button id="disconnectBtn" type="button" class="disconnect-btn" style="display:none;">
       🔌 Disconnect Wallet
