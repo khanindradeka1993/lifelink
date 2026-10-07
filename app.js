@@ -1,8 +1,3 @@
-import { getCircleSdk } from "./src/circle-wallet.js";
-
-// Expose it globally for your UI event handlers
-window.getCircleSdk = getCircleSdk;
-
 // ==========================================
 // 1. CONTRACT ADDRESSES & RPC CONFIGURATION
 // ==========================================
@@ -350,9 +345,6 @@ const viewEmergency = document.getElementById("viewEmergency");
 const viewAllergies = document.getElementById("viewAllergies");
 const viewAddress = document.getElementById("viewAddress");
 
-const circleGoogleBtn = document.getElementById("circleGoogleBtn");
-const circleWalletStatus = document.getElementById("circleWalletStatus");
-
 let currentAccount = "";
 let explicitWalletConnected = false;
 
@@ -375,19 +367,6 @@ function getActiveWallet() {
     };
   }
 
-  const activeType = sessionStorage.getItem("active_wallet_type");
-  const circleUserId = sessionStorage.getItem("circle_user_id");
-  const circleUserToken = sessionStorage.getItem("circle_user_token");
-
-  if (activeType === "CIRCLE" && circleUserId && circleUserToken) {
-    return {
-      type: "CIRCLE",
-      userId: circleUserId,
-      userToken: circleUserToken,
-      address: sessionStorage.getItem("circle_wallet_address") || circleUserId
-    };
-  }
-
   return null;
 }
 
@@ -397,7 +376,6 @@ function enableWalletCopy(address) {
 
   const addrToCopy =
     address ||
-    sessionStorage.getItem("circle_wallet_address") ||
     currentAccount;
 
   if (!addrToCopy) {
@@ -438,464 +416,6 @@ function enableWalletCopy(address) {
       window.prompt("Copy your wallet address:", addrToCopy);
     }
   };
-}
-
-async function executeCircleTransaction(abiFunction, contractAddress, args) {
-  const userToken =
-    sessionStorage.getItem("circle_user_token") ||
-    sessionStorage.getItem("userToken");
-
-  const encryptionKey =
-    sessionStorage.getItem("circle_encryption_key") ||
-    sessionStorage.getItem("encryptionKey");
-
-  const userId = sessionStorage.getItem("circle_user_id");
-
-  if (!userToken || !encryptionKey) {
-    throw new Error(
-      "Circle session or encryption key missing. Please sign in again."
-    );
-  }
-
-  // 1. Ask backend for the first required Circle challenge
-  const response = await fetch("/api/execute-circle-tx", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      userToken,
-      userId,
-      encryptionKey,
-      functionSignature: abiFunction,
-      contractAddress,
-      args,
-      skipSetup: true
-    })
-  });
-
-  const data = await response.json();
-
-  if (!response.ok || data.error) {
-    throw new Error(
-      data.error ||
-      "Failed to initialize transaction on server."
-    );
-  }
-
-  // Save refreshed Circle session data
-  if (data.userToken) {
-    sessionStorage.setItem(
-      "circle_user_token",
-      data.userToken
-    );
-  }
-
-  if (data.encryptionKey) {
-    sessionStorage.setItem(
-      "circle_encryption_key",
-      data.encryptionKey
-    );
-  }
-
-  if (
-    data.walletAddress &&
-    /^0x[a-fA-F0-9]{40}$/.test(data.walletAddress)
-  ) {
-    sessionStorage.setItem(
-      "circle_wallet_address",
-      data.walletAddress
-    );
-  }
-
-  // 2. Get Circle SDK
-  let sdkInstance;
-
-  try {
-    sdkInstance = window.getCircleSdk();
-    console.log(
-      "SDK Instance successfully retrieved:",
-      sdkInstance
-    );
-  } catch (err) {
-      console.error(
-      "Failed to call getCircleSdk",
-      err
-    );
-  }
-
-  if (!sdkInstance) {
-    throw new Error(
-      "Circle web SDK failed to load."
-    );
-  }
-
-  sdkInstance.setAuthentication({
-    userToken:
-      sessionStorage.getItem("circle_user_token"),
-    encryptionKey:
-      sessionStorage.getItem("circle_encryption_key")
-  });
-
-  const challengeId =
-    data.challengeId ||
-    data.data?.challengeId;
-
-  if (!challengeId) {
-    throw new Error(
-      "No challenge ID returned from Circle API."
-    );
-  }
-
-  // Helper: execute exactly ONE Circle challenge
-  const executeChallenge = (id) => {
-    return new Promise((resolve, reject) => {
-      sdkInstance.execute(
-        id,
-        (error, result) => {
-          if (error) {
-            return reject(error);
-          }
-
-          resolve(result);
-        }
-      );
-    });
-  };
-
-  // 3. Execute the FIRST challenge
-  console.log(
-    "🚀 EXECUTING CIRCLE CHALLENGE:",
-    challengeId
-  );
-
-  const sdkResult =
-    await executeChallenge(challengeId);
-
-  console.log(
-    "✅ CIRCLE SDK RESULT:",
-    sdkResult
-  );
-
-  // =====================================================
-  // NORMAL CASE:
-  // The first challenge is already CONTRACT_EXECUTION.
-  // DO NOT create another transaction.
-  // =====================================================
-  if (
-    sdkResult?.type !== "CREATE_WALLET"
-  ) {
-    let finalHash =
-      sdkResult?.transactionHash ||
-      sdkResult?.txHash ||
-      sdkResult?.data?.transactionHash ||
-      sdkResult?.data?.txHash ||
-      "";
-
-    // Circle may complete the transaction without
-    // returning the hash immediately.
-    if (!finalHash) {
-      console.log(
-        "🔎 No hash in SDK result. Looking up completed transaction..."
-      );
-
-      try {
-        const lookupResponse =
-          await fetch(
-            "/api/execute-circle-tx",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
-              body: JSON.stringify({
-                action:
-                  "lookupTransaction",
-                userToken:
-                  sessionStorage.getItem(
-                    "circle_user_token"
-                  ),
-                userId:
-                  sessionStorage.getItem(
-                    "circle_user_id"
-                  ),
-                contractAddress,
-                functionSignature:
-                  abiFunction
-              })
-            }
-          );
-
-        const lookupData =
-          await lookupResponse.json();
-
-        console.log(
-          "🔎 TRANSACTION LOOKUP RESULT:",
-          lookupData
-        );
-
-        if (lookupResponse.ok) {
-          finalHash =
-            lookupData.transactionHash ||
-            lookupData.txHash ||
-            lookupData.transaction?.txHash ||
-            lookupData.transaction?.transactionHash ||
-            "";
-        }
-      } catch (lookupError) {
-        console.error(
-          "❌ TRANSACTION LOOKUP FAILED:",
-          lookupError
-        );
-      }
-    }
-
-    console.log(
-      "🔎 FINAL TRANSACTION HASH:",
-      finalHash
-    );
-
-    if (!finalHash) {
-      throw new Error(
-        "Circle contract execution completed, but the transaction hash is not available yet."
-      );
-    }
-
-    if (
-      typeof showExplorerButton ===
-      "function"
-    ) {
-      showExplorerButton(finalHash);
-    }
-
-    setTimeout(async () => {
-      if (
-        typeof loadDashboardData ===
-        "function"
-      ) {
-        await loadDashboardData();
-      }
-
-      if (
-        typeof fetchRequests ===
-        "function"
-      ) {
-        await fetchRequests();
-      }
-    }, 4000);
-
-    return finalHash;
-  }
-
-  // =====================================================
-  // FIRST-TIME WALLET CASE:
-  // First challenge was wallet creation.
-  // Only NOW do we request the contract challenge.
-  // =====================================================
-  console.log(
-    "⏳ Circle wallet creation challenge completed/processing."
-  );
-
-  const retryResponse =
-    await fetch(
-      "/api/execute-circle-tx",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json"
-        },
-        body: JSON.stringify({
-          userToken:
-            sessionStorage.getItem(
-              "circle_user_token"
-            ),
-          userId:
-            sessionStorage.getItem(
-              "circle_user_id"
-            ),
-          encryptionKey:
-            sessionStorage.getItem(
-              "circle_encryption_key"
-            ),
-          functionSignature:
-            abiFunction,
-          contractAddress,
-          args,
-          skipSetup: true,
-          walletCreationComplete: true
-        })
-      }
-    );
-
-  const retryData =
-    await retryResponse.json();
-
-  console.log(
-    "🔄 CONTRACT CHALLENGE RESPONSE:",
-    retryData
-  );
-
-  if (retryData.userToken) {
-    sessionStorage.setItem(
-      "circle_user_token",
-      retryData.userToken
-    );
-  }
-
-  if (retryData.encryptionKey) {
-    sessionStorage.setItem(
-      "circle_encryption_key",
-      retryData.encryptionKey
-    );
-  }
-
-  if (
-    retryData.walletAddress &&
-    /^0x[a-fA-F0-9]{40}$/.test(
-      retryData.walletAddress
-    )
-  ) {
-    sessionStorage.setItem(
-      "circle_wallet_address",
-      retryData.walletAddress
-    );
-  }
-
-  if (!retryResponse.ok) {
-    throw new Error(
-      retryData.error ||
-      "Wallet creation is still processing. Please try again."
-    );
-  }
-
-  const txChallengeId =
-    retryData.challengeId ||
-    retryData.data?.challengeId;
-
-  if (!txChallengeId) {
-    throw new Error(
-      "No contract execution challenge returned after wallet creation."
-    );
-  }
-
-  console.log(
-    "🚀 EXECUTING ACTUAL CONTRACT CHALLENGE:",
-    txChallengeId
-  );
-
-  // This is the ONLY second SDK execution,
-  // and it happens ONLY after wallet creation.
-  const txSdkResult =
-    await executeChallenge(
-      txChallengeId
-    );
-
-  console.log(
-    "✅ ACTUAL CONTRACT SDK RESULT:",
-    txSdkResult
-  );
-
-  let finalHash =
-    txSdkResult?.transactionHash ||
-    txSdkResult?.txHash ||
-    txSdkResult?.data?.transactionHash ||
-    txSdkResult?.data?.txHash ||
-    "";
-
-  if (!finalHash) {
-    console.log(
-      "🔎 No hash in SDK result. Looking up completed transaction..."
-    );
-
-    try {
-      const lookupResponse =
-        await fetch(
-          "/api/execute-circle-tx",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
-            body: JSON.stringify({
-              action:
-                "lookupTransaction",
-              userToken:
-                sessionStorage.getItem(
-                  "circle_user_token"
-                ),
-              userId:
-                sessionStorage.getItem(
-                  "circle_user_id"
-                ),
-              contractAddress,
-              functionSignature:
-                abiFunction
-            })
-          }
-        );
-
-      const lookupData =
-        await lookupResponse.json();
-
-      console.log(
-        "🔎 TRANSACTION LOOKUP RESULT:",
-        lookupData
-      );
-
-      if (lookupResponse.ok) {
-        finalHash =
-          lookupData.transactionHash ||
-          lookupData.txHash ||
-          lookupData.transaction?.txHash ||
-          lookupData.transaction?.transactionHash ||
-          "";
-      }
-    } catch (lookupError) {
-      console.error(
-        "❌ TRANSACTION LOOKUP FAILED:",
-        lookupError
-      );
-    }
-  }
-
-  console.log(
-    "🔎 FINAL TRANSACTION HASH:",
-    finalHash
-  );
-
-  if (!finalHash) {
-    throw new Error(
-      "Circle contract execution completed, but the transaction hash is not available yet."
-    );
-  }
-
-  if (
-    typeof showExplorerButton ===
-    "function"
-  ) {
-    showExplorerButton(finalHash);
-  }
-
-  setTimeout(async () => {
-    if (
-      typeof loadDashboardData ===
-      "function"
-    ) {
-      await loadDashboardData();
-    }
-
-    if (
-      typeof fetchRequests ===
-      "function"
-    ) {
-      await fetchRequests();
-    }
-  }, 4000);
-
-  return finalHash;
 }
 
 function showExplorerButton(txHash) {
@@ -1554,30 +1074,6 @@ if (registerBtn) {
       alert("Unable to get GPS location. Using default location.");
     }
 
-    if (wallet.type === "CIRCLE") {
-      try {
-        alert("⌛ Submitting transaction to Arc Mainnet via Circle Wallet...");
-        const txHash = await executeCircleTransaction(
-          "registerDonor(string,string,string,string,int256,int256)",
-          CONTRACT_ADDRESS,
-          [name, bloodGroup, city, phone, latitude.toString(), longitude.toString()]
-        );
-
-        showExplorerButton(txHash);
-        alert("✅ Donor registered on Arc via Circle Wallet!");
-        
-        document.getElementById("name").value = "";
-        document.getElementById("city").value = "";
-        document.getElementById("phone").value = "";
-
-        await reloadAppData();
-      } catch (err) {
-        console.error("Circle Tx Error:", err);
-        alert("Circle Tx Failed: " + err.message);
-      }
-      return;
-    }
-
     try {
       const tx = await contract.registerDonor(name, bloodGroup, city, phone, latitude, longitude);
       alert("Transaction submitted ⌛");
@@ -1655,31 +1151,6 @@ if (requestBtn) {
       alert("Please fill all fields");
       return;
     }
-
-    if (wallet.type === "CIRCLE") {
-      try {
-        alert("⌛ Submitting SOS Request via Circle Wallet to Arc Mainnet...");
-        const txHash = await executeCircleTransaction(
-          "createRequest(string,string,string,string,string)",
-          CONTRACT_ADDRESS,
-          [patientName, bloodGroup, hospital, city, contact]
-        );
-
-        showExplorerButton(txHash);
-
-        document.getElementById("patientName").value = "";
-        document.getElementById("hospital").value = "";
-        document.getElementById("requestCity").value = "";
-        document.getElementById("contact").value = "";
-
-        alert("🚨 SOS Request Created on Arc via Circle Wallet!");
-        await reloadAppData();
-      } catch (err) {
-        console.error("Circle SOS Tx Error:", err);
-        alert("Circle SOS Failed: " + err.message);
-      }
-      return;
-                             }
 
     try {
       const tx = await contract.createRequest(patientName, bloodGroup, hospital, city, contact);
@@ -1797,39 +1268,6 @@ window.fulfillRequest = async function(id) {
     // ALL SECURITY CHECKS PASSED
     // ------------------------------------------
 
-    if (wallet.type === "CIRCLE") {
-      try {
-        alert(
-          "⌛ Eligible donor verified.\n\n" +
-          "Submitting fulfillment via Circle Wallet..."
-        );
-
-        const txHash = await executeCircleTransaction(
-          "fulfillRequest(uint256)",
-          CONTRACT_ADDRESS,
-          [id.toString()]
-        );
-
-        showExplorerButton(txHash);
-
-        alert(
-          "❤️ Request marked as fulfilled on Arc via Circle Wallet!"
-        );
-
-        await reloadAppData();
-      } catch (err) {
-        console.error("Circle fulfillment error:", err);
-
-        alert(
-          "🚫 SECURITY ALERT\n\n" +
-          "The blockchain rejected this fulfillment.\n\n" +
-          "Your donor eligibility could not be verified on-chain."
-        );
-      }
-
-      return;
-    }
-
     // ------------------------------------------
     // METAMASK
     // ------------------------------------------
@@ -1885,25 +1323,6 @@ if (payBillBtn) {
       return;
     }
 
-    if (wallet.type === "CIRCLE") {
-      try {
-        if (billStatus) billStatus.innerHTML = "⌛ Processing Hospital Payment via Circle Wallet...";
-        const txHash = await executeCircleTransaction(
-          "payHospitalBill(string,string,address,uint256)",
-          PAYMENT_CONTRACT_ADDRESS,
-          [hospital, billId, hospitalWallet, ethers.utils.parseUnits(amount, 6).toString()]
-        );
-
-        showExplorerButton(txHash);
-        if (billStatus) billStatus.innerHTML = "✅ Hospital bill recorded on blockchain via Circle Wallet.";
-        alert("✅ Hospital bill paid via Circle Wallet!");
-      } catch (err) {
-        if (billStatus) billStatus.innerHTML = "❌ Payment failed";
-        alert("Circle Payment Error: " + err.message);
-      }
-      return;
-    }
-
     try {
       const approveTx = await window.usdcContract.approve(
         PAYMENT_CONTRACT_ADDRESS,
@@ -1952,26 +1371,6 @@ if (ambulanceBtn) {
       return;
     }
 
-    if (wallet.type === "CIRCLE") {
-      try {
-        if (ambulanceStatus) ambulanceStatus.innerHTML = "🚑 Sending ambulance request via Circle Wallet...";
-        const txHash = await executeCircleTransaction(
-          "requestAmbulance(string,string,string,string,string)",
-          EMERGENCY_CONTRACT_ADDRESS,
-          [patient, pickup, hospital, contact, level]
-        );
-
-        showExplorerButton(txHash);
-        if (ambulanceStatus) ambulanceStatus.innerHTML = "✅ Ambulance request recorded on blockchain via Circle Wallet.";
-        alert("🚑 Ambulance requested via Circle Wallet!");
-        await loadAmbulanceRequests();
-      } catch (err) {
-        if (ambulanceStatus) ambulanceStatus.innerHTML = "❌ Ambulance Request Failed";
-        alert("Circle Ambulance Error: " + err.message);
-      }
-      return;
-    }
-
     try {
       if (ambulanceStatus) ambulanceStatus.innerHTML = "🚑 Sending ambulance request...";
       const tx = await window.emergencyContract.requestAmbulance(patient, pickup, hospital, contact, level);
@@ -1991,44 +1390,6 @@ window.completeAmbulance = async function(id) {
   const wallet = getActiveWallet();
   if (!wallet) {
     alert("Connect wallet first");
-    return;
-  }
-
-  if (wallet.type === "CIRCLE") {
-        const isAuthorized =
-      await readOnlyEmergency.ambulanceAuthorities(wallet.address);
-
-    if (!isAuthorized) {
-      alert(
-        "🚫 SECURITY ALERT\n\n" +
-        "You are NOT authorized to complete ambulance requests.\n\n" +
-        "Only an approved ambulance authority can complete this request.\n\n" +
-        "The blockchain has blocked this unauthorized action."
-      );
-      return;
-    }
-
-    try {
-      if (ambulanceStatus) ambulanceStatus.innerHTML = "⏳ Completing request via Circle Wallet...";
-      const txHash = await executeCircleTransaction(
-        "completeRequest(uint256)",
-        EMERGENCY_CONTRACT_ADDRESS,
-        [id.toString()]
-      );
-
-      showExplorerButton(txHash);
-      if (ambulanceStatus) ambulanceStatus.innerHTML = "✅ Request completed via Circle Wallet.";
-      alert("✅ Ambulance request completed via Circle Wallet!");
-      await loadAmbulanceRequests();
-    } catch (err) {
-      if (ambulanceStatus) ambulanceStatus.innerHTML = "❌ Action Failed";
-      alert(
-  "🚫 SECURITY ALERT\n\n" +
-  "You are NOT authorized to complete ambulance requests.\n\n" +
-  "Only an approved ambulance authority can complete this request.\n\n" +
-  "The blockchain has blocked this unauthorized action."
-);
-    }
     return;
   }
 
