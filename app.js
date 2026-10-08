@@ -1032,9 +1032,6 @@ explicitWalletConnected = true;
   }
 }
 
-if (circleGoogleBtn) {
-  circleGoogleBtn.addEventListener("click", handleCircleGoogleLogin);
-}
 if (disconnectBtn) {
   disconnectBtn.addEventListener("click", disconnectWallet);
 }
